@@ -9,8 +9,8 @@ export function PrepareComponent() {
     const [tokenAddress, setTokenAddress] = useState("");
     const [csvData, setCsvData] = useState("");
     const [csvToJSONData, setCsvToJSONData] = useState<any>([]);
-    const [tokenAddressError, setTokenAddressError] = useState(false);
-    const [csvDataError, setCsvDataError] = useState(false);
+    const [tokenAddressError, setTokenAddressError] = useState("");
+    const [csvDataError, setCsvDataError] = useState("");
 
     const handleChange = (event: any) => {
         const file = event.target.files[0];
@@ -18,7 +18,7 @@ export function PrepareComponent() {
       Papa.parse(file, {
         complete: (results: any) => {
             const stringResult = results.data.map((result: any[any]) => {
-                return `${result.address},${result.amount},`;
+                return `${result.address},${result.amount}`;
             }).join(`\n`);
 
             console.log(stringResult);
@@ -34,11 +34,15 @@ export function PrepareComponent() {
         if(!tokenAddress || !csvData) {
 
             if(!tokenAddress) {
-                setTokenAddressError(true);
+                setTokenAddressError("Kindly enter a token address");
+            }
+
+            if(tokenAddress.length < 42) {
+                setTokenAddressError("Invalid address");
             }
             
             if (!csvData) {
-                setCsvDataError(true);
+                setCsvDataError("Kindly upload a csv");
             }
             return;
         }
@@ -57,7 +61,7 @@ export function PrepareComponent() {
                     <div>
                         <div className="text-left">Token address</div>
                         <input className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" placeholder="Ethereum Native Currency" onChange={(e) => {setTokenAddress(e.target.value)}} />
-                        <small className={`${tokenAddressError ? "block text-red-400" : "hidden"} mt-2`}>Kindly enter a token address</small>
+                        <small className={`${tokenAddressError ? "block text-red-400" : "hidden"} mt-2`}>{tokenAddressError}</small>
                     </div>
                     <div>
                         <div>List of addresses in CSV</div>
@@ -65,7 +69,7 @@ export function PrepareComponent() {
                         <div className="text-right py-4">
                             <input className="hidden" type="file" accept=".csv" id="upload-button" onChange={handleChange} />
                             <label className="border-[2px] border-[#FFFFFF17] rounded-md px-8 py-2" htmlFor="upload-button">Upload CSV</label>
-                            <small className={`${csvDataError ? "block text-red-400" : "hidden"} mt-2 text-center`}>Kindly upload a csv</small>
+                            <small className={`${csvDataError ? "block text-red-400" : "hidden"} mt-2 text-center`}>{csvDataError}</small>
                         </div>
                     </div>
                 </div>

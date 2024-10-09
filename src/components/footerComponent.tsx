@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export function FooterComponent() {
     return (
-        <div className="flex justify-between text-white h-[100px] items-center px-8 md:px-[200px]">
+        <div className="flex justify-between text-white h-[100px] items-center px-2 md:px-[200px]">
             <div>Footer</div>
             <div>Footer</div>
             <div className="flex gap-4">
