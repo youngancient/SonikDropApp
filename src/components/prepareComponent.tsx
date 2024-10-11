@@ -1,6 +1,8 @@
+import { ethers } from "ethers";
 import Papa from "papaparse";
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { ICSV } from "../interfaces/CSVInterface";
 
 export function PrepareComponent() {
 
@@ -16,29 +18,28 @@ export function PrepareComponent() {
         const file = event.target.files[0];
     if (file) {
       Papa.parse(file, {
-        complete: (results: any) => {
-            const stringResult = results.data.map((result: any[any]) => {
-                return `${result.address},${result.amount}`;
-            }).join(`\n`);
+                complete: (results: any) => {
+                    const stringResult = results.data.map((result: ICSV) => {
+                        return `${result.address},${ethers.formatUnits((result.amount).toString(), 18)}`;
+                    }).join(`\n`);
 
-            console.log(stringResult);
-            setCsvData(stringResult);
-            setCsvToJSONData(results.data);
-        },
-        header: true, // Set to true if your CSV has headers
-      });
-    }
+                    console.log(stringResult);
+                    setCsvData(stringResult);
+                    setCsvToJSONData(results.data);
+                },
+                header: true, // Set to true if your CSV has headers
+            });
+        }
     }
 
     const nextPage = () => {
-        if(!tokenAddress || !csvData) {
+
+        const isTokenAddressValid = ethers.isAddress(tokenAddress);
+
+        if(!isTokenAddressValid || !csvData) {
 
             if(!tokenAddress) {
-                setTokenAddressError("Kindly enter a token address");
-            }
-
-            if(tokenAddress.length < 42) {
-                setTokenAddressError("Invalid address");
+                setTokenAddressError("Kindly enter a valid token address");
             }
             
             if (!csvData) {
@@ -48,7 +49,10 @@ export function PrepareComponent() {
         }
 
         sessionStorage.setItem("tokenAddress", tokenAddress);
-        sessionStorage.setItem("csvData", JSON.stringify(csvToJSONData));
+        sessionStorage.setItem("csvData", JSON.stringify(csvToJSONData.map((data: ICSV) => {
+            data.amount = ethers.formatUnits((data.amount).toString(), 18);
+            return data;
+        })));
 
         navigate("/approve");
          
@@ -56,7 +60,7 @@ export function PrepareComponent() {
 
     return (
         <div className="w-full flex justify-center items-center text-white p-2">
-            <div className="p-8 w-full lg:w-[400px] xl:w-[600px] border-[1px] border-[#FFFFFF17] rounded-xl" style={{background: "#8989890D", backdropFilter: "blur(150px)"}}>
+            <div className="p-4 w-full lg:w-[400px] xl:w-[600px] border-[3px] border-[#FFFFFF17] rounded-xl" style={{background: "#8989890D", backdropFilter: "blur(150px)"}}>
                 <div className="flex flex-col gap-4">
                     <div>
                         <div className="text-left">Token address</div>
