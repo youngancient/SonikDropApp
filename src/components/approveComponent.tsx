@@ -42,7 +42,7 @@ export function ApproveComponent() {
                     </div>
                     <div>
                         <div className="mt-4">List of recipients</div>
-                        <div className="mb-8 h-[200px] overflow-y-auto">
+                        <div className="mb-8 h-[200px] overflow-y-auto p-2">
                             {csvToJSONData.map((recepients: any) => {
                                 return (
                                     <div className="flex flex-col md:flex-row justify-between border-b-2 border-b-[#D0D5DD] py-4">

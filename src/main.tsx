@@ -1,7 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
-import './index.css'
+import './index.css';
+import 'react-toastify/dist/ReactToastify.css';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import PreparePage from './pages/Prepare.tsx';
 import ApprovePage from './pages/Approve.tsx';
