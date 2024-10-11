@@ -43,10 +43,10 @@ export function ApproveComponent() {
                     <div>
                         <div className="mt-4">List of recipients</div>
                         <div className="mb-8 h-[200px] overflow-y-auto p-2">
-                            {csvToJSONData.map((recepients: any) => {
+                            {csvToJSONData.map((recepients: any, index: number) => {
                                 return (
                                     <div className="flex flex-col md:flex-row justify-between border-b-2 border-b-[#D0D5DD] py-4">
-                                        <div>{recepients.address}</div>
+                                        <div>{index + 1}. {recepients.address}</div>
                                         <div>{recepients.amount} Base</div>
                                     </div>
                                 );
