@@ -72,7 +72,7 @@ export function PrepareComponent() {
             // Trigger the download
             saveAs(blob, 'data.csv');
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             toast("An error occurred while trying to create CSV");
         }
     }
@@ -87,7 +87,7 @@ export function PrepareComponent() {
 
                     setInvalidAirdropAddresses(invalidAddresses);
 
-                    console.log(invalidAddresses);
+                    // console.log(invalidAddresses);
 
                     if(invalidAddresses.length > 0) {
                         toast(invalidAddresses.join(", ") + " are invalid addresses");
@@ -100,7 +100,7 @@ export function PrepareComponent() {
                     }).join(`\n`);
 
 
-                    console.log(stringResult);
+                    // console.log(stringResult);
                     setCsvData(stringResult);
                     setCsvToJSONData(results.data);
                 },
@@ -193,9 +193,10 @@ export function PrepareComponent() {
                     <div>
                         <div className="w-full p-2 h-[200px] overflow-y-auto border-2 border-[2px] border-[#FFFFFF17] rounded-md bg-transparent">
                             {airdropMakerList.length > 0 && (
-                                airdropMakerList.map((eligibleParticipant: IAirdropList) => {
+                                airdropMakerList.map((eligibleParticipant: IAirdropList, index: number) => {
                                     return (
                                         <div className="flex justify-between items-center">
+                                            <div>{index + 1}.</div>
                                             <div>
                                                 <div>{eligibleParticipant.address}</div>
                                                 <div>{eligibleParticipant.amount}</div>
