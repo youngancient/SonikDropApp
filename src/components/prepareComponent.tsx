@@ -200,9 +200,9 @@ export function PrepareComponent() {
                         </div>
                         
                         <div className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1 flex">
-                            <input className="bg-transparent w-[60%]" placeholder="Amount" value={eligibleParticipantAmount} onChange={(e) => {setEligibleParticipantAmount(e.target.value)}} />
-                            <div className="flex w-[40%]">
-                                <div className="w-[50%]">x 10 ^</div>
+                            <input className="bg-transparent w-[50%]" placeholder="Amount" value={eligibleParticipantAmount} onChange={(e) => {setEligibleParticipantAmount(e.target.value)}} />
+                            <div className="flex w-[50%]">
+                                <div className="w-[50%] text-nowrap">x 10 ^</div>
                                 <input type="text" className="w-[50%] bg-transparent" placeholder="Power" value={powerValue} onChange={(e) => {setPowerValue(e.target.value)}} />
                             </div>
                         </div>
