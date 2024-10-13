@@ -63,7 +63,7 @@ export function PrepareComponent() {
 
         setEligibleParticipantAddress("");
         setEligibleParticipantAmount("");
-        setPowerValue("");
+        // setPowerValue("");
     }
 
     const deleteEligibleParticipant = (temporaryId: string) => {
