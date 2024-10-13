@@ -5,7 +5,7 @@ import { formatAddress } from "../utils/helpers";
 export function HeaderComponent() {
   const navigate = useNavigate();
   const { open } = useAppKit();
-  const { address, status, isConnected } = useAppKitAccount();
+  const { address, isConnected } = useAppKitAccount();
 
   const handleButtonClick = () => {
     open();

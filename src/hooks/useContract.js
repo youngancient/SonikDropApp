@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import useRunners from "./useRunners";
 import { Contract } from "ethers";
-import ABI from "../ABI/proposal.json";
+import ABI from "../ABI/contract.json";
 
 
 const useContract = (withSigner = false) => {
