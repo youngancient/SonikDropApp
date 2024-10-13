@@ -57,13 +57,13 @@ export function PrepareComponent() {
 
         setAirdropMakerList(airdropMakerList.concat({
             address: eligibleParticipantAddress,
-            amount: (BigInt(parseFloat(eligibleParticipantAmount) * (10 ** parseInt(powerValue)))).toString(),
+            amount: (BigInt(parseFloat(eligibleParticipantAmount) * (10 ** parseInt(powerValue ? powerValue : "18")))).toString(),
             id: nanoid()
         }));
 
         setEligibleParticipantAddress("");
         setEligibleParticipantAmount("");
-        setPowerValue("");
+        // setPowerValue("");
     }
 
     const deleteEligibleParticipant = (temporaryId: string) => {
@@ -194,15 +194,15 @@ export function PrepareComponent() {
                     <div>
                         <CgClose className="ml-auto" onClick={() => {setShowCSVMaker(false)}} />
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 flex-col md:flex-row">
                         <div className="w-full">
                             <input className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" placeholder="Wallet address" value={eligibleParticipantAddress} onChange={(e) => {setEligibleParticipantAddress(e.target.value)}} />
                         </div>
                         
                         <div className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1 flex">
-                            <input className="bg-transparent w-[60%]" placeholder="Amount" value={eligibleParticipantAmount} onChange={(e) => {setEligibleParticipantAmount(e.target.value)}} />
-                            <div className="flex w-[40%]">
-                                <div className="w-[50%]">x 10 ^</div>
+                            <input className="bg-transparent md:w-[50%]" placeholder="Amount" value={eligibleParticipantAmount} onChange={(e) => {setEligibleParticipantAmount(e.target.value)}} />
+                            <div className="flex md:w-[50%]">
+                                <div className="w-[50%] text-nowrap">x 10 ^</div>
                                 <input type="text" className="w-[50%] bg-transparent" placeholder="Power" value={powerValue} onChange={(e) => {setPowerValue(e.target.value)}} />
                             </div>
                         </div>
