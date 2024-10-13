@@ -44,11 +44,19 @@ export function PrepareComponent() {
             return;
         }
 
+        if(parseFloat(eligibleParticipantAmount) == 0) {
+            toast("Invalid amount");
+            return;
+        }
+
         setAirdropMakerList(airdropMakerList.concat({
             address: eligibleParticipantAddress,
-            amount: eligibleParticipantAmount,
+            amount: (BigInt(eligibleParticipantAmount) * 1000000000000000000n).toString(),
             id: nanoid()
         }));
+
+        setEligibleParticipantAddress("");
+        setEligibleParticipantAmount("");       
 
     }
 
