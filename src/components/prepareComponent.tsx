@@ -153,7 +153,7 @@ export function PrepareComponent() {
                 <div className="flex flex-col gap-4">
                     <div>
                         <div className="text-left">Token address</div>
-                        <input className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" placeholder="Ethereum Native Currency" value={tokenAddress} onChange={(e) => {setTokenAddress(e.target.value)}} />
+                        <input className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8" value={tokenAddress} onChange={(e) => {setTokenAddress(e.target.value)}} />
                         <small className={`${tokenAddressError ? "block text-red-400" : "hidden"} mt-2`}>{tokenAddressError}</small>
                     </div>
                     <div>
