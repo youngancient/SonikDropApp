@@ -28,6 +28,7 @@ export function PrepareComponent() {
     const [airdropMakerList, setAirdropMakerList] = useState<Array<IAirdropList>>([]);
     const [eligibleParticipantAddress, setEligibleParticipantAddress] = useState("");
     const [eligibleParticipantAmount, setEligibleParticipantAmount] = useState("");
+    const [powerValue, setPowerValue] = useState("");
 
     const addEligibleParticipant = () => {
         const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
@@ -44,12 +45,25 @@ export function PrepareComponent() {
             return;
         }
 
+        if(parseFloat(eligibleParticipantAmount) == 0) {
+            toast("Invalid amount");
+            return;
+        }
+
+        if(parseInt(powerValue) == 0) {
+            toast("Invalid power value");
+            return;
+        }
+
         setAirdropMakerList(airdropMakerList.concat({
             address: eligibleParticipantAddress,
-            amount: eligibleParticipantAmount,
+            amount: (BigInt(parseFloat(eligibleParticipantAmount) * (10 ** parseInt(powerValue)))).toString(),
             id: nanoid()
         }));
 
+        setEligibleParticipantAddress("");
+        setEligibleParticipantAmount("");
+        setPowerValue("");
     }
 
     const deleteEligibleParticipant = (temporaryId: string) => {
@@ -182,11 +196,15 @@ export function PrepareComponent() {
                     </div>
                     <div className="flex gap-4">
                         <div className="w-full">
-                            <input className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" placeholder="Enter participant's wallet address" value={eligibleParticipantAddress} onChange={(e) => {setEligibleParticipantAddress(e.target.value)}} />
+                            <input className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" placeholder="Wallet address" value={eligibleParticipantAddress} onChange={(e) => {setEligibleParticipantAddress(e.target.value)}} />
                         </div>
                         
-                        <div className="w-full">
-                            <input className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" placeholder="Enter participant's amount" value={eligibleParticipantAmount} onChange={(e) => {setEligibleParticipantAmount(e.target.value)}} />
+                        <div className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1 flex">
+                            <input className="bg-transparent w-[60%]" placeholder="Amount" value={eligibleParticipantAmount} onChange={(e) => {setEligibleParticipantAmount(e.target.value)}} />
+                            <div className="flex w-[40%]">
+                                <div className="w-[50%]">x 10 ^</div>
+                                <input type="text" className="w-[50%] bg-transparent" placeholder="Power" value={powerValue} onChange={(e) => {setPowerValue(e.target.value)}} />
+                            </div>
                         </div>
                         <button className="bg-[#00A7FF] text-white px-4 py-2 rounded-md" onClick={addEligibleParticipant}>Add</button>
                     </div>
@@ -196,10 +214,12 @@ export function PrepareComponent() {
                                 airdropMakerList.map((eligibleParticipant: IAirdropList, index: number) => {
                                     return (
                                         <div className="flex justify-between items-center">
-                                            <div>{index + 1}.</div>
-                                            <div>
-                                                <div>{eligibleParticipant.address}</div>
-                                                <div>{eligibleParticipant.amount}</div>
+                                            <div className="flex items-center">
+                                                <div className="pr-4">{index + 1}.</div>
+                                                <div>
+                                                    <div>{eligibleParticipant.address}</div>
+                                                    <div>{eligibleParticipant.amount}</div>
+                                                </div>
                                             </div>
                                             <button onClick={() => {deleteEligibleParticipant(eligibleParticipant.id)}}><BiTrash /></button>
                                         </div>
