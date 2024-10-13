@@ -22,22 +22,22 @@ export function ApproveComponent() {
                 <div className="flex flex-col gap-4">
                     <div className="grid grid-cols-2 gap-2 text-center">
                         <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
-                            <div className="font-bold text-white text-[20px]">{csvToJSONData.length}</div>
-                            <div className="text-sm text-white/[0.8]">Current approval</div>
+                            <div className="font-bold text-white text-[20px]">LSK</div>
+                            <div className="text-sm text-white/[0.8]">Token Name</div>
                         </div>
                         <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                             <div className="font-bold text-white text-[20px]">{(csvToJSONData.reduce((accumulator: number, current: any) => {
                                 return accumulator + parseFloat(current.amount);
                             }, 0)).toLocaleString()}</div>
-                            <div className="text-sm text-white/[0.8]">Total tokens to send</div>
+                            <div className="text-sm text-white/[0.8]">Total Output tokens</div>
                         </div>
                         <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
-                            <div className="font-bold text-white text-[20px]">50</div>
+                            <div className="font-bold text-white text-[20px]">{csvToJSONData.length}</div>
+                            <div className="text-sm text-white/[0.8]">Recipients</div>
+                        </div>
+                        <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
+                            <div className="font-bold text-white text-[20px]">5000</div>
                             <div className="text-sm text-white/[0.8]">Token balance</div>
-                        </div>
-                        <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
-                            <div className="font-bold text-white text-[20px]">50</div>
-                            <div className="text-sm text-white/[0.8]">Base balance</div>
                         </div>
                     </div>
                     <div>
@@ -47,14 +47,14 @@ export function ApproveComponent() {
                                 return (
                                     <div className="flex flex-col md:flex-row justify-between border-b-2 border-b-[#D0D5DD] py-4">
                                         <div>{index + 1}. {recepients.address}</div>
-                                        <div>{recepients.amount} Base</div>
+                                        <div>{recepients.amount}</div>
                                     </div>
                                 );
                             })}
                         </div>
                     </div>
                 </div>
-                <button className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]">Continue</button>
+                <button className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]">Approve</button>
             </div>
         </div>
     );
