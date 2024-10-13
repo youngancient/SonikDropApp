@@ -10,7 +10,7 @@ export function StepComponent() {
 
 
     return (
-        <div className="text-center">
+        <div className="text-center mb-2">
             <div className="flex gap-4 items-center justify-center">
                 <div className={`bg-transparent flex ${location.pathname == "/prepare" || location.pathname == "/approve" ? "text-[#27BBFE]" : "text-white"}`}>
                     <div className={`rounded-full w-[25px] h-[25px] mx-2 ${location.pathname == "/prepare" || location.pathname == "/approve" ? "bg-[#27BBFE]" : "bg-white"} text-white`}>1</div> Prepare
