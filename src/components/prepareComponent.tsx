@@ -179,9 +179,9 @@ export function PrepareComponent() {
                             </div>
                             <div className="py-4">
                                 <input className="hidden" type="file" accept=".csv" id="upload-button" onClick={(e) => {
-                                    if(!tokenAddress) {
+                                    if(!(ethers.isAddress(tokenAddress))) {
                                         e.preventDefault();
-                                        toast("Kindly provide a token address before uploading the csv");
+                                        toast("Kindly provide a valid token address before uploading the CSV file");
                                         return;
                                     }
                                 }} onChange={handleChange} />
