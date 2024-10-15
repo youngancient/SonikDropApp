@@ -25,7 +25,7 @@ export const useFactoryContract = (withSigner = false) => {
     }, [readOnlyProvider, signer, withSigner]);
 };
 
-export const useAidropContract = (withSigner = false, airdropContractAddress) => {
+export const useAidropContract = (withSigner = false, airdropContractAddress : string) => {
     const { readOnlyProvider, signer } = useRunners();
 
     return useMemo(() => {
