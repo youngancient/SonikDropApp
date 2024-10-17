@@ -178,7 +178,13 @@ export function PrepareComponent() {
                                 Use a <button onClick={() => {setShowCSVMaker(true)}} className="text-blue-400">CSV Maker</button>
                             </div>
                             <div className="py-4">
-                                <input className="hidden" type="file" accept=".csv" id="upload-button" onChange={handleChange} />
+                                <input className="hidden" type="file" accept=".csv" id="upload-button" onClick={(e) => {
+                                    if(!(ethers.isAddress(tokenAddress))) {
+                                        e.preventDefault();
+                                        toast("Kindly provide a valid token address before uploading the CSV file");
+                                        return;
+                                    }
+                                }} onChange={handleChange} />
                                 <label className="border-[2px] border-[#FFFFFF17] rounded-md px-8 py-2" htmlFor="upload-button">Upload CSV</label>
                                 <small className={`${csvDataError ? "block text-red-400" : "hidden"} mt-2 text-center`}>{csvDataError}</small>
                             </div>
