@@ -25,7 +25,7 @@ export function HeaderComponent() {
           className="border-[2px] px-4 py-1 rounded-md border-[#FFFFFF17]"
           onClick={handleButtonClick}
         >
-          {isConnected ? address && formatAddress(address) : "Connect Wallet"}
+          {isConnected ? formatAddress(address ?? "") : "Connect Wallet"}
         </button>
       </div>
     </div>
