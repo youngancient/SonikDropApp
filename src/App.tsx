@@ -11,19 +11,21 @@ function App() {
 
   return (
     <>
-      <HeaderComponent />
-      <h1>SonikDrop</h1>
-      <div className="card">
-        <Link to="/prepare">Prepare</Link>
+      <HeaderComponent showBackButton={false} />
+      <div className="flex justify-center flex-col items-center gap-4">
+        <h1>SonikDrop</h1>
+        <div className="card" >
+          <Link to="/prepare" className="border-2 border-white/[0.2] px-4 py-1 rounded-lg">Prepare</Link>
+        </div>
+        <p className=" text-[25px]">
+          You're on network:{" "}
+          {selectedNetworkId
+            ? supportedNetworksDetails[
+                parseInt(extractChainId(selectedNetworkId))
+              ]
+            : "Unknown"}
+        </p>
       </div>
-      <p className="">
-        You're on network:{" "}
-        {selectedNetworkId
-          ? supportedNetworksDetails[
-              parseInt(extractChainId(selectedNetworkId))
-            ]
-          : "Unknown"}
-      </p>
     </>
   );
 }

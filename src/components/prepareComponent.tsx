@@ -156,7 +156,7 @@ export function PrepareComponent() {
             return data;
         })));
 
-        navigate("/approve");
+        navigate("/settings");
          
     }
 

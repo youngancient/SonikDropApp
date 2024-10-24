@@ -6,11 +6,16 @@ import 'react-toastify/dist/ReactToastify.css';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import PreparePage from './pages/Prepare.tsx';
 import ApprovePage from './pages/Approve.tsx';
+import SettingsPage from './pages/Settings.tsx';
 
 const router = createBrowserRouter([
   {
     path: "/prepare",
     element: <PreparePage />
+  },
+  {
+    path: "/settings",
+    element: <SettingsPage />
   },
   {
     path: "/approve",

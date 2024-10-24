@@ -3,7 +3,7 @@ import { PrepareComponent } from "../components/prepareComponent";
 
 export default function PreparePage () {
     return (
-        <AirdropLayout>
+        <AirdropLayout showBackButton={true}>
             <PrepareComponent />
         </AirdropLayout>
     );
