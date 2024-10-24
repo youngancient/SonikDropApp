@@ -1,10 +1,10 @@
-import { ApproveComponent } from "../components/approveComponent";
 import AirdropLayout from "../components/layout/airdropLayout";
+import { SettingsComponent } from "../components/settingsComponent";
 
-export default function ApprovePage () {
+export default function SettingsPage () {
     return (
         <AirdropLayout showBackButton={true}>
-            <ApproveComponent />
+            <SettingsComponent />
         </ AirdropLayout>
     );
 }

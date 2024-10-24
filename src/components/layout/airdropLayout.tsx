@@ -6,7 +6,7 @@ export default function AirdropLayout(props: any) {
 
     return (
         <div style={{backgroundColor: "#0F195B"}} className="h-screen overflow-auto">
-            <HeaderComponent />
+            <HeaderComponent showBackButton={props.showBackButton} />
             <StepComponent />
             {props.children}
             <FooterComponent />
