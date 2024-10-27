@@ -1,8 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ethers } from "ethers";
+import { toast } from "react-toastify";
 
 export function SettingsComponent() {
 
+  const [nftAddress, setNftAddress] = useState("");
+  const [nftAddressError, setNftAddressError] = useState("");
+  const [claimButtonDeactivated, setClaimButtonDeactivated] = useState<boolean>(false);
+
+  useEffect(() => {
+
+    const isNftAddressValid = ethers.isAddress(nftAddress);
+
+    if (isNftAddressValid) {
+      setNftAddressError("");
+      setClaimButtonDeactivated(false);
+    } else {
+      setNftAddressError("Kindly enter a valid nft address");
+      setClaimButtonDeactivated(true);
+    }
+
+  }, [nftAddress]);
 
   const [onlyNFTOwnersCanClaim, setOnlyNFTOwnersCanClaim] = useState(false);
 
@@ -12,6 +31,14 @@ export function SettingsComponent() {
   const navigate = useNavigate();
 
   const nextPage = () => {
+
+    const isNftAddressValid = ethers.isAddress(nftAddress);
+
+    if (!isNftAddressValid) {
+      toast("Invalid token address");
+      return;
+    }
+
     localStorage.setItem("settings", JSON.stringify({
         onlyNFTOwnersCanClaim, airdropStart, airdropEnd
     }));
@@ -45,9 +72,15 @@ export function SettingsComponent() {
                             <div className="text-sm text-white/[0.8]">Token balance</div>
                         </div>
                     </div> */}
+          
+          <div>
+                        <div className="text-left">NFT address</div>
+                        <input className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8" value={nftAddress} onChange={(e) => {setNftAddress(e.target.value)}} />
+                        <small className={`${nftAddressError ? "block text-red-400" : "hidden"} mt-2`}>{nftAddressError}</small>
+                    </div>
 
           <div className="flex items-center gap-2">
-            <input type="checkbox" checked={onlyNFTOwnersCanClaim} onChange={() => {setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim)}} />
+            <input type="checkbox" checked={onlyNFTOwnersCanClaim} onChange={() => {setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim)}} disabled={claimButtonDeactivated} />
             <div>Only users with NFT can claim</div>
           </div>
 
