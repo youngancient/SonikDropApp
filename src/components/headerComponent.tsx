@@ -2,6 +2,7 @@ import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { useNavigate } from "react-router-dom";
 import { formatAddress } from "../utils/helpers";
 import { IoChevronBackOutline } from "react-icons/io5";
+import { LogoIcon } from "./icons";
 
 export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
   const navigate = useNavigate();
@@ -20,7 +21,9 @@ export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
           className="flex gap-2 items-center cursor-pointer"
           onClick={() => navigate("/")}
         >
-          <img src="/Sonik_Drop.png" className="w-[40px] h-[40px]" /> SonikDrop
+          {/* <img src="/Sonik_Drop.png" className="w-[40px] h-[40px]" />  */}
+          <LogoIcon />
+          SonikDrop
         </div>
         <div className="w3m">
           <button
