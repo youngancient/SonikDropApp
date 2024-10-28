@@ -34,24 +34,24 @@ export function PrepareComponent() {
         const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
 
         if (!isAValidAddress) {
-            toast("Not a valid address");
+            toast.error("Not a valid address");
             return;
         }
 
         const anyDuplicate = airdropMakerList.filter((eligibleParticipant) => eligibleParticipant.address == eligibleParticipantAddress);
 
         if(anyDuplicate.length > 0) {
-            toast("You have added this address already!");
+            toast.error("You have added this address already!");
             return;
         }
 
         if(parseFloat(eligibleParticipantAmount) == 0) {
-            toast("Invalid amount");
+            toast.error("Invalid amount");
             return;
         }
 
         if(parseInt(powerValue) == 0) {
-            toast("Invalid power value");
+            toast.error("Invalid power value");
             return;
         }
 
@@ -104,7 +104,7 @@ export function PrepareComponent() {
                     // console.log(invalidAddresses);
 
                     if(invalidAddresses.length > 0) {
-                        toast(invalidAddresses.join(", ") + " are invalid addresses");
+                        toast.error(invalidAddresses.join(", ") + " are invalid addresses");
                         return;
                     }
 
@@ -131,20 +131,20 @@ export function PrepareComponent() {
 
             if(!tokenAddress) {
                 setTokenAddressError("Kindly enter a valid token address");
-                toast("Kindly enter a valid token address");
+                toast.error("Kindly enter a valid token address");
             } else {
                 setTokenAddressError("");
             }
             
             if (!csvData) {
                 setCsvDataError("Kindly upload a csv");
-                toast("Kindly upload a csv");
+                toast.error("Kindly upload a csv");
             } else {
                 setCsvDataError("");
             }
 
             if(invalidAirdropAddresses.length > 0) {
-                toast(invalidAirdropAddresses.join(", ") + " are invalid addresses");
+                toast.error(invalidAirdropAddresses.join(", ") + " are invalid addresses");
             }
 
             return;
@@ -181,7 +181,7 @@ export function PrepareComponent() {
                                 <input className="hidden" type="file" accept=".csv" id="upload-button" onClick={(e) => {
                                     if(!(ethers.isAddress(tokenAddress))) {
                                         e.preventDefault();
-                                        toast("Kindly provide a valid token address before uploading the CSV file");
+                                        toast.error("Enter Token address first!");
                                         return;
                                     }
                                 }} onChange={handleChange} />
