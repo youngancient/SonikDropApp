@@ -40,12 +40,6 @@ export function SettingsComponent() {
   const navigate = useNavigate();
 
   const nextPage = () => {
-    const isNftAddressValid = ethers.isAddress(nftAddress);
-
-    if (!isNftAddressValid) {
-      toast.error("Invalid token address");
-      return;
-    }
 
     localStorage.setItem(
       "settings",
@@ -114,6 +108,7 @@ export function SettingsComponent() {
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
+              style={{transform: "scale(1.5)"}}
               checked={onlyNFTOwnersCanClaim}
               onChange={() => {
                 if (claimButtonDeactivated == false) {
