@@ -69,7 +69,7 @@ export function StepComponent() {
           }`}
         >
           <div
-            className={`rounded-full w-[20px] h-[20px] md:w-[25px] md:h-[25px]] mx-1 ${
+            className={`rounded-full w-[20px] h-[20px] md:w-[25px] md:h-[25px] mx-1 ${
               location.pathname == "/approve" ? "bg-[#27BBFE]" : "bg-[#102191]"
             } text-white`}
           >
