@@ -40,12 +40,6 @@ export function SettingsComponent() {
   const navigate = useNavigate();
 
   const nextPage = () => {
-    const isNftAddressValid = ethers.isAddress(nftAddress);
-
-    if (!isNftAddressValid) {
-      toast.error("Invalid token address");
-      return;
-    }
 
     localStorage.setItem(
       "settings",
