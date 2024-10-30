@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import Papa from "papaparse";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ICSV } from "../interfaces/CSVInterface";
 import { ToastContainer, toast } from 'react-toastify';
@@ -160,9 +160,40 @@ export function PrepareComponent() {
          
     }
 
+    useEffect(() => {
+
+        const isTokenAddressValid = ethers.isAddress(tokenAddress);
+
+        if(tokenAddress.length > 0) {
+            if(!isTokenAddressValid || !csvData || invalidAirdropAddresses.length > 0) {
+    
+                if(!tokenAddress) {
+                    setTokenAddressError("Kindly enter a valid token address");
+                    toast.error("Kindly enter a valid token address");
+                } else {
+                    setTokenAddressError("");
+                }
+                
+                if (!csvData) {
+                    setCsvDataError("Kindly upload a csv");
+                    toast.error("Kindly upload a csv");
+                } else {
+                    setCsvDataError("");
+                }
+    
+                if(invalidAirdropAddresses.length > 0) {
+                    toast.error(invalidAirdropAddresses.join(", ") + " are invalid addresses");
+                }
+    
+                return;
+            }
+        }
+
+    }, [csvData, tokenAddress]);
+
     return (
         <div className="w-full flex justify-center items-center text-white p-2">
-            <ToastContainer />
+            {/* <ToastContainer /> */}
             <div className="p-4 w-full lg:w-[400px] xl:w-[600px] border-[3px] border-[#FFFFFF17] rounded-xl" style={{background: "#8989890D", backdropFilter: "blur(150px)"}}>
                 <div className="flex flex-col gap-4">
                     <div>
