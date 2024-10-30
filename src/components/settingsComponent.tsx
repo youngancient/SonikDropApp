@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import { toast } from "react-toastify";
 
 export function SettingsComponent() {
-  const [nftAddress, setNftAddress] = useState("");
+  const [nftAddress, setNftAddress] = useState<string>("");
   const [nftAddressError, setNftAddressError] = useState("");
   const [claimButtonDeactivated, setClaimButtonDeactivated] =
     useState<boolean>(false);
@@ -16,8 +16,15 @@ export function SettingsComponent() {
       setNftAddressError("");
       setClaimButtonDeactivated(false);
     } else {
-      setNftAddressError("Kindly enter a valid nft address");
-      setClaimButtonDeactivated(true);
+      if(nftAddress) {
+        setNftAddressError("Kindly enter a valid nft address");
+        setClaimButtonDeactivated(true);
+        setOnlyNFTOwnersCanClaim(false);
+      } else {
+        setNftAddressError("");
+        setClaimButtonDeactivated(true);
+        setOnlyNFTOwnersCanClaim(false);
+      }
     }
   }, [nftAddress]);
 
@@ -109,7 +116,11 @@ export function SettingsComponent() {
             </small>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" onClick={() => {
+                if(claimButtonDeactivated == true) {
+                  toast("Kindly input a valid NFT address");
+                }
+              }}>
             <input
               type="checkbox"
               checked={onlyNFTOwnersCanClaim}
