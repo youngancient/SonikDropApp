@@ -4,13 +4,12 @@ import { ethers } from "ethers";
 import { toast } from "react-toastify";
 
 export function SettingsComponent() {
-
   const [nftAddress, setNftAddress] = useState("");
   const [nftAddressError, setNftAddressError] = useState("");
-  const [claimButtonDeactivated, setClaimButtonDeactivated] = useState<boolean>(false);
+  const [claimButtonDeactivated, setClaimButtonDeactivated] =
+    useState<boolean>(false);
 
   useEffect(() => {
-
     const isNftAddressValid = ethers.isAddress(nftAddress);
 
     if (isNftAddressValid) {
@@ -20,18 +19,26 @@ export function SettingsComponent() {
       setNftAddressError("Kindly enter a valid nft address");
       setClaimButtonDeactivated(true);
     }
-
   }, [nftAddress]);
+
+  const formatDateToLocalString = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
 
   const [onlyNFTOwnersCanClaim, setOnlyNFTOwnersCanClaim] = useState(false);
 
-    const [airdropStart, setAirdropStart] = useState("");
-    const [airdropEnd, setAirdropEnd] = useState("");
+  const [airdropStart, setAirdropStart] = useState("");
+  const [airdropEndMin, setAirdropEndMin] = useState("");
+  const [airdropEnd, setAirdropEnd] = useState("");
 
   const navigate = useNavigate();
 
   const nextPage = () => {
-
     const isNftAddressValid = ethers.isAddress(nftAddress);
 
     if (!isNftAddressValid) {
@@ -39,11 +46,21 @@ export function SettingsComponent() {
       return;
     }
 
-    localStorage.setItem("settings", JSON.stringify({
-        onlyNFTOwnersCanClaim, airdropStart, airdropEnd
-    }));
+    localStorage.setItem(
+      "settings",
+      JSON.stringify({
+        onlyNFTOwnersCanClaim,
+        airdropStart,
+        airdropEnd,
+      })
+    );
     navigate("/approve");
-  }
+  };
+
+  useEffect(() => {
+    const formattedToday = formatDateToLocalString(new Date(airdropStart));
+    setAirdropEndMin(formattedToday);
+  }, [airdropStart]);
 
   return (
     <div className="w-full flex justify-center items-center text-white p-2">
@@ -72,29 +89,69 @@ export function SettingsComponent() {
                             <div className="text-sm text-white/[0.8]">Token balance</div>
                         </div>
                     </div> */}
-          
+
           <div>
-                        <div className="text-left">NFT address</div>
-                        <input className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8" value={nftAddress} onChange={(e) => {setNftAddress(e.target.value)}} />
-                        <small className={`${nftAddressError ? "block text-red-400" : "hidden"} mt-2`}>{nftAddressError}</small>
-                    </div>
+            <div className="text-left">NFT address</div>
+            <input
+              className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
+              placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8"
+              value={nftAddress}
+              onChange={(e) => {
+                setNftAddress(e.target.value);
+              }}
+            />
+            <small
+              className={`${
+                nftAddressError ? "block text-red-400" : "hidden"
+              } mt-2`}
+            >
+              {nftAddressError}
+            </small>
+          </div>
 
           <div className="flex items-center gap-2">
-            <input type="checkbox" checked={onlyNFTOwnersCanClaim} onChange={() => {setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim)}} disabled={claimButtonDeactivated} />
+            <input
+              type="checkbox"
+              checked={onlyNFTOwnersCanClaim}
+              onChange={() => {
+                setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim);
+              }}
+              disabled={claimButtonDeactivated}
+            />
             <div>Only users with NFT can claim</div>
           </div>
 
           <div>
             <div>Airdrop duration</div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-col lg:flex-row">
               <div>
                 <small>Start time and date</small>
-                <input type="datetime-local" onChange={(e) => {setAirdropStart(e.target.value)}} value={airdropStart} className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" />
+                <input
+                  type="datetime-local"
+                  min={(() => {
+                    const today = new Date();
+                    const formattedToday = formatDateToLocalString(today);
+                    return formattedToday;
+                  })()}
+                  onChange={(e) => {
+                    setAirdropStart(e.target.value);
+                  }}
+                  value={airdropStart}
+                  className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
+                />
               </div>
 
               <div>
-                <small>Start time and date</small>
-                <input type="datetime-local" onChange={(e) => {setAirdropEnd(e.target.value)}} value={airdropEnd} className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1" />
+                <small>End time and date</small>
+                <input
+                  type="datetime-local"
+                  onChange={(e) => {
+                    setAirdropEnd(e.target.value);
+                  }}
+                  value={airdropEnd}
+                  min={airdropEndMin}
+                  className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
+                />
               </div>
             </div>
           </div>
@@ -115,7 +172,10 @@ export function SettingsComponent() {
             </div>
           </div> */}
         </div>
-        <button className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]" onClick={nextPage}>
+        <button
+          className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]"
+          onClick={nextPage}
+        >
           Continue
         </button>
       </div>
