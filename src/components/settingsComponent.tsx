@@ -108,6 +108,7 @@ export function SettingsComponent() {
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
+              style={{transform: "scale(1.5)"}}
               checked={onlyNFTOwnersCanClaim}
               onChange={() => {
                 if (claimButtonDeactivated == false) {
