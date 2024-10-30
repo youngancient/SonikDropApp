@@ -34,6 +34,14 @@ export function ApproveComponent() {
 
     }, []);
 
+    const approve = () => {
+
+        // Your code goes here
+
+        sessionStorage.removeItem("csvData");
+        localStorage.removeItem("settings");
+    }
+
     return (
         <div className="w-full flex justify-center items-center text-white p-2">
             <div className="p-4 w-full lg:w-[400px] xl:w-[600px] border-[3px] border-[#FFFFFF17] rounded-xl" style={{background: "#8989890D", backdropFilter: "blur(150px)"}}>
@@ -72,7 +80,7 @@ export function ApproveComponent() {
                         </div>
                     </div>
                 </div>
-                <button className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]">Approve</button>
+                <button className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]" onClick={approve}>Approve</button>
             </div>
         </div>
     );

@@ -185,16 +185,6 @@ export function PrepareComponent() {
       )
     );
 
-    setTokenAddress("");
-    setAirdropMakerList([]);
-    setEligibleParticipantAddress("");
-    setEligibleParticipantAmount("");
-    setPowerValue("");
-    setCsvData("");
-    setCsvToJSONData("");
-    setCsvDataError("");
-    setInvalidAirdropAddresses([]);
-
     navigate("/settings");
   };
 

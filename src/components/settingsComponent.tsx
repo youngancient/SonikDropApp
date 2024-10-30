@@ -62,13 +62,6 @@ export function SettingsComponent() {
       })
     );
 
-    setNftAddress("");
-    setNftAddressError("");
-    setClaimButtonDeactivated(false);
-    setAirdropStart("");
-    setAirdropEndMin("");
-    setAirdropEnd("");
-
     navigate("/approve");
   };
 
