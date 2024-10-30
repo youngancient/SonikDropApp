@@ -3,7 +3,7 @@ import Papa from "papaparse";
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { ICSV } from "../interfaces/CSVInterface";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { CgClose } from "react-icons/cg";
 import { BiTrash } from "react-icons/bi";
 import { nanoid } from "nanoid";
@@ -193,7 +193,6 @@ export function PrepareComponent() {
 
     return (
         <div className="w-full flex justify-center items-center text-white p-2">
-            {/* <ToastContainer /> */}
             <div className="p-4 w-full lg:w-[400px] xl:w-[600px] border-[3px] border-[#FFFFFF17] rounded-xl" style={{background: "#8989890D", backdropFilter: "blur(150px)"}}>
                 <div className="flex flex-col gap-4">
                     <div>
