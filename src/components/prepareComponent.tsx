@@ -87,7 +87,7 @@ export function PrepareComponent() {
             saveAs(blob, 'data.csv');
         } catch (error) {
             // console.log(error);
-            toast("An error occurred while trying to create CSV");
+            toast.error("An error occurred while trying to create CSV");
         }
     }
 
@@ -155,6 +155,16 @@ export function PrepareComponent() {
             data.amount = ethers.formatUnits((data.amount).toString(), 18);
             return data;
         })));
+
+        setTokenAddress("");
+        setAirdropMakerList([]);
+        setEligibleParticipantAddress("");
+        setEligibleParticipantAmount("");
+        setPowerValue("");
+        setCsvData("");
+        setCsvToJSONData("");
+        setCsvDataError("");
+        setInvalidAirdropAddresses([]);
 
         navigate("/settings");
          

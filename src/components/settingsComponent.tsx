@@ -49,7 +49,7 @@ export function SettingsComponent() {
     const isNftAddressValid = ethers.isAddress(nftAddress);
 
     if (!isNftAddressValid) {
-      toast("Invalid token address");
+      toast.error("Invalid token address");
       return;
     }
 
@@ -61,6 +61,14 @@ export function SettingsComponent() {
         airdropEnd,
       })
     );
+
+    setNftAddress("");
+    setNftAddressError("");
+    setClaimButtonDeactivated(false);
+    setAirdropStart("");
+    setAirdropEndMin("");
+    setAirdropEnd("");
+
     navigate("/approve");
   };
 
@@ -127,7 +135,7 @@ export function SettingsComponent() {
               }}
               onClick={() => {
                 if(claimButtonDeactivated == true) {
-                  toast("Kindly input a valid NFT address");
+                  toast.error("Kindly input a valid NFT address");
                 }
               }}
             />
