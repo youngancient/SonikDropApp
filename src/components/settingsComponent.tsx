@@ -116,18 +116,20 @@ export function SettingsComponent() {
             </small>
           </div>
 
-          <div className="flex items-center gap-2" onClick={() => {
-                if(claimButtonDeactivated == true) {
-                  toast("Kindly input a valid NFT address");
-                }
-              }}>
+          <div className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={onlyNFTOwnersCanClaim}
               onChange={() => {
-                setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim);
+                if(claimButtonDeactivated == false) {
+                  setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim);
+                }
               }}
-              disabled={claimButtonDeactivated}
+              onClick={() => {
+                if(claimButtonDeactivated == true) {
+                  toast("Kindly input a valid NFT address");
+                }
+              }}
             />
             <div>Only users with NFT can claim</div>
           </div>
