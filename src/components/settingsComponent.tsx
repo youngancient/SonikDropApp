@@ -15,16 +15,10 @@ export function SettingsComponent() {
     if (isNftAddressValid) {
       setNftAddressError("");
       setClaimButtonDeactivated(false);
+      setOnlyNFTOwnersCanClaim(false);
     } else {
-      if(nftAddress) {
-        setNftAddressError("Kindly enter a valid nft address");
-        setClaimButtonDeactivated(true);
-        setOnlyNFTOwnersCanClaim(false);
-      } else {
-        setNftAddressError("");
-        setClaimButtonDeactivated(true);
-        setOnlyNFTOwnersCanClaim(false);
-      }
+      setClaimButtonDeactivated(true);
+      setOnlyNFTOwnersCanClaim(false);
     }
   }, [nftAddress]);
 
@@ -122,12 +116,12 @@ export function SettingsComponent() {
               type="checkbox"
               checked={onlyNFTOwnersCanClaim}
               onChange={() => {
-                if(claimButtonDeactivated == false) {
+                if (claimButtonDeactivated == false) {
                   setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim);
                 }
               }}
               onClick={() => {
-                if(claimButtonDeactivated == true) {
+                if (claimButtonDeactivated == true) {
                   toast.error("Kindly input a valid NFT address");
                 }
               }}
