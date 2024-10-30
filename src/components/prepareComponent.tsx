@@ -196,7 +196,7 @@ export function PrepareComponent() {
 
             {/* CSV Maker starts here */}
             <div className={`${showCSVMaker ? "h-screen w-full flex justify-center items-center bg-[transparent] absolute top-[0] left-[0] backdrop-blur-lg p-4": "hidden"}`}>
-                <div className="w-[600px] border-[3px] border-[#FFFFFF17] p-4 rounded-md flex flex-col gap-4">
+                <div className="w-[600px] border-[3px] border-[#FFFFFF17] p-4 rounded-md flex flex-col gap-4 bg-[#0F195B]">
                     <div>
                         <CgClose className="ml-auto" onClick={() => {setShowCSVMaker(false)}} />
                     </div>
