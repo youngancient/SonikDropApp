@@ -7,7 +7,6 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import PreparePage from './pages/Prepare.tsx';
 import ApprovePage from './pages/Approve.tsx';
 import SettingsPage from './pages/Settings.tsx';
-import { ToastContainer } from 'react-toastify';
 
 const router = createBrowserRouter([
   {
