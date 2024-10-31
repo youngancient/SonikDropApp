@@ -9,6 +9,8 @@ import { BiTrash } from "react-icons/bi";
 import { nanoid } from "nanoid";
 import { Parser } from "@json2csv/plainjs";
 import { saveAs } from "file-saver";
+import { leaderboardVariant } from "../animations/animation";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function PrepareComponent() {
   const navigate = useNavigate();
@@ -211,7 +213,15 @@ export function PrepareComponent() {
   }, [csvData, tokenAddress]);
 
   return (
-    <div className="w-full flex justify-center items-center text-white p-2">
+    <AnimatePresence>
+    <motion.div
+      className="w-full flex justify-center items-center text-white p-2"
+      initial="initial"
+      animate="final"
+      exit="exit"
+      key="ying"
+      variants={leaderboardVariant}
+    >
       <div
         className="p-4 w-full lg:w-[400px] xl:w-[600px] border-[3px] border-[#FFFFFF17] rounded-xl"
         style={{ background: "#8989890D", backdropFilter: "blur(150px)" }}
@@ -387,6 +397,7 @@ export function PrepareComponent() {
         </div>
       </div>
       {/* CSV Maker ends here */}
-    </div>
+    </motion.div>
+    </AnimatePresence>
   );
 }

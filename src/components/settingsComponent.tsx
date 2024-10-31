@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
+import { leaderboardVariant } from "../animations/animation";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function SettingsComponent() {
   const [nftAddress, setNftAddress] = useState<string>("");
@@ -40,7 +42,6 @@ export function SettingsComponent() {
   const navigate = useNavigate();
 
   const nextPage = () => {
-
     localStorage.setItem(
       "settings",
       JSON.stringify({
@@ -59,13 +60,21 @@ export function SettingsComponent() {
   }, [airdropStart]);
 
   return (
-    <div className="w-full flex justify-center items-center text-white p-2">
-      <div
-        className="p-4 w-full lg:w-[400px] xl:w-[600px] border-[3px] border-[#FFFFFF17] rounded-xl"
-        style={{ background: "#8989890D", backdropFilter: "blur(150px)" }}
+    <AnimatePresence>
+      <motion.div
+        className="w-full flex justify-center items-center text-white p-2"
+        initial="initial"
+        animate="final"
+        exit="exit"
+        key="settings"
+        variants={leaderboardVariant}
       >
-        <div className="flex flex-col gap-4 my-8">
-          {/* <div className="grid grid-cols-2 gap-2 text-center">
+        <div
+          className="p-4 w-full lg:w-[400px] xl:w-[600px] border-[3px] border-[#FFFFFF17] rounded-xl"
+          style={{ background: "#8989890D", backdropFilter: "blur(150px)" }}
+        >
+          <div className="flex flex-col gap-4 my-8">
+            {/* <div className="grid grid-cols-2 gap-2 text-center">
                         <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                             <div className="font-bold text-white text-[20px]">LSK</div>
                             <div className="text-sm text-white/[0.8]">Token Name</div>
@@ -86,80 +95,80 @@ export function SettingsComponent() {
                         </div>
                     </div> */}
 
-          <div>
-            <div className="text-left">NFT address</div>
-            <input
-              className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
-              placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8"
-              value={nftAddress}
-              onChange={(e) => {
-                setNftAddress(e.target.value);
-              }}
-            />
-            <small
-              className={`${
-                nftAddressError ? "block text-red-400" : "hidden"
-              } mt-2`}
-            >
-              {nftAddressError}
-            </small>
-          </div>
+            <div>
+              <div className="text-left">NFT address</div>
+              <input
+                className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
+                placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8"
+                value={nftAddress}
+                onChange={(e) => {
+                  setNftAddress(e.target.value);
+                }}
+              />
+              <small
+                className={`${
+                  nftAddressError ? "block text-red-400" : "hidden"
+                } mt-2`}
+              >
+                {nftAddressError}
+              </small>
+            </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              style={{transform: "scale(1.5)"}}
-              checked={onlyNFTOwnersCanClaim}
-              onChange={() => {
-                if (claimButtonDeactivated == false) {
-                  setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim);
-                }
-              }}
-              onClick={() => {
-                if (claimButtonDeactivated == true) {
-                  toast.error("Kindly input a valid NFT address");
-                }
-              }}
-            />
-            <div>Only users with NFT can claim</div>
-          </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                style={{ transform: "scale(1.5)" }}
+                checked={onlyNFTOwnersCanClaim}
+                onChange={() => {
+                  if (claimButtonDeactivated == false) {
+                    setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim);
+                  }
+                }}
+                onClick={() => {
+                  if (claimButtonDeactivated == true) {
+                    toast.error("Kindly input a valid NFT address");
+                  }
+                }}
+              />
+              <div>Only users with NFT can claim</div>
+            </div>
 
-          <div>
-            <div>Airdrop duration</div>
-            <div className="flex gap-4 flex-col lg:flex-row">
-              <div>
-                <small>Start time and date</small>
-                <input
-                  type="datetime-local"
-                  min={(() => {
-                    const today = new Date();
-                    const formattedToday = formatDateToLocalString(today);
-                    return formattedToday;
-                  })()}
-                  onChange={(e) => {
-                    setAirdropStart(e.target.value);
-                  }}
-                  value={airdropStart}
-                  className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
-                />
-              </div>
+            <div>
+              <div>Airdrop duration</div>
+              <div className="flex gap-4 flex-col lg:flex-row">
+                <div>
+                  <small>Start time and date</small>
+                  <input
+                    type="datetime-local"
+                    min={(() => {
+                      const today = new Date();
+                      const formattedToday = formatDateToLocalString(today);
+                      return formattedToday;
+                    })()}
+                    onChange={(e) => {
+                      setAirdropStart(e.target.value);
+                    }}
+                    value={airdropStart}
+                    className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
+                  />
+                </div>
 
-              <div>
-                <small>End time and date</small>
-                <input
-                  type="datetime-local"
-                  onChange={(e) => {
-                    setAirdropEnd(e.target.value);
-                  }}
-                  value={airdropEnd}
-                  min={airdropEndMin}
-                  className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
-                />
+                <div>
+                  <small>End time and date</small>
+                  <input
+                    type="datetime-local"
+                    onChange={(e) => {
+                      setAirdropEnd(e.target.value);
+                    }}
+                    value={airdropEnd}
+                    min={airdropEndMin}
+                    className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* <div>
+            {/* <div>
             <div className="mt-4">List of recipients</div>
             <div className="mb-8 h-[200px] overflow-y-auto p-2">
               {csvToJSONData.map((recepients: any, index: number) => {
@@ -174,14 +183,15 @@ export function SettingsComponent() {
               })}
             </div>
           </div> */}
+          </div>
+          <button
+            className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]"
+            onClick={nextPage}
+          >
+            Continue
+          </button>
         </div>
-        <button
-          className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]"
-          onClick={nextPage}
-        >
-          Continue
-        </button>
-      </div>
-    </div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
