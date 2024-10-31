@@ -109,7 +109,7 @@ export function PrepareComponent() {
     }
   };
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files[0];
     if (file) {
       Papa.parse(file, {
