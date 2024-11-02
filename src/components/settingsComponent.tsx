@@ -1,26 +1,53 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setStep } from "../store/slices/stepSlice";
+import {
+  selectAirdropEnd,
+  selectAirdropEndMin,
+  selectAirdropStart,
+  selectClaimButtonDeactivated,
+  selectNftAddress,
+  selectNftAddressError,
+  setAirdropEnd,
+  setClaimButtonDeactivated,
+  setNftAddress,
+  setAirdropEndMin,
+  selectOnlyNFTOwnersCanClaim,
+  setAirdropStart,
+  setNftAddressError,
+  setOnlyNFTOwnersCanClaim,
+} from "../store/slices/settingsSlice";
 import { leaderboardVariant } from "../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function SettingsComponent() {
-  const [nftAddress, setNftAddress] = useState<string>("");
-  const [nftAddressError, setNftAddressError] = useState("");
-  const [claimButtonDeactivated, setClaimButtonDeactivated] =
-    useState<boolean>(false);
+  const dispatch = useAppDispatch();
+
+  // const [nftAddress, setNftAddress] = useState<string>("");
+  // const [nftAddressError, setNftAddressError] = useState("");
+  // const [claimButtonDeactivated, setClaimButtonDeactivated] =
+  //   useState<boolean>(false);
+
+  const nftAddress = useAppSelector(selectNftAddress);
+  const nftAddressError = useAppSelector(selectNftAddressError);
+  const claimButtonDeactivated = useAppSelector(selectClaimButtonDeactivated);
+  const onlyNFTOwnersCanClaim = useAppSelector(selectOnlyNFTOwnersCanClaim);
 
   useEffect(() => {
     const isNftAddressValid = ethers.isAddress(nftAddress);
 
+    const nftOwnersCanClaim = JSON.parse(sessionStorage.getItem("settings") as string)?.onlyNFTOwnersCanClaim;
+
     if (isNftAddressValid) {
-      setNftAddressError("");
-      setClaimButtonDeactivated(false);
-      setOnlyNFTOwnersCanClaim(false);
+      dispatch(setNftAddressError(""));
+      dispatch(setClaimButtonDeactivated(false));
+      dispatch(setOnlyNFTOwnersCanClaim(nftOwnersCanClaim ? nftOwnersCanClaim : false));
     } else {
-      setClaimButtonDeactivated(true);
-      setOnlyNFTOwnersCanClaim(false);
+      dispatch(setClaimButtonDeactivated(true));
+      dispatch(setOnlyNFTOwnersCanClaim(false));
     }
   }, [nftAddress]);
 
@@ -33,16 +60,12 @@ export function SettingsComponent() {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  const [onlyNFTOwnersCanClaim, setOnlyNFTOwnersCanClaim] = useState(false);
-
-  const [airdropStart, setAirdropStart] = useState("");
-  const [airdropEndMin, setAirdropEndMin] = useState("");
-  const [airdropEnd, setAirdropEnd] = useState("");
-
-  const navigate = useNavigate();
+  const airdropStart = useAppSelector(selectAirdropStart);
+  const airdropEndMin = useAppSelector(selectAirdropEndMin);
+  const airdropEnd = useAppSelector(selectAirdropEnd);
 
   const nextPage = () => {
-    localStorage.setItem(
+    sessionStorage.setItem(
       "settings",
       JSON.stringify({
         onlyNFTOwnersCanClaim,
@@ -51,12 +74,12 @@ export function SettingsComponent() {
       })
     );
 
-    navigate("/approve");
+    dispatch(setStep("approve"));
   };
 
   useEffect(() => {
     const formattedToday = formatDateToLocalString(new Date(airdropStart));
-    setAirdropEndMin(formattedToday);
+    dispatch(setAirdropEndMin(formattedToday));
   }, [airdropStart]);
 
   return (
@@ -74,27 +97,6 @@ export function SettingsComponent() {
           style={{ background: "#8989890D", backdropFilter: "blur(150px)" }}
         >
           <div className="flex flex-col gap-4 my-8">
-            {/* <div className="grid grid-cols-2 gap-2 text-center">
-                        <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
-                            <div className="font-bold text-white text-[20px]">LSK</div>
-                            <div className="text-sm text-white/[0.8]">Token Name</div>
-                        </div>
-                        <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
-                            <div className="font-bold text-white text-[20px]">{(csvToJSONData.reduce((accumulator: number, current: any) => {
-                                return accumulator + parseFloat(current.amount);
-                            }, 0)).toLocaleString()}</div>
-                            <div className="text-sm text-white/[0.8]">Total Output tokens</div>
-                        </div>
-                        <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
-                            <div className="font-bold text-white text-[20px]">{csvToJSONData.length}</div>
-                            <div className="text-sm text-white/[0.8]">Recipients</div>
-                        </div>
-                        <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
-                            <div className="font-bold text-white text-[20px]">5000</div>
-                            <div className="text-sm text-white/[0.8]">Token balance</div>
-                        </div>
-                    </div> */}
-
             <div>
               <div className="text-left">NFT address</div>
               <input
@@ -102,7 +104,7 @@ export function SettingsComponent() {
                 placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8"
                 value={nftAddress}
                 onChange={(e) => {
-                  setNftAddress(e.target.value);
+                  dispatch(setNftAddress(e.target.value));
                 }}
               />
               <small
@@ -121,7 +123,7 @@ export function SettingsComponent() {
                 checked={onlyNFTOwnersCanClaim}
                 onChange={() => {
                   if (claimButtonDeactivated == false) {
-                    setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim);
+                    dispatch(setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim));
                   }
                 }}
                 onClick={() => {
@@ -158,7 +160,7 @@ export function SettingsComponent() {
                   <input
                     type="datetime-local"
                     onChange={(e) => {
-                      setAirdropEnd(e.target.value);
+                      dispatch(setAirdropEnd(e.target.value));
                     }}
                     value={airdropEnd}
                     min={airdropEndMin}
