@@ -39,12 +39,12 @@ export function SettingsComponent() {
   useEffect(() => {
     const isNftAddressValid = ethers.isAddress(nftAddress);
 
-    const nftOwnersCanClaim = JSON.parse(sessionStorage.getItem("settings") as string)?.onlyNFTOwnersCanClaim;
+    const nftOwnersCanClaim = JSON.parse(sessionStorage.getItem("settings") as string);
 
     if (isNftAddressValid) {
       dispatch(setNftAddressError(""));
       dispatch(setClaimButtonDeactivated(false));
-      dispatch(setOnlyNFTOwnersCanClaim(nftOwnersCanClaim ? nftOwnersCanClaim : false));
+      dispatch(setOnlyNFTOwnersCanClaim(nftOwnersCanClaim ? nftOwnersCanClaim.onlyNFTOwnersCanClaim : false));
     } else {
       dispatch(setClaimButtonDeactivated(true));
       dispatch(setOnlyNFTOwnersCanClaim(false));
