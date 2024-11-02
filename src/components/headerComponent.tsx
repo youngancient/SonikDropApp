@@ -3,15 +3,28 @@ import { useNavigate } from "react-router-dom";
 import { formatAddress } from "../utils/helpers";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { LogoIcon } from "./icons";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { goBack } from "../store/slices/stepSlice";
 
 export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
   const navigate = useNavigate();
   const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
 
+  const stepToGoBackTo = useAppSelector(state => state.step.backStack);
+  const dispatch = useAppDispatch();
+
   const handleButtonClick = () => {
     open();
   };
+
+  const backButton = () => {
+    if(stepToGoBackTo.length == 0) {
+      navigate("/")
+    } else {
+      dispatch(goBack());
+    }
+  }
 
 
   return (
@@ -19,7 +32,7 @@ export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
       <div className="flex justify-between text-white h-[100px] items-center">
         <div
           className="flex gap-2 items-center cursor-pointer"
-          onClick={() => navigate("/")}
+          onClick={() => {navigate("/")}}
         >
           {/* <img src="/Sonik_Drop.png" className="w-[40px] h-[40px]" />  */}
           <LogoIcon />
@@ -37,7 +50,7 @@ export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
       {
         showBackButton && (
           <div className="mt-4">
-        <button className="flex items-center gap-4" onClick={() => {navigate(-1)}}>
+        <button className="flex items-center gap-4" onClick={backButton}>
           <IoChevronBackOutline /> Back
         </button>
       </div>

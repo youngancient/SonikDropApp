@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
+import { useAppDispatch } from "../store/hooks";
+import { setStep } from "../store/slices/stepSlice";
 
 export function SettingsComponent() {
+
+  const dispatch = useAppDispatch();
+
   const [nftAddress, setNftAddress] = useState<string>("");
   const [nftAddressError, setNftAddressError] = useState("");
   const [claimButtonDeactivated, setClaimButtonDeactivated] =
@@ -50,7 +55,7 @@ export function SettingsComponent() {
       })
     );
 
-    navigate("/approve");
+    dispatch(setStep("approve"));
   };
 
   useEffect(() => {

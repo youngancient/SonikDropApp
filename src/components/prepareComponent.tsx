@@ -9,9 +9,13 @@ import { BiTrash } from "react-icons/bi";
 import { nanoid } from "nanoid";
 import { Parser } from "@json2csv/plainjs";
 import { saveAs } from "file-saver";
+import { useAppDispatch } from "../store/hooks";
+import { setStep } from "../store/slices/stepSlice";
 
 export function PrepareComponent() {
   const navigate = useNavigate();
+
+  const dispatch = useAppDispatch();
 
   const [tokenAddress, setTokenAddress] = useState("");
   const [csvData, setCsvData] = useState("");
@@ -185,7 +189,7 @@ export function PrepareComponent() {
       )
     );
 
-    navigate("/settings");
+    dispatch(setStep("settings"));
   };
 
   useEffect(() => {
