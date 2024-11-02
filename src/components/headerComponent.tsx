@@ -20,7 +20,10 @@ export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
 
   const backButton = () => {
     if(stepToGoBackTo.length == 0) {
-      navigate("/")
+      sessionStorage.removeItem("tokenAddress");
+      sessionStorage.removeItem("csvData");
+      sessionStorage.removeItem("settings");
+      navigate("/");
     } else {
       dispatch(goBack());
     }
