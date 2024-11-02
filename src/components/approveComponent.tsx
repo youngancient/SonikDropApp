@@ -18,15 +18,22 @@ export function ApproveComponent() {
         // JSON.stringify({onlyNFTOwnersCanClaim, airdropStart, airdropEnd})
         const settings = JSON.parse(localStorage.getItem("settings") as string);
 
-        dispatch(setOnlyNFTOwnersCanClaim(settings.onlyNFTOwnersCanClaim));
+        if(settings) {
 
-        if (settings.airdropStart) {
-            dispatch(setAirdropStart(settings.airdropStart));
+          if(settings.onlyNFTOwnersCanClaim) {
+            dispatch(setOnlyNFTOwnersCanClaim(settings.onlyNFTOwnersCanClaim));
+          }
+
+          if (settings.airdropStart) {
+              dispatch(setAirdropStart(settings.airdropStart));
+          }
+  
+          if(settings.airdropEnd) {
+              dispatch(setAirdropEnd(settings.airdropEnd));
+          }
+          
         }
 
-        if(settings.airdropEnd) {
-            dispatch(setAirdropEnd(settings.airdropEnd));
-        }
     }, []);
 
     const approve = () => {
