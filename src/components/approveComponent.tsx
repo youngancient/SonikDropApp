@@ -31,7 +31,7 @@ export function ApproveComponent() {
           if(settings.airdropEnd) {
               dispatch(setAirdropEnd(settings.airdropEnd));
           }
-          
+
         }
 
     }, []);
@@ -40,6 +40,7 @@ export function ApproveComponent() {
 
         // Your code goes here
 
+        sessionStorage.removeItem("tokenAddress");
         sessionStorage.removeItem("csvData");
         sessionStorage.removeItem("settings");
   };
