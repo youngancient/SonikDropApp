@@ -39,12 +39,12 @@ export function SettingsComponent() {
   useEffect(() => {
     const isNftAddressValid = ethers.isAddress(nftAddress);
 
-    const nftOwnersCanClaim = JSON.parse(sessionStorage.getItem("settings") as string)?.onlyNFTOwnersCanClaim;
+    const nftOwnersCanClaim = JSON.parse(sessionStorage.getItem("settings") as string);
 
     if (isNftAddressValid) {
       dispatch(setNftAddressError(""));
       dispatch(setClaimButtonDeactivated(false));
-      dispatch(setOnlyNFTOwnersCanClaim(nftOwnersCanClaim ? nftOwnersCanClaim : false));
+      dispatch(setOnlyNFTOwnersCanClaim(nftOwnersCanClaim ? nftOwnersCanClaim.onlyNFTOwnersCanClaim : false));
     } else {
       dispatch(setClaimButtonDeactivated(true));
       dispatch(setOnlyNFTOwnersCanClaim(false));
@@ -78,8 +78,14 @@ export function SettingsComponent() {
   };
 
   useEffect(() => {
-    const formattedToday = formatDateToLocalString(new Date(airdropStart));
-    dispatch(setAirdropEndMin(formattedToday));
+    if(airdropStart) {
+
+      const formattedToday = formatDateToLocalString(new Date(airdropStart));
+      dispatch(setAirdropEndMin(formattedToday));
+    } else {
+      const formattedToday = formatDateToLocalString(new Date());
+      dispatch(setAirdropEndMin(formattedToday));
+    }
   }, [airdropStart]);
 
   return (
@@ -148,7 +154,7 @@ export function SettingsComponent() {
                       return formattedToday;
                     })()}
                     onChange={(e) => {
-                      setAirdropStart(e.target.value);
+                      dispatch(setAirdropStart(e.target.value));
                     }}
                     value={airdropStart}
                     className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"

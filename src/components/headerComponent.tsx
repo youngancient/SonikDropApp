@@ -20,7 +20,10 @@ export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
 
   const backButton = () => {
     if(stepToGoBackTo.length == 0) {
-      navigate("/")
+      sessionStorage.removeItem("tokenAddress");
+      sessionStorage.removeItem("csvData");
+      sessionStorage.removeItem("settings");
+      navigate("/");
     } else {
       dispatch(goBack());
     }
@@ -29,7 +32,7 @@ export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
 
   return (
     <div className="px-2 md:px-[200px]">
-      <div className="flex justify-between text-white h-[100px] items-center">
+      <div className="flex justify-between text-white h-[60px] md:h-[100px] items-center">
         <div
           className="flex gap-2 items-center cursor-pointer"
           onClick={() => {navigate("/")}}
@@ -49,7 +52,7 @@ export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
       </div>
       {
         showBackButton && (
-          <div className="mt-4">
+          <div className="mt-1 mb-2 md:mt-4">
         <button className="flex items-center gap-4" onClick={backButton}>
           <IoChevronBackOutline /> Back
         </button>

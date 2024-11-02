@@ -34,7 +34,7 @@ export function ApproveComponent() {
         // Your code goes here
 
         sessionStorage.removeItem("csvData");
-        localStorage.removeItem("settings");
+        sessionStorage.removeItem("settings");
   };
 
   return (
