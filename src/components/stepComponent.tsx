@@ -1,11 +1,12 @@
 import { useLocation } from "react-router-dom";
 import { useAppSelector } from "../store/hooks";
+import { selectStep } from "../store/slices/stepSlice";
 
 
 export function StepComponent() {
   const loc = useLocation();
 
-  const step = useAppSelector(value => value.step.value);
+  const step = useAppSelector(selectStep);
 
   console.log(loc.pathname);
 

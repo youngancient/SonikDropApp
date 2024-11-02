@@ -3,10 +3,11 @@ import AirdropLayout from "../components/layout/airdropLayout";
 import { PrepareComponent } from "../components/prepareComponent";
 import { SettingsComponent } from "../components/settingsComponent";
 import {useAppSelector } from "../store/hooks";
+import { selectStep } from "../store/slices/stepSlice";
 
 export default function AirdropPage () {
 
-    const step = useAppSelector(value => value.step.value);
+    const step = useAppSelector(selectStep);
 
     return (
         <AirdropLayout showBackButton={true}>

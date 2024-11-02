@@ -1,10 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit'
 import stepSlice from './slices/stepSlice'
+import prepareSlice from './slices/prepareSlice'
+import settingsSlice from './slices/settingsSlice'
+import approveSlice from './slices/approveSlice'
 // ...
 
 export const store = configureStore({
   reducer: {
-    step: stepSlice
+    step: stepSlice,
+    prepare: prepareSlice,
+    settings: settingsSlice,
+    approve: approveSlice
   },
 })
 

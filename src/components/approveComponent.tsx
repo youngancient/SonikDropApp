@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { selectCsvToJSONData, setAirdropEnd, setAirdropStart, setCsvToJSONData, setOnlyNFTOwnersCanClaim } from "../store/slices/approveSlice";
 
 
 export function ApproveComponent() {
@@ -8,30 +10,32 @@ export function ApproveComponent() {
         amount: number
     }
 
-    // const [tokenAddress, setTokenAddress] = useState("");
-    const [csvToJSONData, setCsvToJSONData] = useState<ICSV[]>([]);
-    const [_onlyNFTOwnersCanClaim, setOnlyNFTOwnersCanClaim] = useState(false);
+    const dispatch = useAppDispatch();
 
-    const [_airdropStart, setAirdropStart] = useState("");
-    const [_airdropEnd, setAirdropEnd] = useState("");
+    // const [csvToJSONData, setCsvToJSONData] = useState<ICSV[]>([]);
+    // const [_onlyNFTOwnersCanClaim, setOnlyNFTOwnersCanClaim] = useState(false);
+
+    // const [_airdropStart, setAirdropStart] = useState("");
+    // const [_airdropEnd, setAirdropEnd] = useState("");
+
+    const csvToJSONData = useAppSelector(selectCsvToJSONData);
+
 
     useEffect(() => {
         // setTokenAddress(sessionStorage.getItem("tokenAddress")  as string);
-        setCsvToJSONData(JSON.parse(sessionStorage.getItem("csvData") as string));
+        dispatch(setCsvToJSONData(JSON.parse(sessionStorage.getItem("csvData") as string)));
         // JSON.stringify({onlyNFTOwnersCanClaim, airdropStart, airdropEnd})
         const settings = JSON.parse(localStorage.getItem("settings") as string);
 
-        setOnlyNFTOwnersCanClaim(settings.onlyNFTOwnersCanClaim);
+        dispatch(setOnlyNFTOwnersCanClaim(settings.onlyNFTOwnersCanClaim));
 
         if (settings.airdropStart) {
-            setAirdropStart(settings.airdropStart);
+            dispatch(setAirdropStart(settings.airdropStart));
         }
 
         if(settings.airdropEnd) {
-            setAirdropEnd(settings.airdropEnd);
+            dispatch(setAirdropEnd(settings.airdropEnd));
         }
-
-
     }, []);
 
     const approve = () => {

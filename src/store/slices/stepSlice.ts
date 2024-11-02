@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 
-type stepTypes = "prepare" | "settings" | "approve";
+export type stepTypes = "prepare" | "settings" | "approve";
 
 // Define a type for the slice state
 interface CounterState {
@@ -44,6 +44,7 @@ export const stepSlice = createSlice({
 export const { setStep, goBack } = stepSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectCount = (state: RootState) => state.step.value;
+export const selectStep = (state: RootState) => state.step.value;
+export const selectBackStack = (state: RootState) => state.step.backStack;
 
 export default stepSlice.reducer;

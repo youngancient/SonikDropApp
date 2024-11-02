@@ -1,41 +1,78 @@
 import { ethers } from "ethers";
 import Papa from "papaparse";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ICSV } from "../interfaces/CSVInterface";
+import { useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+import { IAirdropList, ICSV } from "../interfaces/CSVInterface";
 import { toast } from "react-toastify";
 import { CgClose } from "react-icons/cg";
 import { BiTrash } from "react-icons/bi";
 import { nanoid } from "nanoid";
 import { Parser } from "@json2csv/plainjs";
 import { saveAs } from "file-saver";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setStep } from "../store/slices/stepSlice";
+import {
+  selectAirdropMakerList,
+  selectCsvData,
+  selectCsvDataError,
+  selectCsvToJSONData,
+  selectEligibleParticipantAddress,
+  selectEligibleParticipantAmount,
+  selectInvalidAirdropAddresses,
+  selectPowerValue,
+  selectShowCSVMaker,
+  selectTokenAddress,
+  selectTokenAddressError,
+  setAirdropMakerList,
+  setCsvData,
+  setEligibleParticipantAddress,
+  setEligibleParticipantAmount,
+  setInvalidAirdropAddresses,
+  setCsvDataError,
+  setCsvToJSONData,
+  setPowerValue,
+  setShowCSVMaker,
+  setTokenAddress,
+  setTokenAddressError
+} from "../store/slices/prepareSlice";
 
 export function PrepareComponent() {
-  const navigate = useNavigate();
+//   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
-  const [tokenAddress, setTokenAddress] = useState("");
-  const [csvData, setCsvData] = useState("");
-  const [csvToJSONData, setCsvToJSONData] = useState<any>([]);
-  const [tokenAddressError, setTokenAddressError] = useState("");
-  const [csvDataError, setCsvDataError] = useState("");
-  const [invalidAirdropAddresses, setInvalidAirdropAddresses] = useState([]);
-
-  interface IAirdropList extends ICSV {
-    id: string;
-  }
-  const [showCSVMaker, setShowCSVMaker] = useState(false);
-  const [airdropMakerList, setAirdropMakerList] = useState<Array<IAirdropList>>(
-    []
+  const airdropMakerList = useAppSelector(selectAirdropMakerList);
+  const csvData = useAppSelector(selectCsvData);
+  const tokenAddress = useAppSelector(selectTokenAddress);
+  const csvToJSONData = useAppSelector(selectCsvToJSONData);
+  const tokenAddressError = useAppSelector(selectTokenAddressError);
+  const csvDataError = useAppSelector(selectCsvDataError);
+  const invalidAirdropAddresses = useAppSelector(selectInvalidAirdropAddresses);
+  const showCSVMaker = useAppSelector(selectShowCSVMaker);
+  const eligibleParticipantAddress = useAppSelector(
+    selectEligibleParticipantAddress
   );
-  const [eligibleParticipantAddress, setEligibleParticipantAddress] =
-    useState("");
-  const [eligibleParticipantAmount, setEligibleParticipantAmount] =
-    useState("");
-  const [powerValue, setPowerValue] = useState("");
+  const eligibleParticipantAmount = useAppSelector(
+    selectEligibleParticipantAmount
+  );
+  const powerValue = useAppSelector(selectPowerValue);
+
+  //   const [tokenAddress, setTokenAddress] = useState("");
+  //   const [csvData, setCsvData] = useState("");
+  //   const [csvToJSONData, setCsvToJSONData] = useState<any>([]);
+  //   const [tokenAddressError, setTokenAddressError] = useState("");
+  //   const [csvDataError, setCsvDataError] = useState("");
+  //   const [invalidAirdropAddresses, setInvalidAirdropAddresses] = useState([]);
+
+  //   const [showCSVMaker, setShowCSVMaker] = useState(false);
+  //   const [airdropMakerList, setAirdropMakerList] = useState<Array<IAirdropList>>(
+  //     []
+  //   );
+  //   const [eligibleParticipantAddress, setEligibleParticipantAddress] =
+  //     useState("");
+  //   const [eligibleParticipantAmount, setEligibleParticipantAmount] =
+  //     useState("");
+  //   const [powerValue, setPowerValue] = useState("");
 
   const addEligibleParticipant = () => {
     const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
@@ -65,19 +102,21 @@ export function PrepareComponent() {
       return;
     }
 
-    setAirdropMakerList(
-      airdropMakerList.concat({
-        address: eligibleParticipantAddress,
-        amount: BigInt(
-          parseFloat(eligibleParticipantAmount) *
-            10 ** parseInt(powerValue ? powerValue : "18")
-        ).toString(),
-        id: nanoid(),
-      })
+    dispatch(
+      setAirdropMakerList(
+        airdropMakerList.concat({
+          address: eligibleParticipantAddress,
+          amount: BigInt(
+            parseFloat(eligibleParticipantAmount) *
+              10 ** parseInt(powerValue ? powerValue : "18")
+          ).toString(),
+          id: nanoid(),
+        })
+      )
     );
 
-    setEligibleParticipantAddress("");
-    setEligibleParticipantAmount("");
+    dispatch(setEligibleParticipantAddress(""));
+    dispatch(setEligibleParticipantAmount(""));
     // setPowerValue("");
   };
 
@@ -120,7 +159,7 @@ export function PrepareComponent() {
             (result: ICSV) => !ethers.isAddress(result.address)
           );
 
-          setInvalidAirdropAddresses(invalidAddresses);
+          dispatch(setInvalidAirdropAddresses(invalidAddresses));
 
           // console.log(invalidAddresses);
 
@@ -139,8 +178,8 @@ export function PrepareComponent() {
             .join(`\n`);
 
           // console.log(stringResult);
-          setCsvData(stringResult);
-          setCsvToJSONData(results.data);
+          dispatch(setCsvData(stringResult));
+          dispatch(setCsvToJSONData(results.data));
         },
         header: true, // Set to true if your CSV has headers
       });
@@ -156,17 +195,17 @@ export function PrepareComponent() {
       invalidAirdropAddresses.length > 0
     ) {
       if (!isTokenAddressValid) {
-        setTokenAddressError("Kindly enter a valid token address");
+        dispatch(setTokenAddressError("Kindly enter a valid token address"));
         toast.error("Kindly enter a valid token address");
       } else {
-        setTokenAddressError("");
+        dispatch(setTokenAddressError(""));
       }
 
       if (!csvData) {
-        setCsvDataError("Kindly upload a csv");
+        dispatch(setCsvDataError("Kindly upload a csv"));
         toast.error("Kindly upload a csv");
       } else {
-        setCsvDataError("");
+        dispatch(setCsvDataError(""));
       }
 
       if (invalidAirdropAddresses.length > 0) {
@@ -182,7 +221,8 @@ export function PrepareComponent() {
     sessionStorage.setItem(
       "csvData",
       JSON.stringify(
-        csvToJSONData.map((data: ICSV) => {
+          JSON.parse(JSON.stringify(csvToJSONData)).map((data: ICSV) => {
+            console.log("Data", data.amount);
           data.amount = ethers.formatUnits(data.amount.toString(), 18);
           return data;
         })
@@ -196,15 +236,15 @@ export function PrepareComponent() {
     const isTokenAddressValid = ethers.isAddress(tokenAddress);
 
     if (!isTokenAddressValid) {
-      setTokenAddressError("Kindly enter a valid token address");
+      dispatch(setTokenAddressError("Kindly enter a valid token address"));
     } else {
-      setTokenAddressError("");
+      dispatch(setTokenAddressError(""));
     }
 
     if (!csvData) {
-      setCsvDataError("Kindly upload a csv");
+      dispatch(setCsvDataError("Kindly upload a csv"));
     } else {
-      setCsvDataError("");
+      dispatch(setCsvDataError(""));
     }
 
     if (invalidAirdropAddresses.length > 0) {
@@ -228,7 +268,7 @@ export function PrepareComponent() {
               placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8"
               value={tokenAddress}
               onChange={(e) => {
-                setTokenAddress(e.target.value);
+                dispatch(setTokenAddress(e.target.value));
               }}
             />
             <small
@@ -250,7 +290,7 @@ export function PrepareComponent() {
                 Use a{" "}
                 <button
                   onClick={() => {
-                    setShowCSVMaker(true);
+                    dispatch(setShowCSVMaker(true));
                   }}
                   className="text-blue-400"
                 >
@@ -310,7 +350,7 @@ export function PrepareComponent() {
             <CgClose
               className="ml-auto"
               onClick={() => {
-                setShowCSVMaker(false);
+                dispatch(setShowCSVMaker(false));
               }}
             />
           </div>
@@ -343,7 +383,7 @@ export function PrepareComponent() {
                   placeholder="Power"
                   value={powerValue}
                   onChange={(e) => {
-                    setPowerValue(e.target.value);
+                    dispatch(setPowerValue(e.target.value));
                   }}
                 />
               </div>
