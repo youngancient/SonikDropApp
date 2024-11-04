@@ -62,8 +62,6 @@ export function useClearFormInput() {
     sessionStorage.removeItem("tokenAddress");
     sessionStorage.removeItem("csvData");
     sessionStorage.removeItem("settings");
-
-    console.log("Called");
   };
 
   return {
