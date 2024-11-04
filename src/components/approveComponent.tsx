@@ -44,9 +44,7 @@ export function ApproveComponent() {
         // Your code goes here
 
         clear();
-        sessionStorage.removeItem("tokenAddress");
-        sessionStorage.removeItem("csvData");
-        sessionStorage.removeItem("settings");
+        
   };
 
   return (
