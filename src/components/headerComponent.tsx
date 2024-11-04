@@ -5,6 +5,7 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { LogoIcon } from "./icons";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { goBack } from "../store/slices/stepSlice";
+import { useClearFormInput } from "../hooks/useClearForm";
 
 export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
   const navigate = useNavigate();
@@ -18,11 +19,11 @@ export function HeaderComponent({showBackButton}: {showBackButton:boolean}) {
     open();
   };
 
+  const {clear} = useClearFormInput();
+
   const backButton = () => {
     if(stepToGoBackTo.length == 0) {
-      sessionStorage.removeItem("tokenAddress");
-      sessionStorage.removeItem("csvData");
-      sessionStorage.removeItem("settings");
+      clear();
       navigate("/");
     } else {
       dispatch(goBack());

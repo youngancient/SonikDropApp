@@ -4,6 +4,7 @@ import { selectCsvToJSONData, setAirdropEnd, setAirdropStart, setCsvToJSONData, 
 
 import { leaderboardVariant } from "../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useClearFormInput } from "../hooks/useClearForm";
 
 export function ApproveComponent() {
 
@@ -36,10 +37,13 @@ export function ApproveComponent() {
 
     }, []);
 
+    const {clear} = useClearFormInput();
+
     const approve = () => {
 
         // Your code goes here
 
+        clear();
         sessionStorage.removeItem("tokenAddress");
         sessionStorage.removeItem("csvData");
         sessionStorage.removeItem("settings");

@@ -106,12 +106,12 @@ export function PrepareComponent() {
   };
 
   const deleteEligibleParticipant = (temporaryId: string) => {
-    setAirdropMakerList(
+    dispatch(setAirdropMakerList(
       airdropMakerList.filter(
         (eligibleParticipant: IAirdropList) =>
           eligibleParticipant.id != temporaryId
       )
-    );
+    ));
   };
 
   const downloadCSV = () => {
@@ -356,7 +356,7 @@ export function PrepareComponent() {
                   placeholder="Wallet address"
                   value={eligibleParticipantAddress}
                   onChange={(e) => {
-                    setEligibleParticipantAddress(e.target.value);
+                    dispatch(setEligibleParticipantAddress(e.target.value));
                   }}
                 />
               </div>
@@ -367,7 +367,7 @@ export function PrepareComponent() {
                   placeholder="Amount"
                   value={eligibleParticipantAmount}
                   onChange={(e) => {
-                    setEligibleParticipantAmount(e.target.value);
+                    dispatch(setEligibleParticipantAmount(e.target.value));
                   }}
                 />
                 <div className="flex md:w-[50%]">
