@@ -39,12 +39,12 @@ export function SettingsComponent() {
   useEffect(() => {
     const isNftAddressValid = ethers.isAddress(nftAddress);
 
-    const nftOwnersCanClaim = JSON.parse(sessionStorage.getItem("settings") as string);
+    // const nftOwnersCanClaim = JSON.parse(sessionStorage.getItem("settings") as string);
 
     if (isNftAddressValid) {
       dispatch(setNftAddressError(""));
       dispatch(setClaimButtonDeactivated(false));
-      dispatch(setOnlyNFTOwnersCanClaim(nftOwnersCanClaim ? nftOwnersCanClaim.onlyNFTOwnersCanClaim : false));
+      dispatch(setOnlyNFTOwnersCanClaim(true));
     } else {
       dispatch(setClaimButtonDeactivated(true));
       dispatch(setOnlyNFTOwnersCanClaim(false));
@@ -127,11 +127,11 @@ export function SettingsComponent() {
                 type="checkbox"
                 style={{ transform: "scale(1.5)" }}
                 checked={onlyNFTOwnersCanClaim}
-                onChange={() => {
-                  if (claimButtonDeactivated == false) {
-                    dispatch(setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim));
-                  }
-                }}
+                // onChange={() => {
+                //   if (claimButtonDeactivated == false) {
+                //     dispatch(setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim));
+                //   }
+                // }}
                 onClick={() => {
                   if (claimButtonDeactivated == true) {
                     toast.error("Kindly input a valid NFT address");
