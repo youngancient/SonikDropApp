@@ -26,7 +26,7 @@ export const Hero = () => {
           viewport={{ once: true }}
           variants={leftVariant}
         >
-          <button type="button" onClick={() => navigate("/prepare")}>
+          <button type="button" onClick={() => navigate("/airdrop")}>
             <p>Start Drop</p>
           </button>
         </motion.div>

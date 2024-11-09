@@ -1,7 +1,12 @@
 import { useLocation } from "react-router-dom";
+import { useAppSelector } from "../store/hooks";
+import { selectStep } from "../store/slices/stepSlice";
+
 
 export function StepComponent() {
   const loc = useLocation();
+
+  const step = useAppSelector(selectStep);
 
   console.log(loc.pathname);
 
@@ -10,20 +15,20 @@ export function StepComponent() {
       <div className="flex gap-2 md:gap-4 items-center justify-center text-[14px] md:text-[18px]">
         <div
           className={`bg-transparent flex ${
-            location.pathname == "/prepare" ||
-            location.pathname == "/settings" ||
-            location.pathname == "/approve"
+            step == "prepare" ||
+            step == "settings" ||
+            step == "approve"
               ? "text-white"
               : "text-white/[0.5]"
           }`}
         >
           <div
             className={`rounded-full w-[20px] h-[20px] md:w-[25px] md:h-[25px] mx-1 ${
-              location.pathname == "/prepare" ||
-              location.pathname == "/settings" ||
-              location.pathname == "/approve"
+              step == "prepare" ||
+              step == "settings" ||
+              step == "approve"
                 ? "bg-[#27BBFE]"
-                : "bg-white"
+                : "bg-[#102191]"
             } text-white`}
           >
             1
@@ -32,22 +37,22 @@ export function StepComponent() {
         </div>
         <div
           className={`w-[20px] md:w-[90px] h-[1px] ${
-            location.pathname == "/settings" || location.pathname == "/approve"
+            step == "settings" || step == "approve"
               ? "bg-[#27BBFE]/[0.8]"
               : "bg-white/[0.8]"
           }`}
         ></div>
         <div
           className={`bg-transparent flex ${
-            location.pathname == "/settings" || location.pathname == "/approve"
+            step == "settings" || step == "approve"
               ? "text-white"
               : "text-white/[0.5]"
           }`}
         >
           <div
             className={`rounded-full w-[20px] h-[20px] md:w-[25px] md:h-[25px] mx-1 ${
-              location.pathname == "/approve" ||
-              location.pathname == "/settings"
+              step == "approve" ||
+              step == "settings"
                 ? "bg-[#27BBFE]"
                 : "bg-[#102191]"
             } text-white`}
@@ -58,19 +63,19 @@ export function StepComponent() {
         </div>
         <div
           className={`w-[20px] md:w-[90px] h-[1px] ${
-            location.pathname == "/approve"
+            step == "approve"
               ? "bg-[#27BBFE]/[0.8]"
               : "bg-white/[0.8]"
           }`}
         ></div>
         <div
           className={`bg-transparent flex ${
-            location.pathname == "/approve" ? "text-white" : "text-white/[0.5]"
+            step == "approve" ? "text-white" : "text-white/[0.5]"
           }`}
         >
           <div
             className={`rounded-full w-[20px] h-[20px] md:w-[25px] md:h-[25px] mx-1 ${
-              location.pathname == "/approve" ? "bg-[#27BBFE]" : "bg-[#102191]"
+              step == "approve" ? "bg-[#27BBFE]" : "bg-[#102191]"
             } text-white`}
           >
             3

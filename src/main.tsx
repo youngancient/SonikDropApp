@@ -4,22 +4,14 @@ import App from './App.tsx'
 import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import PreparePage from './pages/Prepare.tsx';
-import ApprovePage from './pages/Approve.tsx';
-import SettingsPage from './pages/Settings.tsx';
+import AirdropPage from './pages/Airdrop.tsx';
+import { store } from './store/store.ts';
+import { Provider } from 'react-redux';
 
 const router = createBrowserRouter([
   {
-    path: "/prepare",
-    element: <PreparePage />
-  },
-  {
-    path: "/settings",
-    element: <SettingsPage />
-  },
-  {
-    path: "/approve",
-    element: <ApprovePage />
+    path: "/airdrop",
+    element: <AirdropPage />
   },
   {
     path: "/",
@@ -29,6 +21,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>,
 )

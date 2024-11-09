@@ -1,42 +1,50 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { selectCsvToJSONData, setAirdropEnd, setAirdropStart, setCsvToJSONData, setOnlyNFTOwnersCanClaim } from "../store/slices/approveSlice";
+
 import { leaderboardVariant } from "../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useClearFormInput } from "../hooks/useClearForm";
 
 export function ApproveComponent() {
-  interface ICSV {
-    address: string;
-    amount: number;
-  }
 
-  // const [tokenAddress, setTokenAddress] = useState("");
-  const [csvToJSONData, setCsvToJSONData] = useState<ICSV[]>([]);
-  const [_onlyNFTOwnersCanClaim, setOnlyNFTOwnersCanClaim] = useState(false);
+    const dispatch = useAppDispatch();
 
-  const [_airdropStart, setAirdropStart] = useState("");
-  const [_airdropEnd, setAirdropEnd] = useState("");
+    const csvToJSONData = useAppSelector(selectCsvToJSONData);
 
-  useEffect(() => {
-    // setTokenAddress(sessionStorage.getItem("tokenAddress")  as string);
-    setCsvToJSONData(JSON.parse(sessionStorage.getItem("csvData") as string));
-    // JSON.stringify({onlyNFTOwnersCanClaim, airdropStart, airdropEnd})
-    const settings = JSON.parse(localStorage.getItem("settings") as string);
 
-    setOnlyNFTOwnersCanClaim(settings.onlyNFTOwnersCanClaim);
+    useEffect(() => {
+        // setTokenAddress(sessionStorage.getItem("tokenAddress")  as string);
+        dispatch(setCsvToJSONData(JSON.parse(sessionStorage.getItem("csvData") as string)));
+        // JSON.stringify({onlyNFTOwnersCanClaim, airdropStart, airdropEnd})
+        const settings = JSON.parse(localStorage.getItem("settings") as string);
 
-    if (settings.airdropStart) {
-      setAirdropStart(settings.airdropStart);
-    }
+        if(settings) {
 
-    if (settings.airdropEnd) {
-      setAirdropEnd(settings.airdropEnd);
-    }
-  }, []);
+          if(settings.onlyNFTOwnersCanClaim) {
+            dispatch(setOnlyNFTOwnersCanClaim(settings.onlyNFTOwnersCanClaim));
+          }
 
-  const approve = () => {
-    // Your code goes here
+          if (settings.airdropStart) {
+              dispatch(setAirdropStart(settings.airdropStart));
+          }
+  
+          if(settings.airdropEnd) {
+              dispatch(setAirdropEnd(settings.airdropEnd));
+          }
 
-    sessionStorage.removeItem("csvData");
-    localStorage.removeItem("settings");
+        }
+
+    }, []);
+
+    const {clear} = useClearFormInput();
+
+    const approve = () => {
+
+        // Your code goes here
+
+        clear();
+        
   };
 
   return (
