@@ -58,7 +58,7 @@ export const textVariant = {
     },
   };
 
-  export const leaderboardVariant = {
+  export const moodVariant = {
     initial: {
       opacity: 0,
       y: -20,
@@ -75,6 +75,27 @@ export const textVariant = {
       y: -20,
       transition: {
         duration: 0.25,
+      },
+    },
+  };
+
+  export const contVariant = {
+    initial: { scale: 0.8, opacity: 0 },
+    animate: {
+      scale: [0.8, 1.05, 1],
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        ease: 'easeInOut',
+      },
+    },
+  };
+
+  export const parentVariant = {
+    initial: {},
+    final: {
+      transition: {
+        staggerChildren: 0.1, // Adjust the delay between children animations
       },
     },
   };

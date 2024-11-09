@@ -20,7 +20,7 @@ import {
   setNftAddressError,
   setOnlyNFTOwnersCanClaim,
 } from "../store/slices/settingsSlice";
-import { leaderboardVariant } from "../animations/animation";
+import { moodVariant } from "../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function SettingsComponent() {
@@ -96,7 +96,7 @@ export function SettingsComponent() {
         animate="final"
         exit="exit"
         key="settings"
-        variants={leaderboardVariant}
+        variants={moodVariant}
       >
         <div
           className="p-4 w-full lg:w-[400px] xl:w-[600px] border-[3px] border-[#FFFFFF17] rounded-xl"

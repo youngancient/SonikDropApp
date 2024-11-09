@@ -7,11 +7,16 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import AirdropPage from './pages/Airdrop.tsx';
 import { store } from './store/store.ts';
 import { Provider } from 'react-redux';
+import PoapPage from './pages/Poap.tsx';
 
 const router = createBrowserRouter([
   {
     path: "/airdrop",
     element: <AirdropPage />
+  },
+  {
+    path: "/poap",
+    element: <PoapPage />
   },
   {
     path: "/",

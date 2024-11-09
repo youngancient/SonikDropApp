@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { selectCsvToJSONData, setAirdropEnd, setAirdropStart, setCsvToJSONData, setOnlyNFTOwnersCanClaim } from "../store/slices/approveSlice";
 
-import { leaderboardVariant } from "../animations/animation";
+import { moodVariant } from "../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useClearFormInput } from "../hooks/useClearForm";
 
@@ -55,7 +55,7 @@ export function ApproveComponent() {
         animate="final"
         exit="exit"
         key="yang"
-        variants={leaderboardVariant}
+        variants={moodVariant}
       >
         <div
           className="p-4 w-full lg:w-[400px] xl:w-[600px] border-[3px] border-[#FFFFFF17] rounded-xl"
