@@ -35,8 +35,9 @@ import {
   setTokenAddress,
   setTokenAddressError,
 } from "../store/slices/prepareSlice";
-import { leaderboardVariant } from "../animations/animation";
+import { moodVariant, parentVariant } from "../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
+import ClickOutsideWrapper from "./outsideClick";
 
 export function PrepareComponent() {
   //   const navigate = useNavigate();
@@ -106,12 +107,14 @@ export function PrepareComponent() {
   };
 
   const deleteEligibleParticipant = (temporaryId: string) => {
-    dispatch(setAirdropMakerList(
-      airdropMakerList.filter(
-        (eligibleParticipant: IAirdropList) =>
-          eligibleParticipant.id != temporaryId
+    dispatch(
+      setAirdropMakerList(
+        airdropMakerList.filter(
+          (eligibleParticipant: IAirdropList) =>
+            eligibleParticipant.id != temporaryId
+        )
       )
-    ));
+    );
   };
 
   const downloadCSV = () => {
@@ -136,7 +139,9 @@ export function PrepareComponent() {
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files[0];
+    const files = event.target.files;
+    if(!files) return;
+    const file = files[0];
     if (file) {
       Papa.parse(file, {
         complete: (results: any) => {
@@ -247,7 +252,7 @@ export function PrepareComponent() {
         animate="final"
         exit="exit"
         key="ying"
-        variants={leaderboardVariant}
+        variants={moodVariant}
       >
         <div
           className="p-4 w-full lg:w-[400px] xl:w-[600px] border-[3px] border-[#FFFFFF17] rounded-xl"
@@ -333,98 +338,111 @@ export function PrepareComponent() {
         </div>
 
         {/* CSV Maker starts here */}
-        <div
-          className={`${
-            showCSVMaker
-              ? "h-screen w-full flex justify-center items-center bg-[transparent] absolute top-[0] left-[0] backdrop-blur-lg p-4"
-              : "hidden"
-          }`}
+        <AnimatePresence>
+        {showCSVMaker && <motion.div
+          className="h-screen w-full flex justify-center items-center bg-[transparent] absolute top-[0] left-[0] backdrop-blur-lg p-4"
+          variants={parentVariant}
+            initial="initial"
+            animate="final"
         >
-          <div className="w-full md:w-[600px] border-[3px] border-[#FFFFFF17] p-4 rounded-md flex flex-col gap-4 bg-[#0F195B]">
-            <div>
-              <CgClose
-                className="ml-auto"
-                onClick={() => {
-                  dispatch(setShowCSVMaker(false));
-                }}
-              />
-            </div>
-            <div className="flex gap-4 flex-col md:flex-row">
-              <div className="w-full">
-                <input
-                  className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
-                  placeholder="Wallet address"
-                  value={eligibleParticipantAddress}
-                  onChange={(e) => {
-                    dispatch(setEligibleParticipantAddress(e.target.value));
+          <ClickOutsideWrapper
+            onClickOutside={() => dispatch(setShowCSVMaker(false))}
+          >
+            <motion.div className="w-full md:w-[600px] border-[3px] border-[#FFFFFF17] p-4 rounded-[2rem] flex flex-col gap-4 bg-[#050C19]"
+            variants={moodVariant}
+            initial="initial"
+            animate="final"
+            exit="exit"
+            key="csvmaker"
+            >
+              <div>
+                <CgClose
+                  className="ml-auto cursor-pointer"
+                  onClick={() => {
+                    dispatch(setShowCSVMaker(false));
                   }}
                 />
               </div>
-
-              <div className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1 flex">
-                <input
-                  className="bg-transparent md:w-[50%]"
-                  placeholder="Amount"
-                  value={eligibleParticipantAmount}
-                  onChange={(e) => {
-                    dispatch(setEligibleParticipantAmount(e.target.value));
-                  }}
-                />
-                <div className="flex md:w-[50%]">
-                  <div className="w-[50%] text-nowrap">x 10 ^</div>
+              <div className="flex gap-4 flex-col md:flex-row">
+                <div className="w-full">
                   <input
-                    type="text"
-                    className="w-[50%] bg-transparent"
-                    placeholder="Power"
-                    value={powerValue}
+                    className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
+                    placeholder="Wallet address"
+                    value={eligibleParticipantAddress}
                     onChange={(e) => {
-                      dispatch(setPowerValue(e.target.value));
+                      dispatch(setEligibleParticipantAddress(e.target.value));
                     }}
                   />
                 </div>
+
+                <div className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1 flex">
+                  <input
+                    className="bg-transparent md:w-[50%]"
+                    placeholder="Amount"
+                    value={eligibleParticipantAmount}
+                    onChange={(e) => {
+                      dispatch(setEligibleParticipantAmount(e.target.value));
+                    }}
+                  />
+                  <div className="flex md:w-[50%]">
+                    <div className="w-[50%] text-nowrap">x 10 ^</div>
+                    <input
+                      type="text"
+                      className="w-[50%] bg-transparent"
+                      placeholder="Power"
+                      value={powerValue}
+                      onChange={(e) => {
+                        dispatch(setPowerValue(e.target.value));
+                      }}
+                    />
+                  </div>
+                </div>
+                <button
+                  className="bg-[#00A7FF] text-white px-4 py-2 rounded-md"
+                  onClick={addEligibleParticipant}
+                >
+                  Add
+                </button>
+              </div>
+              <div>
+                <div className="w-full p-2 h-[200px] overflow-y-auto border-2 border-[2px] border-[#FFFFFF17] rounded-md bg-transparent">
+                  {airdropMakerList.length > 0 &&
+                    airdropMakerList.map(
+                      (eligibleParticipant: IAirdropList, index: number) => {
+                        return (
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center">
+                              <div className="pr-4">{index + 1}.</div>
+                              <div>
+                                <div>{eligibleParticipant.address}</div>
+                                <div>{eligibleParticipant.amount}</div>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => {
+                                deleteEligibleParticipant(
+                                  eligibleParticipant.id
+                                );
+                              }}
+                            >
+                              <BiTrash />
+                            </button>
+                          </div>
+                        );
+                      }
+                    )}
+                </div>
               </div>
               <button
-                className="bg-[#00A7FF] text-white px-4 py-2 rounded-md"
-                onClick={addEligibleParticipant}
+                className="w-full bg-[#00A7FF] text-white py-2 rounded-md"
+                onClick={downloadCSV}
               >
-                Add
+                Download
               </button>
-            </div>
-            <div>
-              <div className="w-full p-2 h-[200px] overflow-y-auto border-2 border-[2px] border-[#FFFFFF17] rounded-md bg-transparent">
-                {airdropMakerList.length > 0 &&
-                  airdropMakerList.map(
-                    (eligibleParticipant: IAirdropList, index: number) => {
-                      return (
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center">
-                            <div className="pr-4">{index + 1}.</div>
-                            <div>
-                              <div>{eligibleParticipant.address}</div>
-                              <div>{eligibleParticipant.amount}</div>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => {
-                              deleteEligibleParticipant(eligibleParticipant.id);
-                            }}
-                          >
-                            <BiTrash />
-                          </button>
-                        </div>
-                      );
-                    }
-                  )}
-              </div>
-            </div>
-            <button
-              className="w-full bg-[#00A7FF] text-white py-2 rounded-md"
-              onClick={downloadCSV}
-            >
-              Download
-            </button>
-          </div>
-        </div>
+            </motion.div>
+          </ClickOutsideWrapper>
+        </motion.div>}
+        </AnimatePresence>
         {/* CSV Maker ends here */}
       </motion.div>
     </AnimatePresence>
