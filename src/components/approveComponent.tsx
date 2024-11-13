@@ -113,7 +113,7 @@ export function ApproveComponent() {
                 <div className="font-bold text-white text-[20px]">
                   {tokenDetail?.symbol}
                 </div>
-                <div className="text-sm text-white/[0.8]">Token Name</div>
+                <div className="text-sm text-white/[0.8]">Token Symbol</div>
               </div>
               <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                 <div className="font-bold text-white text-[20px]">
@@ -124,7 +124,7 @@ export function ApproveComponent() {
                     .toLocaleString()}
                 </div>
                 <div className="text-sm text-white/[0.8]">
-                  Total Output tokens
+                  Total Output
                 </div>
               </div>
               <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
