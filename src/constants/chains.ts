@@ -28,15 +28,15 @@ export const supportedNetworksDetails:INetworkDetail = {
 
 
 export const ethSettings = {
-  apiKey: "o8P5Uj9ObttRRtuaWg-44jrSNnB1nX_9",
+  apiKey: process.env.VITE_ALCHEMY_API_KEY,
   network: Network.ETH_SEPOLIA,
 };
 export const baseSettings = {
-  apiKey: "o8P5Uj9ObttRRtuaWg-44jrSNnB1nX_9",
+  apiKey: process.env.VITE_ALCHEMY_API_KEY,
   network: Network.BASE_SEPOLIA,
 };
 
 export const bnbSettings = {
-  apiKey: "o8P5Uj9ObttRRtuaWg-44jrSNnB1nX_9",
+  apiKey: process.env.VITE_ALCHEMY_API_KEY,
   network: Network.BNB_TESTNET,
 };
