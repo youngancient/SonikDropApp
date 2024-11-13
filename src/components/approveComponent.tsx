@@ -1,50 +1,81 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { selectCsvToJSONData, setAirdropEnd, setAirdropStart, setCsvToJSONData, setOnlyNFTOwnersCanClaim } from "../store/slices/approveSlice";
+import {
+  selectCsvToJSONData,
+  setAirdropEnd,
+  setAirdropStart,
+  setCsvToJSONData,
+  setOnlyNFTOwnersCanClaim,
+} from "../store/slices/approveSlice";
 
 import { moodVariant } from "../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useClearFormInput } from "../hooks/useClearForm";
+import { selectTokenDetail } from "../store/slices/prepareSlice";
+import { Alchemy } from "alchemy-sdk";
+import { ethSettings } from "../constants/chains";
+import { useAppKitAccount } from "@reown/appkit/react";
+import { ethers } from "ethers";
 
 export function ApproveComponent() {
+  const alchemy = new Alchemy(ethSettings);
+  const { address } = useAppKitAccount();
+  const dispatch = useAppDispatch();
+  const [balance, setBalance] = useState("");
+  const tokenAddress = sessionStorage.getItem("tokenAddress") as string;
 
-    const dispatch = useAppDispatch();
+  const csvToJSONData = useAppSelector(selectCsvToJSONData);
 
-    const csvToJSONData = useAppSelector(selectCsvToJSONData);
+  const tokenDetail = useAppSelector(selectTokenDetail);
 
+  useEffect(() => {
+    const getTokenBalance = async () => {
+      if (!address) {
+        return;
+      }
+      const balances = await alchemy.core.getTokenBalances(address, [
+        tokenAddress,
+      ]);
+      if(balances.tokenBalances[0].tokenBalance == null){
+        return;
+      }
+      if (tokenDetail?.decimals == null) {
+        return;
+      }
+      setBalance(ethers.formatUnits(
+        balances.tokenBalances[0].tokenBalance,
+        tokenDetail?.decimals
+      ));
+    };
+    getTokenBalance();
+    // setTokenAddress(sessionStorage.getItem("tokenAddress")  as string);
+    dispatch(
+      setCsvToJSONData(JSON.parse(sessionStorage.getItem("csvData") as string))
+    );
+    // JSON.stringify({onlyNFTOwnersCanClaim, airdropStart, airdropEnd})
+    const settings = JSON.parse(localStorage.getItem("settings") as string);
 
-    useEffect(() => {
-        // setTokenAddress(sessionStorage.getItem("tokenAddress")  as string);
-        dispatch(setCsvToJSONData(JSON.parse(sessionStorage.getItem("csvData") as string)));
-        // JSON.stringify({onlyNFTOwnersCanClaim, airdropStart, airdropEnd})
-        const settings = JSON.parse(localStorage.getItem("settings") as string);
+    if (settings) {
+      if (settings.onlyNFTOwnersCanClaim) {
+        dispatch(setOnlyNFTOwnersCanClaim(settings.onlyNFTOwnersCanClaim));
+      }
 
-        if(settings) {
+      if (settings.airdropStart) {
+        dispatch(setAirdropStart(settings.airdropStart));
+      }
 
-          if(settings.onlyNFTOwnersCanClaim) {
-            dispatch(setOnlyNFTOwnersCanClaim(settings.onlyNFTOwnersCanClaim));
-          }
+      if (settings.airdropEnd) {
+        dispatch(setAirdropEnd(settings.airdropEnd));
+      }
+    }
+  }, []);
 
-          if (settings.airdropStart) {
-              dispatch(setAirdropStart(settings.airdropStart));
-          }
-  
-          if(settings.airdropEnd) {
-              dispatch(setAirdropEnd(settings.airdropEnd));
-          }
+  const { clear } = useClearFormInput();
 
-        }
+  const approve = () => {
+    // Your code goes here
 
-    }, []);
-
-    const {clear} = useClearFormInput();
-
-    const approve = () => {
-
-        // Your code goes here
-
-        clear();
-        
+    clear();
   };
 
   return (
@@ -64,7 +95,9 @@ export function ApproveComponent() {
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-2 text-center">
               <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
-                <div className="font-bold text-white text-[20px]">LSK</div>
+                <div className="font-bold text-white text-[20px]">
+                  {tokenDetail?.symbol}
+                </div>
                 <div className="text-sm text-white/[0.8]">Token Name</div>
               </div>
               <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
@@ -86,7 +119,9 @@ export function ApproveComponent() {
                 <div className="text-sm text-white/[0.8]">Recipients</div>
               </div>
               <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
-                <div className="font-bold text-white text-[20px]">5000</div>
+                <div className="font-bold text-white text-[20px]">
+                  {balance}
+                </div>
                 <div className="text-sm text-white/[0.8]">Token balance</div>
               </div>
             </div>
