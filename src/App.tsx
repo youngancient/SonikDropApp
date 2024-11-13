@@ -6,6 +6,7 @@ import { HeaderComponent } from "./components/headerComponent.tsx";
 // import { supportedNetworksDetails } from "./constants/chains.ts";
 // import { extractChainId } from "./utils/helpers.ts";
 import { Hero } from "./components/heroComponent.tsx";
+//import { SupportedChains } from "./components/supportedChains.tsx";
 
 function App() {
   // const { selectedNetworkId } = useAppKitState();
@@ -14,6 +15,7 @@ function App() {
     <>
       <HeaderComponent showBackButton={false} />
       <Hero />
+      {/* <SupportedChains /> */}
     </>
   );
 }

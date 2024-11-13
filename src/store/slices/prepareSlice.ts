@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 import { IAirdropList } from "../../interfaces/CSVInterface";
+import {  TokenMetadataResponse } from "alchemy-sdk";
 
 // Define a type for the slice state
 interface prepareState {
@@ -16,6 +17,7 @@ interface prepareState {
   eligibleParticipantAddress: string;
   eligibleParticipantAmount: string;
   powerValue: string;
+  tokenDetail : TokenMetadataResponse | null;
 }
 
 // Define the initial state using that type
@@ -31,6 +33,7 @@ const initialState: prepareState = {
   eligibleParticipantAddress: "",
   eligibleParticipantAmount: "",
   powerValue: "",
+  tokenDetail: null,
 };
 
 export const prepareSlice = createSlice({
@@ -72,6 +75,9 @@ export const prepareSlice = createSlice({
     setPowerValue: (state, action: PayloadAction<string>) => {
       state.powerValue = action.payload;
     },
+    setTokenDetail: (state, action: PayloadAction<TokenMetadataResponse | null>) => {
+      state.tokenDetail = action.payload;
+    }
   },
 });
 
@@ -86,7 +92,8 @@ export const {
     setPowerValue,
     setShowCSVMaker,
     setTokenAddress,
-    setTokenAddressError
+    setTokenAddressError,
+    setTokenDetail
 } = prepareSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
@@ -101,5 +108,6 @@ export const selectShowCSVMaker = (state: RootState) => state.prepare.showCSVMak
 export const selectEligibleParticipantAddress = (state: RootState) => state.prepare.eligibleParticipantAddress;
 export const selectEligibleParticipantAmount = (state: RootState) => state.prepare.eligibleParticipantAmount;
 export const selectPowerValue = (state: RootState) => state.prepare.powerValue;
+export const selectTokenDetail = (state: RootState) => state.prepare.tokenDetail;
 
 export default prepareSlice.reducer;
