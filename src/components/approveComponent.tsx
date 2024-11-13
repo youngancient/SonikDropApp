@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   selectCsvToJSONData,
@@ -32,6 +32,19 @@ export function ApproveComponent() {
 
   const [isLoadingBal, setLoadingBal] = useState(false);
 
+  const [totalOutput, setTotalOutput] = useState(0);
+
+  const calculateTotalOutput = useCallback(() => {
+    const total = csvToJSONData.reduce((accumulator: number, current: any) => {
+      return accumulator + parseFloat(current.amount);
+    }, 0);
+    setTotalOutput(total);
+  }, [csvToJSONData]);
+
+  useEffect(() => {
+    calculateTotalOutput();
+  }, [calculateTotalOutput]);
+
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
@@ -58,7 +71,7 @@ export function ApproveComponent() {
         );
       } catch (error) {
         console.error("Error fetching token balance:", error);
-      } finally{
+      } finally {
         setLoadingBal(false);
       }
     };
@@ -89,7 +102,10 @@ export function ApproveComponent() {
 
   const approve = () => {
     // Your code goes here
-
+    if (parseFloat(balance) < totalOutput) {
+      toast.error("Insufficient balance to approve");
+      return;
+    }
     clear();
   };
 
@@ -117,15 +133,9 @@ export function ApproveComponent() {
               </div>
               <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                 <div className="font-bold text-white text-[20px]">
-                  {csvToJSONData
-                    .reduce((accumulator: number, current: any) => {
-                      return accumulator + parseFloat(current.amount);
-                    }, 0)
-                    .toLocaleString()}
+                  {totalOutput.toLocaleString()}
                 </div>
-                <div className="text-sm text-white/[0.8]">
-                  Total Output
-                </div>
+                <div className="text-sm text-white/[0.8]">Total Output</div>
               </div>
               <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                 <div className="font-bold text-white text-[20px]">
