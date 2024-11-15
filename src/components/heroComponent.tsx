@@ -89,6 +89,7 @@ export const Hero = () => {
           <motion.div
             className="h-screen w-full flex justify-center items-center bg-[transparent] absolute top-[0] left-[0] backdrop-blur-lg p-4"
             variants={parentVariant}
+            style={{ zIndex: 5 }}
             initial="initial"
             animate="final"
             // onClick={handleClickOutside}
@@ -172,7 +173,7 @@ export const HeroStyles = styled.div`
   h1 {
     text-align: center;
     font-size: 4rem;
-    z-index: 10;
+    z-index: 5;
     font-style: normal;
     font-weight: 400;
     line-height: 4.4rem; /* 110% */
