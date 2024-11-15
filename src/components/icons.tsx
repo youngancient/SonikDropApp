@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import { Rotate } from "../animations/button";
 
 export const LogoIcon = () => {
@@ -59,8 +59,6 @@ export const LogoIcon = () => {
   );
 };
 
-
-
 // to be used for button loading states
 export const ButtonLoader = styled.div`
   width: 20px;
@@ -70,4 +68,121 @@ export const ButtonLoader = styled.div`
   border-top: 4px solid transparent;
   margin: auto;
   animation: ${Rotate} 0.6s ease infinite;
+`;
+
+// to be used for chain icons
+const moveTopLeft = keyframes`
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-15px, -5px); }
+  50% { transform: translate(-30px, -10px); }
+  75% { transform: translate(-15px, -5px); }
+`;
+
+const moveTopRight = keyframes`
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(10px, -10px); }
+`;
+
+const moveBottomLeft = keyframes`
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-10px, 10px); }
+`;
+
+const moveBottomRight = keyframes`
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(10px, 10px); }
+`;
+
+export const BNB = () => {
+  return (
+    <ChainDivStyle top={130} left={30}>
+      <img src="/BNB.avif" alt="bnb" />
+    </ChainDivStyle>
+  );
+};
+export const ETH = () => {
+  return (
+    <ChainDivStyle top={130} right={80}>
+      <img src="/Ethereum.avif" alt="eth" />
+    </ChainDivStyle>
+  );
+};
+export const Optimism = () => {
+  return (
+    <ChainDivStyle top={180} left={150}>
+      <img src="/Optimism.avif" alt="op" />
+    </ChainDivStyle>
+  );
+};
+export const Polygon = () => {
+  return (
+    <ChainDivStyle bottom={100} left={110}>
+      <img src="/Polygon.avif" alt="polygon" />
+    </ChainDivStyle>
+  );
+};
+export const Arbitrum = () => {
+  return (
+    <ChainDivStyle bottom={100} right={150}>
+      <img src="/Arbitrum.svg" alt="arbitrum" />
+    </ChainDivStyle>
+  );
+};
+export const Solana = () => {
+  return (
+    <ChainDivStyle bottom={200} right={50}>
+      <img src="/Solana.avif" alt="sol" />
+    </ChainDivStyle>
+  );
+};
+
+interface IChainDiv {
+  top?: number;
+  left?: number;
+  right?: number;
+  bottom?: number;
+}
+export const ChainDivStyle = styled.div<IChainDiv>`
+  position: absolute;
+  z-index: -1;
+  top: ${({ top }) => (top !== undefined ? `${top}px` : "auto")};
+  left: ${({ left }) => (left !== undefined ? `${left}px` : "auto")};
+  right: ${({ right }) => (right !== undefined ? `${right}px` : "auto")};
+  bottom: ${({ bottom }) => (bottom !== undefined ? `${bottom}px` : "auto")};
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+  filter: blur(6px);
+  cursor: pointer;
+  z-index: 1;
+  scale: 0.8;
+  transition: filter 0.3s ease, scale 0.3s ease; /* Add transition for filter and scale */
+  &:hover {
+    filter: blur(0px);
+    scale: 0.9;
+    animation-play-state: paused;
+  }
+  
+
+   ${({ top, left }) => top !== undefined && left !== undefined && css`
+    animation: ${moveTopLeft} 3s infinite;
+  `}
+  ${({ top, right }) => top !== undefined && right !== undefined && css`
+    animation: ${moveTopRight} 3s infinite;
+  `}
+  ${({ bottom, left }) => bottom !== undefined && left !== undefined && css`
+    animation: ${moveBottomLeft} 3s infinite;
+  `}
+  ${({ bottom, right }) => bottom !== undefined && right !== undefined && css`
+    animation: ${moveBottomRight} 3s infinite;
+  `}
+
+  @media (max-width: 767px) {
+    display: none;
+  }
 `;

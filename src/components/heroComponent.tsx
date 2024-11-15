@@ -153,6 +153,7 @@ export const Hero = () => {
 
 export const HeroStyles = styled.div`
   // border: 2px solid #fff;
+  z-index: 10;
   &,
   .text {
     display: flex;
@@ -171,6 +172,7 @@ export const HeroStyles = styled.div`
   h1 {
     text-align: center;
     font-size: 4rem;
+    z-index: 10;
     font-style: normal;
     font-weight: 400;
     line-height: 4.4rem; /* 110% */
@@ -306,3 +308,14 @@ const OptionStyles = styled.div<OptionProps>`
     );
   }
 `;
+
+export const BlurDiv = styled.div`
+    margin: auto;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background: transparent;
+`
