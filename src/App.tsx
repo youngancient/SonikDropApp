@@ -3,7 +3,7 @@ import "./connection.ts";
 import { HeaderComponent } from "./components/headerComponent.tsx";
 
 import { Hero } from "./components/heroComponent.tsx";
-import { BNB, ETH , Optimism, Solana, Arbitrum, Polygon} from "./components/icons.tsx";
+import { BNB, ETH , Optimism, Solana, Arbitrum, Polygon, Base, Lisk} from "./components/icons.tsx";
 
 function App() {
   // const { selectedNetworkId } = useAppKitState();
@@ -18,6 +18,8 @@ function App() {
       <Solana />
       <Arbitrum />
       <Polygon />
+      <Base />
+      <Lisk />
     </>
   );
 }

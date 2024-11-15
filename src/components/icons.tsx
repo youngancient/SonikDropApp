@@ -95,28 +95,35 @@ const moveBottomRight = keyframes`
 
 export const BNB = () => {
   return (
-    <ChainDivStyle top={130} left={30}>
+    <ChainDivStyle top={130} left={0}>
       <img src="/BNB.avif" alt="bnb" />
     </ChainDivStyle>
   );
 };
 export const ETH = () => {
   return (
-    <ChainDivStyle top={130} right={80}>
+    <ChainDivStyle top={130} right={0}>
       <img src="/Ethereum.avif" alt="eth" />
     </ChainDivStyle>
   );
 };
 export const Optimism = () => {
   return (
-    <ChainDivStyle top={180} left={150}>
+    <ChainDivStyle bottom={100} left={200}>
       <img src="/Optimism.avif" alt="op" />
+    </ChainDivStyle>
+  );
+};
+export const Base = () => {
+  return (
+    <ChainDivStyle top={180} left={150}>
+      <img src="/Base.png" alt="base" />
     </ChainDivStyle>
   );
 };
 export const Polygon = () => {
   return (
-    <ChainDivStyle bottom={100} left={110}>
+    <ChainDivStyle bottom={180} left={90}>
       <img src="/Polygon.avif" alt="polygon" />
     </ChainDivStyle>
   );
@@ -136,12 +143,23 @@ export const Solana = () => {
   );
 };
 
+export const Lisk = () => {
+  return (
+    <ChainDivStyle bottom={300} right={110}>
+      <img src="/Lisk.png" alt="sol" />
+    </ChainDivStyle>
+  );
+};
+
 interface IChainDiv {
   top?: number;
   left?: number;
   right?: number;
   bottom?: number;
 }
+export const BorderStyle = styled.div`
+border: 1px solid red;
+`
 export const ChainDivStyle = styled.div<IChainDiv>`
   position: absolute;
   z-index: -1;
@@ -157,7 +175,7 @@ export const ChainDivStyle = styled.div<IChainDiv>`
     height: 100%;
     border-radius: 50%;
   }
-  filter: blur(6px);
+  filter: blur(7px);
   cursor: pointer;
   z-index: 1;
   scale: 0.8;
