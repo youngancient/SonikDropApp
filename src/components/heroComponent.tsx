@@ -79,6 +79,7 @@ export const Hero = () => {
           whileInView="final"
           viewport={{ once: true }}
           variants={leftVariant}
+          onClick={() => navigate("/claim")}
         >
           <p>Fast Claim</p>
           <FaAngleRight />
@@ -241,6 +242,7 @@ export const HeroStyles = styled.div`
     }
   }
   @media (max-width: 500px) {
+  padding: 0.25rem;
     h1 {
       font-size: 3.25rem;
       font-style: normal;
