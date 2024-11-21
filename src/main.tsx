@@ -8,6 +8,7 @@ import AirdropPage from './pages/Airdrop.tsx';
 import { store } from './store/store.ts';
 import { Provider } from 'react-redux';
 import PoapPage from './pages/Poap.tsx';
+import ClaimPage from './pages/Claim.tsx';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "/poap",
     element: <PoapPage />
+  },
+  {
+    path: "/claim",
+    element: <ClaimPage />
   },
   {
     path: "/",
