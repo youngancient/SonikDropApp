@@ -11,6 +11,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { CgClose } from "react-icons/cg";
 import ClickOutsideWrapper from "./outsideClick";
+// import { useAppKitProvider } from "@reown/appkit/react";
+// import { BrowserProvider, Eip1193Provider } from "ethers";
 
 interface IOption {
   name: string;
@@ -48,6 +50,18 @@ export const Hero = () => {
       navigate("/poap");
     }
   };
+
+  // test sign message
+
+  // const {walletProvider} = useAppKitProvider("eip155");
+
+  // const onSignMessage = async()=> {
+  //   const provider = new BrowserProvider(walletProvider as Eip1193Provider)
+  //   const signer = await provider.getSigner()
+  //   const signature = await signer?.signMessage('Hello, this is Sonikdrop')
+  //   console.log(signature)
+  // }
+
   return (
     <HeroStyles>
       <div className="text">
