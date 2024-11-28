@@ -21,6 +21,7 @@ import { IChains, supportedNetworks } from "../constants/chains";
 import { toast } from "react-toastify";
 // import { appkit } from "../connection";
 
+
 export function HeaderComponent({
   showBackButton,
 }: {
@@ -57,7 +58,7 @@ export function HeaderComponent({
             navigate("/");
           }}
         >
-          {/* <img src="/Sonik_Drop.png" className="w-[40px] h-[40px]" />  */}
+          
           <LogoIcon />
           <span className="hidden md:block">SonikDrop</span>
         </div>
@@ -94,21 +95,21 @@ export const SwitchChainComp = () => {
   const [showDropdown, setShowdropdown] = useState(false);
   const [selectedChain, setSelectedChain] = useState<IChains | null>(null);
   const { chainId } = useAppKitNetwork();
+  const { address } = useAppKitAccount();
+
   const { open } = useAppKit();
 
   const setChain = useCallback(
-    async (id: number) => {
+    async (id: number, calledByUser?: boolean) => {
       const chain = supportedNetworks.find((ele) => ele.id === id);
       if (!chain) {
         toast.error("Chain not supported!");
         return;
       }
-      if (!chainId) {
+      if (!address && calledByUser) {
+        toast.error("Please connect wallet first!");
         return;
       }
-      console.log("omo e reach here sha1");
-      console.log({id, chainId});
-
       // Only proceed if the current network ID does not match the requested one
       if (id !== Number(chainId?.toString())) {
         open({ view: "Networks" }); // Open modal to prompt network change
@@ -117,7 +118,7 @@ export const SwitchChainComp = () => {
         setSelectedChain(chain); // Set the chain if there's no mismatch
       }
     },
-    [chainId, open]
+    [address, chainId, open]
   );
 
   useEffect(() => {
@@ -158,7 +159,7 @@ export const SwitchChainComp = () => {
               <div
                 className="dropdown-item cursor-pointer flex gap-1 items-center"
                 key={ele.id}
-                onClick={() => setChain(ele.id)}
+                onClick={() => setChain(ele.id, true)}
               >
                 <img
                   src={ele.logo}
