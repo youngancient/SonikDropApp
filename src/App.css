@@ -40,3 +40,20 @@ button{
 img{
   object-fit: cover;
 }
+
+/* General focus style for all focusable elements */
+div:focus {
+  outline: 3px solid #2b75ff;  /* Use a contrasting color */
+  outline-offset: 2px;         /* Adds space between the outline and the element */
+}
+
+/* Specific style for buttons */
+button:focus {
+  outline: 3px solid #2b75ff;  /* Gold outline for buttons */
+}
+
+/* For links */
+a:focus {
+  outline: 2px solid #2b75ff;  /* Orange outline for links */
+}
+

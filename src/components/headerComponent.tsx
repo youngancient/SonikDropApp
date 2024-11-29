@@ -54,8 +54,15 @@ export function HeaderComponent({
       <div className="flex justify-between text-white h-[60px] md:h-[100px] items-center">
         <div
           className="flex gap-2 items-center cursor-pointer"
+          tabIndex={0}
+          role="button"
           onClick={() => {
             navigate("/");
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              navigate("/");
+            }
           }}
         >
           

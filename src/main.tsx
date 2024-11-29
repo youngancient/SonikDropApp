@@ -9,6 +9,7 @@ import { store } from './store/store.ts';
 import { Provider } from 'react-redux';
 import PoapPage from './pages/Poap.tsx';
 import ClaimPage from './pages/Claim.tsx';
+import { ToastContainer } from 'react-toastify';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
       <RouterProvider router={router} />
+      <ToastContainer />
     </Provider>
   </StrictMode>,
 )
