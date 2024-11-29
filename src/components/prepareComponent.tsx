@@ -48,7 +48,6 @@ import {
 import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
 import { ethSettings } from "../constants/chains";
 
-
 export function PrepareComponent() {
   //   const navigate = useNavigate();
 
@@ -368,7 +367,11 @@ export function PrepareComponent() {
                   </button>
                 </div>
                 <div className="py-4">
-                  <div className="border-[2px] border-[#FFFFFF17] rounded-md w-full block text-center">
+                  <div
+                    className="border-[2px] border-[#FFFFFF17] rounded-md w-full block text-center"
+                    tabIndex={0}
+                    role="button"
+                  >
                     <input
                       className="hidden"
                       type="file"

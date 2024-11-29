@@ -120,10 +120,17 @@ export const Hero = () => {
               >
                 <div>
                   <CgClose
-                    className="ml-auto cursor-pointer text-xl"
+                    className="ml-auto cursor-pointer text-xl focus:outline-none focus:ring-2 focus:ring-[#2b75ff]"
                     onClick={() => {
                       setShowModal(false);
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        setShowModal(false);
+                      }
+                    }}
+                    tabIndex={0}
+                    role="button"
                   />
                 </div>
                 <h3 className="text-white text-center text-2xl font-normal font-bold leading-6">
@@ -138,6 +145,13 @@ export const Hero = () => {
                       key={index}
                       $isSelected={option.isSelected}
                       onClick={() => handleSelectOption(index)}
+                      tabIndex={0}
+                      role="button"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          handleSelectOption(index)
+                        }
+                      }}
                     >
                       <p className="text-white text-lg font-normal font-bold leading-6">
                         {option.name}
@@ -149,10 +163,10 @@ export const Hero = () => {
                   <button
                     type="button"
                     className="rounded-3xl bg-[#B6C9F7] flex w-[15.625rem] p-[0.625rem] justify-center items-center gap-[0.625rem]"
+                    onClick={handleNavigation}
                   >
                     <span
                       className="text-[#172444] text-lg font-bold leading-6"
-                      onClick={handleNavigation}
                     >
                       lfggg🚀
                     </span>
