@@ -95,7 +95,7 @@ export const Hero = () => {
           variants={leftVariant}
           onClick={() => navigate("/claim")}
         >
-          <p>Fast Claim</p>
+          <p>Claim Drop</p>
           <FaAngleRight />
         </motion.button>
       </div>
