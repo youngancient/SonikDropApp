@@ -11,8 +11,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { CgClose } from "react-icons/cg";
 import ClickOutsideWrapper from "./outsideClick";
-// import { useAppKitProvider } from "@reown/appkit/react";
+// import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 // import { BrowserProvider, Eip1193Provider } from "ethers";
+// import { toast } from "react-toastify";
 
 interface IOption {
   name: string;
@@ -27,39 +28,30 @@ export const Hero = () => {
   const [showModal, setShowModal] = useState(false);
   const [options, setOptions] = useState(Options);
 
-  // const modalRef = useRef<HTMLDivElement>(null);
-  // const handleClickOutside = (
-  //   event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  // ) => {
-  //   if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-  //     setShowModal(false);
-  //   }
-  // };
   const handleSelectOption = (index: number) => {
-    const newOptions = options.map((option, i) => {
-      return { ...option, isSelected: i == index };
-    });
-    setOptions(newOptions);
-  };
-  const handleNavigation = () => {
-    console.log("clicked me");
-    const selectedOption = options.find((option) => option.isSelected);
-    if (selectedOption?.name === "Airdrop") {
+    if (index === 0) {
       navigate("/airdrop");
-    } else if (selectedOption?.name === "POAP") {
+    } else if (index === 1) {
       navigate("/poap");
     }
+    setOptions(options);
   };
+
 
   // test sign message
 
   // const {walletProvider} = useAppKitProvider("eip155");
+  // const {address} = useAppKitAccount();
 
   // const onSignMessage = async()=> {
+  //   if(!address){
+  //     toast.error('Please connect wallet');
+  //     return;
+  //   }
   //   const provider = new BrowserProvider(walletProvider as Eip1193Provider)
   //   const signer = await provider.getSigner()
   //   const signature = await signer?.signMessage('Hello, this is Sonikdrop')
-  //   console.log(signature)
+  //   console.log(signature, address, 'Hello, this is Sonikdrop')
   // }
 
   return (
@@ -111,7 +103,7 @@ export const Hero = () => {
           >
             <ClickOutsideWrapper onClickOutside={() => setShowModal(false)}>
               <motion.div
-                className="w-full md:w-[600px] border-[3px] border-[#FFFFFF17] p-4 rounded-[2rem] flex flex-col gap-8 bg-[#050C19]"
+                className="w-full md:w-[600px] border-[3px] border-[#FFFFFF17] p-4 pb-8 rounded-[2rem] flex flex-col gap-8 bg-[#050C19]"
                 variants={moodVariant}
                 initial="initial"
                 animate="final"
@@ -158,20 +150,7 @@ export const Hero = () => {
                       </p>
                     </OptionStyles>
                   ))}
-                </div>
-                <div className="btn flex justify-center items-center">
-                  <button
-                    type="button"
-                    className="rounded-3xl bg-[#B6C9F7] flex w-[15.625rem] p-[0.625rem] justify-center items-center gap-[0.625rem]"
-                    onClick={handleNavigation}
-                  >
-                    <span
-                      className="text-[#172444] text-lg font-bold leading-6"
-                    >
-                      lfggg🚀
-                    </span>
-                  </button>
-                </div>
+                </div>          
               </motion.div>
             </ClickOutsideWrapper>
           </motion.div>
