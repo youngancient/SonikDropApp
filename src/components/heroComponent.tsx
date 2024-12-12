@@ -57,7 +57,10 @@ export const Hero = () => {
     <HeroStyles>
       <div className="text">
         <motion.h1 initial="initial" whileInView="final" variants={textVariant}>
-          Sonic Drops <br /> Seamless Claims
+          Sonic Drops <br /> Seamless Claims{" "}
+          <div className="hidden md:block absolute bottom-0 -right-16">
+            <img src="/rocket.svg" alt="sonic" />
+          </div>
         </motion.h1>
         <motion.p initial="initial" whileInView="final2" variants={textVariant}>
           We streamline the entire airdrop experience by letting you
@@ -176,10 +179,12 @@ export const HeroStyles = styled.div`
       width: 80%;
       text-align: center;
     }
+     
   }
   h1 {
     text-align: center;
     font-size: 4rem;
+    position: relative;
     z-index: 5;
     font-style: normal;
     font-weight: 400;
