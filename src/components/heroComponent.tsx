@@ -37,7 +37,6 @@ export const Hero = () => {
     setOptions(options);
   };
 
-
   // test sign message
 
   // const {walletProvider} = useAppKitProvider("eip155");
@@ -61,9 +60,9 @@ export const Hero = () => {
           Sonic Drops <br /> Seamless Claims
         </motion.h1>
         <motion.p initial="initial" whileInView="final2" variants={textVariant}>
-          Effortless claiming ready in seconds, SonikDrop keeps it fast simple
-          and secure across chains, empowering creators and users with smooth
-          drops every time
+          We streamline the entire airdrop experience by letting you
+          effortlessly create, manage, and claim token airdrops and POAPs, all
+          in one place.
         </motion.p>
       </div>
       <div className="btns">
@@ -141,7 +140,7 @@ export const Hero = () => {
                       role="button"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
-                          handleSelectOption(index)
+                          handleSelectOption(index);
                         }
                       }}
                     >
@@ -150,7 +149,7 @@ export const Hero = () => {
                       </p>
                     </OptionStyles>
                   ))}
-                </div>          
+                </div>
               </motion.div>
             </ClickOutsideWrapper>
           </motion.div>
@@ -249,7 +248,7 @@ export const HeroStyles = styled.div`
     }
   }
   @media (max-width: 500px) {
-  padding: 0.25rem;
+    padding: 0.25rem;
     h1 {
       font-size: 3.25rem;
       font-style: normal;
@@ -320,12 +319,12 @@ const OptionStyles = styled.div<OptionProps>`
 `;
 
 export const BlurDiv = styled.div`
-    margin: auto;
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    background: transparent;
-`
+  margin: auto;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  background: transparent;
+`;

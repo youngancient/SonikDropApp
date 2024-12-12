@@ -135,10 +135,10 @@ export const Arbitrum = () => {
     </ChainDivStyle>
   );
 };
-export const Solana = () => {
+export const Kaia = () => {
   return (
     <ChainDivStyle bottom={200} right={50}>
-      <img src="/Solana.avif" alt="sol" />
+      <img src="/kaia.png" alt="sol" />
     </ChainDivStyle>
   );
 };
