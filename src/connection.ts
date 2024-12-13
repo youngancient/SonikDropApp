@@ -3,7 +3,6 @@ import { EthersAdapter } from "@reown/appkit-adapter-ethers";
 import {
   sepolia,
   baseSepolia,
-  binanceSmartChain,
 } from "@reown/appkit/networks";
 
 export const liskSepoliaNetwork: CaipNetwork = {
@@ -34,7 +33,6 @@ const networks = [
   liskSepoliaNetwork,
   sepolia,
   baseSepolia,
-  binanceSmartChain,
   kaiaTestNetwork,
 ];
 
