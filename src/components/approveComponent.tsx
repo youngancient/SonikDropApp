@@ -101,7 +101,6 @@ export function ApproveComponent() {
   const { clear } = useClearFormInput();
 
   const approve = () => {
-    // Your code goes here
     if (parseFloat(balance) < totalOutput) {
       toast.error("Insufficient balance to approve");
       return;
