@@ -35,7 +35,7 @@ export function ApproveComponent() {
   const [totalOutput, setTotalOutput] = useState(0);
 
   const calculateTotalOutput = useCallback(() => {
-    const total = csvToJSONData?.reduce((accumulator: number, current: any) => {
+    const total = csvToJSONData.reduce((accumulator: number, current: any) => {
       return accumulator + parseFloat(current.amount);
     }, 0);
     setTotalOutput(total);
@@ -153,7 +153,7 @@ export function ApproveComponent() {
             <div>
               <div className="mt-4">List of recipients</div>
               <div className="mb-8 h-[200px] overflow-y-auto p-2">
-                {csvToJSONData?.map((recepients: any, index: number) => {
+                {csvToJSONData.map((recepients: any, index: number) => {
                   return (
                     <div className="flex items-start border-b-solid border-b-[1px] border-b-[#D0D5DD] py-4 gap-2 min-w-max w-full">
                       <p>{index + 1}.</p>
