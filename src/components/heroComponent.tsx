@@ -105,7 +105,7 @@ export const Hero = () => {
           >
             <ClickOutsideWrapper onClickOutside={() => setShowModal(false)}>
               <motion.div
-                className="w-full md:w-[600px] border-[3px] border-[#FFFFFF17] p-4 pb-8 rounded-[2rem] flex flex-col gap-8 bg-[#050C19]"
+                className="w-full md:w-[600px] border-[3px] border-[#FFFFFF17] p-4 pb-16 rounded-[2rem] flex flex-col gap-8 bg-[#050C19]"
                 variants={moodVariant}
                 initial="initial"
                 animate="final"
