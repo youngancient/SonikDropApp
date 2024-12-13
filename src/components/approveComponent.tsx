@@ -101,7 +101,6 @@ export function ApproveComponent() {
   const { clear } = useClearFormInput();
 
   const approve = () => {
-    // Your code goes here
     if (parseFloat(balance) < totalOutput) {
       toast.error("Insufficient balance to approve");
       return;
@@ -132,14 +131,14 @@ export function ApproveComponent() {
                 <div className="text-sm text-white/[0.8]">Token Symbol</div>
               </div>
               <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
-                <div className="font-bold text-white text-[20px]">
-                  {totalOutput.toLocaleString()}
+                <div className="font-bold text-white break-words overflow-hidden text-[20px] ">
+                  {totalOutput?.toLocaleString()}
                 </div>
                 <div className="text-sm text-white/[0.8]">Total Output</div>
               </div>
               <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                 <div className="font-bold text-white text-[20px]">
-                  {csvToJSONData.length}
+                  {csvToJSONData?.length}
                 </div>
                 <div className="text-sm text-white/[0.8]">Recipients</div>
               </div>
@@ -155,11 +154,16 @@ export function ApproveComponent() {
               <div className="mb-8 h-[200px] overflow-y-auto p-2">
                 {csvToJSONData.map((recepients: any, index: number) => {
                   return (
-                    <div className="flex flex-col md:flex-row justify-between border-b-2 border-b-[#D0D5DD] py-4">
-                      <div>
-                        {index + 1}. {recepients.address}
+                    <div className="flex items-start border-b-solid border-b-[1px] border-b-[#D0D5DD] py-4 gap-2 min-w-max w-full">
+                      <p>{index + 1}.</p>
+                      <div className="flex flex-col gap-2">
+                        <p className="text-white truncate">
+                          Address: {recepients.address}
+                        </p>
+                        <p className="text-white">
+                          Amount: {recepients.amount}
+                        </p>
                       </div>
-                      <div>{recepients.amount}</div>
                     </div>
                   );
                 })}
