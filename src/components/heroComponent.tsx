@@ -37,7 +37,6 @@ export const Hero = () => {
     setOptions(options);
   };
 
-
   // test sign message
 
   // const {walletProvider} = useAppKitProvider("eip155");
@@ -58,12 +57,15 @@ export const Hero = () => {
     <HeroStyles>
       <div className="text">
         <motion.h1 initial="initial" whileInView="final" variants={textVariant}>
-          Sonic Drops <br /> Seamless Claims
+          Sonic Drops <br /> Seamless Claims{" "}
+          <div className="hidden md:block absolute bottom-0 -right-16">
+            <img src="/rocket.svg" alt="sonic" />
+          </div>
         </motion.h1>
         <motion.p initial="initial" whileInView="final2" variants={textVariant}>
-          Effortless claiming ready in seconds, SonikDrop keeps it fast simple
-          and secure across chains, empowering creators and users with smooth
-          drops every time
+          We streamline the entire airdrop experience by letting you
+          effortlessly create, manage, and claim token airdrops and POAPs, all
+          in one place.
         </motion.p>
       </div>
       <div className="btns">
@@ -103,7 +105,7 @@ export const Hero = () => {
           >
             <ClickOutsideWrapper onClickOutside={() => setShowModal(false)}>
               <motion.div
-                className="w-full md:w-[600px] border-[3px] border-[#FFFFFF17] p-4 pb-8 rounded-[2rem] flex flex-col gap-8 bg-[#050C19]"
+                className="w-full md:w-[600px] border-[3px] border-[#FFFFFF17] p-4 pb-16 rounded-[2rem] flex flex-col gap-8 bg-[#050C19]"
                 variants={moodVariant}
                 initial="initial"
                 animate="final"
@@ -141,7 +143,7 @@ export const Hero = () => {
                       role="button"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
-                          handleSelectOption(index)
+                          handleSelectOption(index);
                         }
                       }}
                     >
@@ -150,7 +152,7 @@ export const Hero = () => {
                       </p>
                     </OptionStyles>
                   ))}
-                </div>          
+                </div>
               </motion.div>
             </ClickOutsideWrapper>
           </motion.div>
@@ -177,10 +179,12 @@ export const HeroStyles = styled.div`
       width: 80%;
       text-align: center;
     }
+     
   }
   h1 {
     text-align: center;
     font-size: 4rem;
+    position: relative;
     z-index: 5;
     font-style: normal;
     font-weight: 400;
@@ -249,7 +253,7 @@ export const HeroStyles = styled.div`
     }
   }
   @media (max-width: 500px) {
-  padding: 0.25rem;
+    padding: 0.25rem;
     h1 {
       font-size: 3.25rem;
       font-style: normal;
@@ -320,12 +324,12 @@ const OptionStyles = styled.div<OptionProps>`
 `;
 
 export const BlurDiv = styled.div`
-    margin: auto;
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    background: transparent;
-`
+  margin: auto;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  background: transparent;
+`;

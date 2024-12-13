@@ -16,11 +16,27 @@ export const liskSepoliaNetwork: CaipNetwork = {
   rpcUrl: import.meta.env.VITE_LISK_SEPOLIA_RPC_URL,
 };
 
+export const kaiaTestNetwork: CaipNetwork = {
+  id: "eip155:1001",
+  chainId: 1001,
+  chainNamespace: "eip155",
+  name: "Kaia Testnet",
+  currency: "KAIA",
+  explorerUrl: import.meta.env.VITE_KAIA_TESTNET_EXPLORER_URL,
+  rpcUrl: import.meta.env.VITE_KAIA_TESTNET_RPC_URL,
+};
+
 // 1. Get projectId
 const projectId = import.meta.env.VITE_APPKIT_PROJECT_ID;
 
 // 2. Set the networks
-const networks = [liskSepoliaNetwork, sepolia, baseSepolia, binanceSmartChain];
+const networks = [
+  liskSepoliaNetwork,
+  sepolia,
+  baseSepolia,
+  binanceSmartChain,
+  kaiaTestNetwork,
+];
 
 // 3. Create a metadata object - optional
 const metadata = {

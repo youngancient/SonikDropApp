@@ -62,23 +62,29 @@ export const supportedNetworks: IChains[] = [
     logo: "Base.png",
   },
   {
-    name: "BNB",
-    id: 56,
-    logo: "BNB.avif",
+    name: "Kaia Testnet",
+    id: 1001,
+    logo: "kaia.png",
   },
-  {
-    name: "Optimism",
-    id: 10,
-    logo: "Optimism.avif",
-  },
-  {
-    name: "Arbitrum",
-    id: 42161,
-    logo: "Arbitrum.svg",
-  },
-  {
-    name: "Polygon",
-    id: 137,
-    logo: "Polygon.avif",
-  },
+  // {
+  //   name: "BNB",
+  //   id: 56,
+  //   logo: "BNB.avif",
+  // },
+  // {
+  //   name: "Optimism",
+  //   id: 10,
+  //   logo: "Optimism.avif",
+  // },
+  // {
+  //   name: "Arbitrum",
+  //   id: 42161,
+  //   logo: "Arbitrum.svg",
+  // },
+  // {
+  //   name: "Polygon",
+  //   id: 137,
+  //   logo: "Polygon.avif",
+  // },
+  
 ];

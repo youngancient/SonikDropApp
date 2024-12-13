@@ -67,7 +67,7 @@ export function HeaderComponent({
         >
           
           <LogoIcon />
-          <span className="hidden md:block">SonikDrop</span>
+          <span className="hidden md:block"><p className="text-base font-bold">SonikDrop</p></span>
         </div>
         <div className="w3m flex gap-2">
           <SwitchChainComp />

@@ -1,13 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 :root {
-  font-family: "Roboto Mono", monospace;
-  line-height: 1.5;
-  font-weight: 400;
-
+  font-family: "DM Sans", sans-serif;
+  line-height: 1.5rem;
+  font-style: normal;
+  font-optical-sizing: auto;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  /* background-color: #242424; */
-  /* background-color: #000; */
 
   background: linear-gradient(180deg, #0b135b 40.24%, rgba(1, 3, 20, 0) 100%),
     radial-gradient(
