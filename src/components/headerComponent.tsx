@@ -21,7 +21,6 @@ import { IChains, supportedNetworks } from "../constants/chains";
 import { toast } from "react-toastify";
 // import { appkit } from "../connection";
 
-
 export function HeaderComponent({
   showBackButton,
 }: {
@@ -65,9 +64,10 @@ export function HeaderComponent({
             }
           }}
         >
-          
           <LogoIcon />
-          <span className="hidden md:block"><p className="text-base font-bold">SonikDrop</p></span>
+          <span className="hidden md:block">
+            <p className="text-base font-bold">SonikDrop</p>
+          </span>
         </div>
         <div className="w3m flex gap-2">
           <SwitchChainComp />
@@ -161,7 +161,7 @@ export const SwitchChainComp = () => {
           <IoChevronDown size={18} />
         </button>
         {showDropdown && (
-          <div className="dropdown absolute">
+          <div className="dropdown absolute flex flex-col">
             {supportedNetworks.map((ele: IChains) => (
               <div
                 className="dropdown-item cursor-pointer flex gap-1 items-center"
@@ -196,7 +196,7 @@ const SwitchChainCompStyles = styled.div`
     border-radius: 0.5rem;
     padding: 0.25rem 0.3125rem;
     z-index: 15;
-    min-width: 100%;
+    width: max-content;
     width: fit-content;
     margin-top: 0.5rem;
   }
@@ -207,6 +207,7 @@ const SwitchChainCompStyles = styled.div`
     padding: 0.5rem 0.75rem;
     transition: background-color 0.2s;
     display: inline-flex;
+    width: max-content;
     min-width: 100%;
   }
 
