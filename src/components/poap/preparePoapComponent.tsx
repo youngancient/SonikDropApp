@@ -134,10 +134,10 @@ export function PreparePoapComponent() {
         "any.required": "Event name is required",
         "string.base": "Event name must be a string"
       }),
-      eventDescription: Joi.string().min(10).required().messages({
+      eventDescription: Joi.string().min(20).required().messages({
         "any.required": "Event details is required",
         "string.base": "Event details must be a string",
-        "string.min": "Event details have to be more than 10 characters"
+        "string.min": "Event details have to be more than 20 characters"
       }),
       eventType: Joi.string().valid("conference", "meetup", "hackathon").required().messages({
         "any.required": "Event type is required",
@@ -168,7 +168,6 @@ export function PreparePoapComponent() {
     console.log("eventName", eventName)
     console.log("eventDescription", eventDescription)
     console.log("eventType", eventType)
-    console.log("selectedFile", selectedFile)
     console.log("Picture", upload);
 
     sessionStorage.setItem("poapEventDetails", JSON.stringify({eventName, eventDescription, eventType, selectedFile} as IPoapEvent));
