@@ -1,5 +1,5 @@
 import AirdropLayout from "../components/layout/airdropLayout";
-import { SettingsComponent } from "../components/settingsComponent";
+import { SettingsComponent } from "../components/airdrop/settingsComponent";
 
 export default function SettingsPage () {
     return (

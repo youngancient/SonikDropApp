@@ -1,23 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   selectCsvToJSONData,
   setAirdropEnd,
   setAirdropStart,
   setCsvToJSONData,
   setOnlyNFTOwnersCanClaim,
-} from "../store/slices/approveSlice";
+} from "../../store/slices/approveSlice";
 
-import { moodVariant } from "../animations/animation";
+import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useClearFormInput } from "../hooks/useClearForm";
-import { selectTokenDetail } from "../store/slices/prepareSlice";
+import { useClearFormInput } from "../../hooks/useClearForm";
+import { selectTokenDetail } from "../../store/slices/prepareSlice";
 import { Alchemy } from "alchemy-sdk";
-import { ethSettings } from "../constants/chains";
+import { ethSettings } from "../../constants/chains";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
-import { ButtonLoader } from "./icons";
+import { ButtonLoader } from "../icons";
 
 export function ApproveComponent() {
   const alchemy = new Alchemy(ethSettings);
