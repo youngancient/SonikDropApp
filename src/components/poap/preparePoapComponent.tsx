@@ -1,30 +1,31 @@
-import { ethers, Numeric } from "ethers";
-import Papa from "papaparse";
-import { useCallback, useEffect, useState } from "react";
+// import { ethers, Numeric } from "ethers";
+// import Papa from "papaparse";
+import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
-import { IAirdropList, ICSV, IPoapEvent } from "../../interfaces/CSVInterface";
+import { IPoapEvent } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
-import { CgClose } from "react-icons/cg";
-import { BiTrash } from "react-icons/bi";
-import { nanoid } from "nanoid";
-import { Parser } from "@json2csv/plainjs";
-import { saveAs } from "file-saver";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+// import { CgClose } from "react-icons/cg";
+// import { BiTrash } from "react-icons/bi";
+// import { nanoid } from "nanoid";
+// import { Parser } from "@json2csv/plainjs";
+// import { saveAs } from "file-saver";
+import { useAppDispatch } from "../../store/hooks";
 import { setStep } from "../../store/slices/stepSlice";
-import { moodVariant, parentVariant } from "../../animations/animation";
+import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
-import ClickOutsideWrapper from "../outsideClick";
+// import ClickOutsideWrapper from "../outsideClick";
 import {
   useAppKit,
   useAppKitAccount,
   useAppKitNetwork,
 } from "@reown/appkit/react";
-import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
-import { ethSettings } from "../../constants/chains";
+// import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
+// import { ethSettings } from "../../constants/chains";
 import { pinata } from "../../utils/pinataConfig";
 import { AiOutlinePicture } from "react-icons/ai";
 import { useDropzone } from "react-dropzone";
 import Joi from "joi";
+// import { setTokenDetail } from "../../store/slices/prepareSlice";
 
 export function PreparePoapComponent() {
 
@@ -33,22 +34,6 @@ export function PreparePoapComponent() {
   const [eventType, setEventType] = useState("");
   const [selectedFile, setSelectedFile] = useState<File>();
 
-  // const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setSelectedFile(event.target?.files?.[0]);
-  // };
-
-  const handleSubmission = async () => {
-    try {
-
-      
-
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  //   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
@@ -74,8 +59,8 @@ export function PreparePoapComponent() {
   const { open } = useAppKit();
   const { caipNetwork } = useAppKitNetwork();
 
-  const alchemy = new Alchemy(ethSettings);
-  const [isLoadingData, setIsLoadingData] = useState(false);
+  // const alchemy = new Alchemy(ethSettings);
+  // const [_isLoadingData, setIsLoadingData] = useState(false);
   // const getTokenMetadata = async (
   //   address: string
   // ): Promise<TokenMetadataResponse | null> => {
