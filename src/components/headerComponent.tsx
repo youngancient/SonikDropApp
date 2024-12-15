@@ -49,7 +49,7 @@ export function HeaderComponent({
   };
 
   return (
-    <div className="px-2 md:px-[200px]">
+    <div className="px-2 px-[20px] md:px-[100px] lg:px-[200px]">
       <div className="flex justify-between text-white h-[60px] md:h-[100px] items-center">
         <div
           className="flex gap-2 items-center cursor-pointer"

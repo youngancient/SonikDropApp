@@ -1,7 +1,7 @@
-import { ApproveComponent } from "../components/approveComponent";
+import { ApproveComponent } from "../components/airdrop/approveComponent";
 import AirdropLayout from "../components/layout/airdropLayout";
-import { PrepareComponent } from "../components/prepareComponent";
-import { SettingsComponent } from "../components/settingsComponent";
+import { PrepareComponent } from "../components/airdrop/prepareComponent";
+import { SettingsComponent } from "../components/airdrop/settingsComponent";
 import { useAppSelector } from "../store/hooks";
 import { selectStep } from "../store/slices/stepSlice";
 

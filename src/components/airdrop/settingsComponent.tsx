@@ -2,8 +2,8 @@ import { useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setStep } from "../store/slices/stepSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setStep } from "../../store/slices/stepSlice";
 import {
   selectAirdropEnd,
   selectAirdropEndMin,
@@ -19,8 +19,8 @@ import {
   setAirdropStart,
   setNftAddressError,
   setOnlyNFTOwnersCanClaim,
-} from "../store/slices/settingsSlice";
-import { moodVariant } from "../animations/animation";
+} from "../../store/slices/settingsSlice";
+import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function SettingsComponent() {

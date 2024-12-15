@@ -1,5 +1,5 @@
 import AirdropLayout from "../components/layout/airdropLayout";
-import { PrepareComponent } from "../components/prepareComponent";
+import { PrepareComponent } from "../components/airdrop/prepareComponent";
 
 export default function PreparePage () {
     return (

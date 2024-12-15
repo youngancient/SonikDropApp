@@ -1,6 +1,6 @@
 import { FooterComponent } from "../footerComponent";
 import { HeaderComponent } from "../headerComponent";
-import { StepComponent } from "../stepComponent";
+import { StepComponent } from "../airdrop/stepComponent";
 
 export default function AirdropLayout(props: any) {
 
