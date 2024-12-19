@@ -75,7 +75,7 @@ const networks: [CaipNetwork, ...CaipNetwork[]] = [
 // 3. Create a metadata object - optional
 const metadata = {
   name: "SonikDrop",
-  description: "Swift & Cheap Airdrop Service",
+  description: "Swift & Cheap Airdrop as a service tool",
   url: "https://mywebsite.com",
   icons: ["https://avatars.mywebsite.com/"],
 };
