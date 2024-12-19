@@ -42,8 +42,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ClickOutsideWrapper from "./outsideClick";
 import {
   useAppKit,
-  useAppKitAccount,
-  useAppKitNetwork,
+  useAppKitAccount
 } from "@reown/appkit/react";
 import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
 import { ethSettings } from "../constants/chains";
@@ -194,7 +193,7 @@ export function PrepareComponent() {
 
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
-  const { caipNetwork } = useAppKitNetwork();
+  
 
   const alchemy = new Alchemy(ethSettings);
   const [isLoadingData, setIsLoadingData] = useState(false);
@@ -216,7 +215,7 @@ export function PrepareComponent() {
     }
   };
   const nextPage = async () => {
-    console.log(caipNetwork?.name, caipNetwork?.imageUrl, caipNetwork?.chainId);
+  
     const isTokenAddressValid = ethers.isAddress(tokenAddress);
     if (!isConnected) {
       open();
