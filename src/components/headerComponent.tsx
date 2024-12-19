@@ -110,7 +110,6 @@ export const SwitchChainComp = () => {
     async (id: number, calledByUser?: boolean) => {
       const chain = supportedNetworks.find((ele) => ele.id === id);
       if (!chain) {
-        toast.error("Chain not supported!");
         return;
       }
       if (!address && calledByUser) {
