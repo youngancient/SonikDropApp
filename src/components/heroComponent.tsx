@@ -32,7 +32,7 @@ export const Hero = () => {
 
   return (
     <HeroStyles>
-      <div className="text">
+      <div className="text mt-12 md:mt-10">
         <motion.h1 initial="initial" whileInView="final" variants={textVariant}>
           Sonic Drops <br /> Seamless Claims{" "}
           <div className="hidden md:block absolute bottom-0 -right-16">
