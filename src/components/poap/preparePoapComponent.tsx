@@ -32,7 +32,7 @@ export function PreparePoapComponent() {
   const [eventName, setEventName] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [eventType, setEventType] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File>();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 
   const dispatch = useAppDispatch();
@@ -140,6 +140,11 @@ export function PreparePoapComponent() {
 
     if(error) {
       toast.error(error.message);
+      return;
+    }
+
+    if(!selectedFile) {
+      toast.error("Kindly select a file to continue");
       return;
     }
 
