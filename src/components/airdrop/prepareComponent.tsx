@@ -1,16 +1,16 @@
-import { ethers, Numeric } from "ethers";
+import { ethers, Numeric, } from "ethers";
 import Papa from "papaparse";
 import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
-import { IAirdropList, ICSV } from "../interfaces/CSVInterface";
+import { IAirdropList, ICSV } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
 import { CgClose } from "react-icons/cg";
 import { BiTrash } from "react-icons/bi";
 import { nanoid } from "nanoid";
 import { Parser } from "@json2csv/plainjs";
 import { saveAs } from "file-saver";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setStep } from "../store/slices/stepSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setStep } from "../../store/slices/stepSlice";
 import {
   selectAirdropMakerList,
   selectCsvData,
@@ -36,16 +36,16 @@ import {
   setTokenAddressError,
   setTokenDetail,
   selectTokenDetail,
-} from "../store/slices/prepareSlice";
-import { moodVariant, parentVariant } from "../animations/animation";
+} from "../../store/slices/prepareSlice";
+import { moodVariant, parentVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
-import ClickOutsideWrapper from "./outsideClick";
+import ClickOutsideWrapper from "../outsideClick";
 import {
   useAppKit,
   useAppKitAccount
 } from "@reown/appkit/react";
 import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
-import { ethSettings } from "../constants/chains";
+import { ethSettings } from "../../constants/chains";
 
 export function PrepareComponent() {
   //   const navigate = useNavigate();
@@ -163,13 +163,23 @@ export function PrepareComponent() {
 
           // console.log(invalidAddresses);
 
+
           if (invalidAddresses.length > 0) {
-            toast.error(invalidAddresses.join(", ") + " are invalid addresses");
+            toast.error(invalidAddresses.join(", ") + invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses");
             return;
           }
 
           if (tokenDetail?.decimals == null) {
             toast.error("Token metadata is missing");
+            return;
+          }
+
+          const invalidAmounts = results.data.filter(
+            (result: ICSV) => !(/^(\d+(\.\d+)?|\.\d+)$/.test(result.address))
+          );
+
+          if(invalidAmounts.length > 0) {
+            toast.error(invalidAmounts.join(", ") + invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts");
             return;
           }
 
