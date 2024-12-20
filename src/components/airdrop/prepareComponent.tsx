@@ -1,4 +1,4 @@
-import { ethers, Numeric } from "ethers";
+import { ethers, Numeric, } from "ethers";
 import Papa from "papaparse";
 import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
@@ -42,8 +42,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ClickOutsideWrapper from "../outsideClick";
 import {
   useAppKit,
-  useAppKitAccount,
-  useAppKitNetwork,
+  useAppKitAccount
 } from "@reown/appkit/react";
 import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
 import { ethSettings } from "../../constants/chains";
@@ -164,13 +163,23 @@ export function PrepareComponent() {
 
           // console.log(invalidAddresses);
 
+
           if (invalidAddresses.length > 0) {
-            toast.error(invalidAddresses.join(", ") + " are invalid addresses");
+            toast.error(invalidAddresses.join(", ") + invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses");
             return;
           }
 
           if (tokenDetail?.decimals == null) {
             toast.error("Token metadata is missing");
+            return;
+          }
+
+          const invalidAmounts = results.data.filter(
+            (result: ICSV) => !(/^(\d+(\.\d+)?|\.\d+)$/.test(result.address))
+          );
+
+          if(invalidAmounts.length > 0) {
+            toast.error(invalidAmounts.join(", ") + invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts");
             return;
           }
 
@@ -194,7 +203,7 @@ export function PrepareComponent() {
 
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
-  const { caipNetwork } = useAppKitNetwork();
+  
 
   const alchemy = new Alchemy(ethSettings);
   const [isLoadingData, setIsLoadingData] = useState(false);
@@ -216,7 +225,7 @@ export function PrepareComponent() {
     }
   };
   const nextPage = async () => {
-    console.log(caipNetwork?.name, caipNetwork?.imageUrl, caipNetwork?.chainId);
+  
     const isTokenAddressValid = ethers.isAddress(tokenAddress);
     if (!isConnected) {
       open();

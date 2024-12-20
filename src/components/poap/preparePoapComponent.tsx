@@ -17,7 +17,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   useAppKit,
   useAppKitAccount,
-  useAppKitNetwork,
+  // useAppKitNetwork,
 } from "@reown/appkit/react";
 // import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
 // import { ethSettings } from "../../constants/chains";
@@ -57,7 +57,7 @@ export function PreparePoapComponent() {
 
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
-  const { caipNetwork } = useAppKitNetwork();
+  // const { caipNetwork } = useAppKitNetwork();
 
   // const alchemy = new Alchemy(ethSettings);
   // const [_isLoadingData, setIsLoadingData] = useState(false);
@@ -107,7 +107,7 @@ export function PreparePoapComponent() {
   }, []);
 
   const nextPage = async () => {
-    console.log(caipNetwork?.name, caipNetwork?.imageUrl, caipNetwork?.chainId);
+    // console.log(caipNetwork?.name, caipNetwork?.imageUrl, caipNetwork?.chainId);
 
     if (!isConnected) {
       open();

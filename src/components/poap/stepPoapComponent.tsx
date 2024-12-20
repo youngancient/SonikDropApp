@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
-import { selectStep } from "../../store/slices/stepSlice";
+import { selectStep } from "../../store/slices/poapStepSlice";
 
 
 export function StepComponent() {

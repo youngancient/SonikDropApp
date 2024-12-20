@@ -3,6 +3,7 @@ import stepSlice from './slices/stepSlice'
 import prepareSlice from './slices/prepareSlice'
 import settingsSlice from './slices/settingsSlice'
 import approveSlice from './slices/approveSlice'
+import poapStepSlice from './slices/poapStepSlice'
 // ...
 
 export const store = configureStore({
@@ -10,7 +11,8 @@ export const store = configureStore({
     step: stepSlice,
     prepare: prepareSlice,
     settings: settingsSlice,
-    approve: approveSlice
+    approve: approveSlice,
+    poap: poapStepSlice
   },
 })
 
