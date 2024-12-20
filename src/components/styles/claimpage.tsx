@@ -114,11 +114,13 @@ export const ClaimPageStyle = styled.div`
 
 export const DropCompStyle = styled.div`
   border-radius: 0.5rem;
-  border: 2px solid rgba(152, 162, 179, 0.3);
+  border: 1px solid rgba(152, 162, 179, 0.3);
   display: flex;
   padding: 1.25rem 1rem 0.875rem 1rem;
   flex-direction: column;
   align-items: center;
+  // height: fit-content;
+  justify-content: space-between;
   gap: 1.5rem;
   .top {
     display: flex;
@@ -145,6 +147,10 @@ export const DropCompStyle = styled.div`
       font-weight: 500;
       line-height: 2rem; /* 228.571% */
       letter-spacing: -0.02rem;
+      &:hover {
+        background: #01a7ff;
+        box-shadow: 0px 4px 6.8px 0px #2b75ff inset;
+      }
     }
   }
   .one .deet {
@@ -193,9 +199,17 @@ export const DropCompStyle = styled.div`
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-    .three .inner{
-    background: var(--coughs, linear-gradient(164deg, #2C67FF -21.47%, #27C4FD 88.84%));
-    }
+  .three .inner {
+    background: var(
+      --coughs,
+      linear-gradient(164deg, #2c67ff -21.47%, #27c4fd 88.84%)
+    );
+  }
+
+  &:hover {
+    box-shadow: 0px 4px 10px 0px rgba(204, 215, 246, 0.2);
+    border: 1px solid #2c67ff;
+  }
 `;
 
 export const DropListStyle = styled.div`
@@ -219,7 +233,7 @@ export const DropListStyle = styled.div`
   }
 
   @media (min-width: 998px) {
-    grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
     column-gap: 1.69rem;
     row-gap: 2rem;
   }

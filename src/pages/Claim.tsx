@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { CircleCancel, MagnifyingGlass } from "../components/icons";
 import { DropComp, IDropComp } from "../components/claimComponent";
 
+import { v4 as uuidv4 } from 'uuid';
+
 interface TabSwitch {
   name: string;
   isSelected: boolean;
@@ -46,6 +48,46 @@ const Drops: IDropComp[] = [
     totalRewardPool: 15000000,
     totalRewardClaimed: 1000000,
     totalParticipants: 64000,
+  },
+  {
+    name: "ChillGuy",
+    creator: "0x53182725595443ba2bB9EbEfE716EE72761a3CD3",
+    date: "24.11.24",
+    totalRewardPool: 1500000000,
+    totalRewardClaimed: 100000000,
+    totalParticipants: 64000,
+  },
+  {
+    name: "Dogs",
+    creator: "0x0f09D1Fb501041E32170b1B759f1b2ef6349C490",
+    date: "24.11.24",
+    totalRewardPool: 1500000,
+    totalRewardClaimed: 900000,
+    totalParticipants: 640000,
+  },
+  {
+    name: "ChillGirl",
+    creator: "0x0f09D1Fb501041E32170b1B759f1b2ef6349C490",
+    date: "28.11.24",
+    totalRewardPool: 18000000,
+    totalRewardClaimed: 1900000,
+    totalParticipants: 164000,
+  },
+  {
+    name: "Sonik",
+    creator: "0x0f09D1Fb501041E32170b1B759f1b2ef6349C490",
+    date: "28.11.24",
+    totalRewardPool: 8000000,
+    totalRewardClaimed: 1900000,
+    totalParticipants: 14000,
+  },
+  {
+    name: "Santa",
+    creator: "0x0f09D1Fb501041E32170b1B759f1b2ef6349C490",
+    date: "28.11.24",
+    totalRewardPool: 5000000000,
+    totalRewardClaimed: 1500000,
+    totalParticipants: 16000,
   },
 ];
 
@@ -117,7 +159,7 @@ const ClaimPage = () => {
         <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem]">
           {Drops.map((drop) => (
             <DropComp
-              key={`${drop.name}-${drop.creator}/${drop.totalRewardPool}`}
+              key={uuidv4()}
               {...drop}
             />
           ))}
