@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import styled from "styled-components";
 
 export const ClaimPageStyle = styled.div`
@@ -112,7 +113,7 @@ export const ClaimPageStyle = styled.div`
   }
 `;
 
-export const DropCompStyle = styled.div`
+export const DropCompStyle = styled(motion.div)`
   border-radius: 0.5rem;
   border: 1px solid rgba(152, 162, 179, 0.3);
   display: flex;
@@ -128,7 +129,15 @@ export const DropCompStyle = styled.div`
     gap: 0.75rem;
     align-self: stretch;
   }
-
+  .poap-img {
+    border-radius: 0.625rem;
+    height: 5rem;
+    width: 100%;
+    img {
+      border-radius: 0.625rem;
+      width: 100%;
+    }
+  }
   .btn {
     width: 100%;
     button {
@@ -153,6 +162,7 @@ export const DropCompStyle = styled.div`
       }
     }
   }
+
   .one .deet {
     h4 {
       color: var(--Grey-50, #f9fafb);
@@ -237,4 +247,36 @@ export const DropListStyle = styled.div`
     column-gap: 1.69rem;
     row-gap: 2rem;
   }
+`;
+
+export const AbsoluteContStyle = styled.div`
+  position: fixed;
+  transition: 0.4s;
+  left: 50%;
+  top: 50%;
+  height: 100vh;
+  width: 100vw;
+  margin-left: -50vw;
+  margin-top: -50vh;
+  z-index: 20;
+  background: rgba(24, 29, 80, 0.44);
+  backdrop-filter: blur(4px);
+`;
+
+export const FlexAbsoluteModalStyles = styled(AbsoluteContStyle)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ClaimModalStyles = styled.div`
+  border-radius: 2rem;
+  background: #050c19;
+  button {
+    width: 150px;
+    height: 40px;
+    border: 1px solid #2c67ff;
+  }
+  height: 30vh;
+  width: 30vw;
 `;
