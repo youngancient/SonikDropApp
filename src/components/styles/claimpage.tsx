@@ -277,6 +277,11 @@ export const ClaimModalStyles = styled.div`
     height: 40px;
     border: 1px solid #2c67ff;
   }
-  height: 30vh;
-  width: 30vw;
+  width: 60%;
+  @media (max-width: 500px) {
+    width: 91%;
+  }
+  @media (min-width: 998px) {
+    width: 35%;
+  }
 `;
