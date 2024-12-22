@@ -34,7 +34,7 @@ const TokenDrops: IDropComp[] = [
     creator: "0x0f09D1Fb501041E32170b1B759f1b2ef6349C490",
     date: "24.10.24",
     totalRewardPool: 100000,
-    totalRewardClaimed: 50000,
+    totalRewardClaimed: 0,
     totalParticipants: 6000,
   },
   {

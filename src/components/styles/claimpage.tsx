@@ -198,6 +198,32 @@ export const DropCompStyle = styled(motion.div)`
       line-height: 1.5rem; /* 240% */
     }
   }
+  .tiny {
+    font-variant-numeric: lining-nums proportional-nums;
+    font-size: 0.625rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.5rem; /* 342.857% */
+    background: var(
+      --coughs,
+      linear-gradient(164deg, #2c67ff -21.47%, #27c4fd 88.84%)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .inner .mini,
+  .text-completed {
+    font-variant-numeric: lining-nums proportional-nums;
+    font-size: 0.625rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.5rem; /* 342.857% */
+    color: #000;
+  }
+  .text-completed {
+    color: #36bc7b;
+  }
   .blu p {
     font-variant-numeric: lining-nums proportional-nums;
     font-size: 1rem;
@@ -277,6 +303,11 @@ export const ClaimModalStyles = styled.div`
     height: 40px;
     border: 1px solid #2c67ff;
   }
-  height: 30vh;
-  width: 30vw;
+  width: 60%;
+  @media (max-width: 500px) {
+    width: 91%;
+  }
+  @media (min-width: 998px) {
+    width: 35%;
+  }
 `;
