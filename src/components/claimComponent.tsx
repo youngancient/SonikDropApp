@@ -2,7 +2,7 @@ import { useState } from "react";
 import { claimCardVariants } from "../animations/animation";
 import { formatAddress } from "../utils/helpers";
 import ThreeDHoverWrapper from "./3dhover";
-import { CalendarIcon } from "./icons";
+import { CalendarIcon, CheckedIcon } from "./icons";
 import {
   ClaimModalStyles,
   DropCompStyle,
@@ -28,6 +28,13 @@ export const DropComp: React.FC<IDropComp> = ({
   totalRewardPool,
 }) => {
   const [showModal, setShowModal] = useState(false);
+  const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
+  const [percentClaimed] = useState(
+    percentageRaw % 1 === 0
+      ? percentageRaw.toFixed(0)
+      : percentageRaw.toFixed(1)
+  );
+
   return (
     <>
       <ThreeDHoverWrapper>
@@ -72,13 +79,35 @@ export const DropComp: React.FC<IDropComp> = ({
             </div>
 
             <div className="three">
-              <div className="rounded-md bg-[#283245] h-[0.75rem]">
-                <div
-                  className="rounded-md inner h-[0.75rem]"
-                  style={{
-                    width: `${(totalRewardClaimed * 100) / totalRewardPool}%`,
-                  }}
-                ></div>
+              <div
+                className={`rounded-md h-[0.75rem] flex items-center gap-[0.25rem] ${
+                  parseInt(percentClaimed) !== 100
+                    ? "bg-[#283245]"
+                    : "bg-[rgba(157,211,175,0.28)] p-[0.25rem]"
+                }`}
+              >
+                {parseInt(percentClaimed) !== 100 && (
+                  <div
+                    className="rounded-md inner h-[0.75rem] flex items-center justify-end pr-[0.75rem]"
+                    style={{
+                      width: `${percentClaimed}%`,
+                    }}
+                  >
+                    {parseInt(percentClaimed) > 80 &&
+                      parseInt(percentClaimed) !== 100 && (
+                        <p className="mini">{percentClaimed}%</p>
+                      )}
+                  </div>
+                )}
+                {parseInt(percentClaimed) < 80 && (
+                  <p className="tiny">{percentClaimed}%</p>
+                )}
+                {parseInt(percentClaimed) === 100 && (
+                  <>
+                    <CheckedIcon />
+                    <p className="text-completed">Completed</p>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -113,6 +142,12 @@ export const POAPDropComp: React.FC<IDropComp> = ({
   totalRewardPool,
 }) => {
   const [showModal, setShowModal] = useState(false);
+  const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
+  const [percentClaimed] = useState(
+    percentageRaw % 1 === 0
+      ? percentageRaw.toFixed(0)
+      : percentageRaw.toFixed(1)
+  );
   return (
     <>
       <ThreeDHoverWrapper>
@@ -160,13 +195,35 @@ export const POAPDropComp: React.FC<IDropComp> = ({
             </div>
 
             <div className="three">
-              <div className="rounded-md bg-[#283245] h-[0.75rem]">
-                <div
-                  className="rounded-md inner h-[0.75rem]"
-                  style={{
-                    width: `${(totalRewardClaimed * 100) / totalRewardPool}%`,
-                  }}
-                ></div>
+              <div
+                className={`rounded-md h-[0.75rem] flex items-center gap-[0.25rem] ${
+                  parseInt(percentClaimed) !== 100
+                    ? "bg-[#283245]"
+                    : "bg-[rgba(157,211,175,0.28)] p-[0.25rem]"
+                }`}
+              >
+                {parseInt(percentClaimed) !== 100 && (
+                  <div
+                    className="rounded-md inner h-[0.75rem] flex items-center justify-end pr-[0.75rem]"
+                    style={{
+                      width: `${percentClaimed}%`,
+                    }}
+                  >
+                    {parseInt(percentClaimed) > 80 &&
+                      parseInt(percentClaimed) !== 100 && (
+                        <p className="mini">{percentClaimed}%</p>
+                      )}
+                  </div>
+                )}
+                {parseInt(percentClaimed) < 80 && (
+                  <p className="tiny">{percentClaimed}%</p>
+                )}
+                {parseInt(percentClaimed) === 100 && (
+                  <>
+                    <CheckedIcon />
+                    <p className="text-completed">Completed</p>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -193,9 +250,9 @@ export const POAPDropComp: React.FC<IDropComp> = ({
 };
 
 interface IClaimModal extends IDropComp {
-  closeModal : () => void;
+  closeModal: () => void;
 }
-export const ClaimModal: React.FC<IClaimModal> = ({closeModal}) => {
+export const ClaimModal: React.FC<IClaimModal> = ({ closeModal }) => {
   return (
     <FlexAbsoluteModalStyles>
       <ClaimModalStyles>
