@@ -7,7 +7,7 @@ import { CircleCancel, MagnifyingGlass } from "../components/icons";
 import { DropComp, POAPDropComp } from "../components/claimComponent";
 
 import { v4 as uuidv4 } from "uuid";
-import { POAPDrops, TokenDrops } from "../constants/data";
+import { POAPDrops, TokenDrops } from "../constants/data.ts";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
 

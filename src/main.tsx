@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import PoapPage from './pages/Poap.tsx';
 import ClaimPage from './pages/Claim.tsx';
 import { ToastContainer } from 'react-toastify';
+import Dashboard from './pages/Dashboard.tsx';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: "/claim",
     element: <ClaimPage />
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />
   },
   {
     path: "/",

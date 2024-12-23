@@ -267,7 +267,7 @@ export const CalendarIcon = () => {
       viewBox="0 0 12 12"
       fill="none"
     >
-      <g clip-path="url(#clip0_2001_1553)">
+      <g clipPath="url(#clip0_2001_1553)">
         <path
           d="M8.5 7C8.77614 7 9 6.77614 9 6.5C9 6.22386 8.77614 6 8.5 6C8.22386 6 8 6.22386 8 6.5C8 6.77614 8.22386 7 8.5 7Z"
           fill="url(#paint0_linear_2001_1553)"
