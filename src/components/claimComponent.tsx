@@ -1,13 +1,25 @@
 import { useState } from "react";
-import { claimCardVariants } from "../animations/animation";
+import {
+  claimCardVariants,
+  moodVariant,
+  parentVariant,
+} from "../animations/animation";
 import { formatAddress } from "../utils/helpers";
 import ThreeDHoverWrapper from "./3dhover";
-import { CalendarIcon, CheckedIcon } from "./icons";
+import {
+  BackArrow,
+  CalendarIcon,
+  CheckedIcon,
+  CopyIcon,
+  InfoIcon,
+} from "./icons";
 import {
   ClaimModalStyles,
   DropCompStyle,
   FlexAbsoluteModalStyles,
 } from "./styles/claimpage";
+import ClickOutsideWrapper from "./outsideClick";
+import { AnimatePresence } from "framer-motion";
 
 export interface IDropComp {
   name: string;
@@ -16,6 +28,8 @@ export interface IDropComp {
   totalRewardPool: number;
   totalRewardClaimed: number;
   totalParticipants: number;
+  totalClaims: number;
+  nftAddress?: string;
   // img ?: string; havent figure how best to get this
 }
 
@@ -26,6 +40,8 @@ export const DropComp: React.FC<IDropComp> = ({
   totalParticipants,
   totalRewardClaimed,
   totalRewardPool,
+  nftAddress,
+  totalClaims,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
@@ -116,19 +132,23 @@ export const DropComp: React.FC<IDropComp> = ({
           </div>
         </DropCompStyle>
       </ThreeDHoverWrapper>
-      {showModal && (
-        <ClaimModal
-          {...{
-            name,
-            creator,
-            date,
-            totalParticipants,
-            totalRewardClaimed,
-            totalRewardPool,
-          }}
-          closeModal={() => setShowModal(false)}
-        />
-      )}
+      <AnimatePresence>
+        {showModal && (
+          <ClaimModal
+            {...{
+              name,
+              creator,
+              date,
+              totalParticipants,
+              totalRewardClaimed,
+              totalRewardPool,
+              nftAddress,
+              totalClaims,
+            }}
+            closeModal={() => setShowModal(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };
@@ -140,6 +160,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
   totalParticipants,
   totalRewardClaimed,
   totalRewardPool,
+  totalClaims,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
@@ -232,19 +253,22 @@ export const POAPDropComp: React.FC<IDropComp> = ({
           </div>
         </DropCompStyle>
       </ThreeDHoverWrapper>
-      {showModal && (
-        <ClaimModal
-          {...{
-            name,
-            creator,
-            date,
-            totalParticipants,
-            totalRewardClaimed,
-            totalRewardPool,
-          }}
-          closeModal={() => setShowModal(false)}
-        />
-      )}
+      <AnimatePresence>
+        {showModal && (
+          <ClaimModal
+            {...{
+              name,
+              creator,
+              date,
+              totalParticipants,
+              totalRewardClaimed,
+              totalRewardPool,
+              totalClaims,
+            }}
+            closeModal={() => setShowModal(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };
@@ -252,13 +276,156 @@ export const POAPDropComp: React.FC<IDropComp> = ({
 interface IClaimModal extends IDropComp {
   closeModal: () => void;
 }
-export const ClaimModal: React.FC<IClaimModal> = ({ closeModal }) => {
+export const ClaimModal: React.FC<IClaimModal> = ({
+  closeModal,
+  name,
+  creator,
+  nftAddress,
+  date,
+  totalParticipants,
+  totalRewardClaimed,
+  totalRewardPool,
+  totalClaims,
+}) => {
+  const percentageRaw = (totalClaims * 100) / totalParticipants;
+  const [percentClaimed] = useState(
+    percentageRaw % 1 === 0
+      ? percentageRaw.toFixed(0)
+      : percentageRaw.toFixed(1)
+  );
+
   return (
-    <FlexAbsoluteModalStyles>
-      <ClaimModalStyles>
-        <button onClick={closeModal}>Close!</button>
-        <h1>We're cooking</h1>
+    <FlexAbsoluteModalStyles
+      variants={parentVariant}
+      initial="initial"
+      animate="final"
+    >
+      <ClaimModalStyles
+        key="inoske"
+        variants={moodVariant}
+        initial="initial"
+        animate="final"
+        exit="exit"
+      >
+        <ClickOutsideWrapper onClickOutside={closeModal}>
+          <div className="modal overflow-y-auto overflow-x-hidden max-h-[80vh]">
+            <BackButton action={closeModal} />
+            <div className="reward-pool flex flex-col items-center justify-center w-full">
+              <p>Reward Pool</p>
+              <h1>{totalRewardPool.toLocaleString()}ETH</h1>
+            </div>
+            <div className="flex flex-col gap-[1rem]">
+              <div className="deet flex gap-[0.5rem]">
+                <div className="img w-[2.5rem] h-[2.5rem]">
+                  <img
+                    src="/avatar.svg"
+                    className="w-full h-full"
+                    alt="random image"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <h4>{name}</h4>
+                  <p>{formatAddress(creator)}</p>
+                </div>
+              </div>
+              <div className="cards flex gap-[1rem] justify-between items-stretch">
+                <div className="flex flex-col rounded-md bg-[#1E2430] gap-[0.75rem] p-[1rem] w-full">
+                  <div className="flex flex-col">
+                    <p>No Of Recipients</p>
+                    <h4>{totalParticipants.toLocaleString()}</h4>
+                  </div>
+                  <div
+                    className={`rounded-md h-[0.75rem] flex items-center gap-[0.25rem] ${
+                      parseInt(percentClaimed) !== 100
+                        ? "bg-[#283245]"
+                        : "bg-[rgba(157,211,175,0.28)] p-[0.25rem]"
+                    }`}
+                  >
+                    {parseInt(percentClaimed) !== 100 && (
+                      <div
+                        className="rounded-md inner h-[0.75rem] flex items-center justify-end pr-[0.75rem]"
+                        style={{
+                          width: `${percentClaimed}%`,
+                        }}
+                      >
+                        {parseInt(percentClaimed) > 80 &&
+                          parseInt(percentClaimed) !== 100 && (
+                            <p className="mini">{percentClaimed}%</p>
+                          )}
+                      </div>
+                    )}
+                    {parseInt(percentClaimed) < 80 && (
+                      <p className="tiny">{percentClaimed}%</p>
+                    )}
+                    {parseInt(percentClaimed) === 100 && (
+                      <>
+                        <CheckedIcon />
+                        <p className="text-completed">Completed</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col rounded-md bg-[#1E2430] gap-[0.625rem] p-[1rem] w-full">
+                  <div className="flex flex-col">
+                    <p>Rewards Claimed</p>
+                    <h4>{totalRewardClaimed.toLocaleString()}ETH</h4>
+                  </div>
+                </div>
+              </div>
+              <div className="addy flex items-center justify-between gap-[1rem]">
+                <div className="flex flex-col w-[70%]">
+                  <h4>Creator Address</h4>
+                  <p className="break-words">{creator}</p>
+                </div>
+                <div className="flex flex-col items-center justify-center">
+                  <button>
+                    <CopyIcon />
+                  </button>
+                </div>
+              </div>
+              {nftAddress && (
+                <div className=" addy flex items-center justify-between">
+                  <div className="flex flex-col w-[70%]">
+                    <h4>NFT Address</h4>
+                    <p className="break-words">{nftAddress}</p>
+                  </div>
+                  <div className="flex flex-col items-center justify-center">
+                    <button>
+                      <CopyIcon />
+                    </button>
+                  </div>
+                </div>
+              )}
+              <div className="required flex items-center gap-[0.25rem]">
+                <InfoIcon />
+                <p>NFT is required to claim Airdrop</p>
+              </div>
+              <div className="flex flex-col addy">
+                <h4>End Date</h4>
+                <div className="flex items-center gap-[0.25rem]">
+                  <CalendarIcon />
+                  <p className="w-[70%] whitespace-normal">{date}</p>
+                </div>
+              </div>
+            </div>
+            <div className="btn flex w-full justify-center items-center">
+              <button>Claim Airdrop</button>
+            </div>
+          </div>
+        </ClickOutsideWrapper>
       </ClaimModalStyles>
     </FlexAbsoluteModalStyles>
+  );
+};
+
+interface IFunctionComp {
+  action: () => void;
+}
+export const BackButton: React.FC<IFunctionComp> = ({ action }) => {
+  return (
+    <button onClick={action} className="flex items-center gap-[0.25rem]">
+      <BackArrow />
+      <p>Back</p>
+    </button>
   );
 };
