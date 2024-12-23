@@ -4,7 +4,7 @@ import {
   moodVariant,
   parentVariant,
 } from "../animations/animation";
-import { formatAddress } from "../utils/helpers";
+import { copyToClipboard, formatAddress } from "../utils/helpers";
 import ThreeDHoverWrapper from "./3dhover";
 import {
   BackArrow,
@@ -24,7 +24,7 @@ import { AnimatePresence } from "framer-motion";
 export interface IDropComp {
   name: string;
   creator: string; //address
-  date: string;
+  date?: string;
   totalRewardPool: number;
   totalRewardClaimed: number;
   totalParticipants: number;
@@ -89,7 +89,7 @@ export const DropComp: React.FC<IDropComp> = ({
                 <p>ENDING DATE</p>
                 <div className="flex items-center gap-[0.625rem] justify-end">
                   <CalendarIcon />
-                  <h3>{date}</h3>
+                  <h3>{date ? date : "none"}</h3>
                 </div>
               </div>
             </div>
@@ -144,6 +144,7 @@ export const DropComp: React.FC<IDropComp> = ({
               totalRewardPool,
               nftAddress,
               totalClaims,
+              type: "token",
             }}
             closeModal={() => setShowModal(false)}
           />
@@ -210,7 +211,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
                 <p>ENDING DATE</p>
                 <div className="flex items-center gap-[0.625rem] justify-end">
                   <CalendarIcon />
-                  <h3>{date}</h3>
+                  <h3>{date ? date : "none"}</h3>
                 </div>
               </div>
             </div>
@@ -264,6 +265,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
               totalRewardClaimed,
               totalRewardPool,
               totalClaims,
+              type: "poap",
             }}
             closeModal={() => setShowModal(false)}
           />
@@ -275,6 +277,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
 
 interface IClaimModal extends IDropComp {
   closeModal: () => void;
+  type: "token" | "poap";
 }
 export const ClaimModal: React.FC<IClaimModal> = ({
   closeModal,
@@ -286,6 +289,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   totalRewardClaimed,
   totalRewardPool,
   totalClaims,
+  type,
 }) => {
   const percentageRaw = (totalClaims * 100) / totalParticipants;
   const [percentClaimed] = useState(
@@ -293,6 +297,15 @@ export const ClaimModal: React.FC<IClaimModal> = ({
       ? percentageRaw.toFixed(0)
       : percentageRaw.toFixed(1)
   );
+  const handleClaim = (dropType: "token" | "poap") => {
+    if (dropType === "token") {
+      // handle token claim
+    } else if (dropType === "poap") {
+      // handle poap claim
+    }
+  };
+  const [isCreatorAddressCopied, setIsCreatorAddressCopied] = useState(false);
+  const [isNftAddressCopied, setIsNftAddressCopied] = useState(false);
 
   return (
     <FlexAbsoluteModalStyles
@@ -310,10 +323,21 @@ export const ClaimModal: React.FC<IClaimModal> = ({
         <ClickOutsideWrapper onClickOutside={closeModal}>
           <div className="modal overflow-y-auto overflow-x-hidden max-h-[80vh]">
             <BackButton action={closeModal} />
-            <div className="reward-pool flex flex-col items-center justify-center w-full">
-              <p>Reward Pool</p>
-              <h1>{totalRewardPool.toLocaleString()}ETH</h1>
-            </div>
+            {type === "token" && (
+              <div className="reward-pool flex flex-col items-center justify-center w-full">
+                <p>Reward Pool</p>
+                <h1>{totalRewardPool.toLocaleString()}ETH</h1>
+              </div>
+            )}
+            {type === "poap" && (
+              <div className="poap-img h-[12.625rem] md:h-[11.25rem] w-full rounded-[0.625rem]">
+                <img
+                  src="/poap.avif"
+                  className="w-full h-full rounded-[0.625rem]"
+                  alt="POAP image"
+                />
+              </div>
+            )}
             <div className="flex flex-col gap-[1rem]">
               <div className="deet flex gap-[0.5rem]">
                 <div className="img w-[2.5rem] h-[2.5rem]">
@@ -368,7 +392,10 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                 <div className="flex flex-col rounded-md bg-[#1E2430] gap-[0.625rem] p-[1rem] w-full">
                   <div className="flex flex-col">
                     <p>Rewards Claimed</p>
-                    <h4>{totalRewardClaimed.toLocaleString()}ETH</h4>
+                    <h4>
+                      {totalRewardClaimed.toLocaleString()}
+                      {type === "token" && "ETH"}
+                    </h4>
                   </div>
                 </div>
               </div>
@@ -378,8 +405,14 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                   <p className="break-words">{creator}</p>
                 </div>
                 <div className="flex flex-col items-center justify-center">
-                  <button>
-                    <CopyIcon />
+                  <button
+                    onClick={() =>
+                      copyToClipboard(creator, () =>
+                        setIsCreatorAddressCopied(true)
+                      )
+                    }
+                  >
+                    {isCreatorAddressCopied ? <CopyIcon /> : <CopyIcon />}
                   </button>
                 </div>
               </div>
@@ -390,8 +423,14 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                     <p className="break-words">{nftAddress}</p>
                   </div>
                   <div className="flex flex-col items-center justify-center">
-                    <button>
-                      <CopyIcon />
+                    <button
+                      onClick={() =>
+                        copyToClipboard(nftAddress, () =>
+                          setIsNftAddressCopied(true)
+                        )
+                      }
+                    >
+                      {isNftAddressCopied ? <CopyIcon /> : <CopyIcon />}
                     </button>
                   </div>
                 </div>
@@ -404,12 +443,16 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                 <h4>End Date</h4>
                 <div className="flex items-center gap-[0.25rem]">
                   <CalendarIcon />
-                  <p className="w-[70%] whitespace-normal">{date}</p>
+                  <p className="w-[70%] whitespace-normal">
+                    {date ? date : "No End date"}
+                  </p>
                 </div>
               </div>
             </div>
             <div className="btn flex w-full justify-center items-center">
-              <button>Claim Airdrop</button>
+              <button onClick={() => handleClaim(type)}>
+                {type === "token" ? "Claim Airdrop" : "Mint POAP"}
+              </button>
             </div>
           </div>
         </ClickOutsideWrapper>
