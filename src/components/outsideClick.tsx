@@ -3,9 +3,10 @@ import React, { useRef, useEffect, ReactNode } from 'react';
 interface ClickOutsideWrapperProps {
   onClickOutside: () => void;
   children: ReactNode;
+  className ?: string;
 }
 
-const ClickOutsideWrapper: React.FC<ClickOutsideWrapperProps> = ({ onClickOutside, children }) => {
+const ClickOutsideWrapper: React.FC<ClickOutsideWrapperProps> = ({ onClickOutside, children, className }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const ClickOutsideWrapper: React.FC<ClickOutsideWrapperProps> = ({ onClickOutsid
     };
   }, [onClickOutside]);
 
-  return <div ref={ref}>{children}</div>;
+  return <div ref={ref} className={className}>{children}</div>;
 };
 
 export default ClickOutsideWrapper;

@@ -33,13 +33,18 @@ export const Hero = () => {
   return (
     <HeroStyles>
       <div className="text mt-12 md:mt-10">
-        <motion.h1 initial="initial" whileInView="final" variants={textVariant}>
+        <motion.h1
+          initial="initial"
+          whileInView="final"
+          variants={textVariant}
+          viewport={{ once: true }}
+        >
           Sonic Drops <br /> Seamless Claims{" "}
           <div className="hidden md:block absolute bottom-0 -right-16">
             <img src="/rocket.svg" alt="sonic" />
           </div>
         </motion.h1>
-        <motion.p initial="initial" whileInView="final2" variants={textVariant}>
+        <motion.p initial="initial" whileInView="final2" variants={textVariant} viewport={{ once: true }}>
           We streamline the entire airdrop experience by letting you
           effortlessly create, manage, and claim token airdrops and POAPs, all
           in one place.

@@ -2,6 +2,25 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 
 export const ClaimPageStyle = styled.div`
+  h1,
+  h2 {
+    color: #fff;
+    font-style: normal;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 500;
+    line-height: 3.0625rem; /* 122.5% */
+  }
+  h2 {
+    font-size: 2rem;
+    background: var(
+      --coughs,
+      linear-gradient(164deg, #2c67ff -21.47%, #27c4fd 88.84%)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
   .banner {
     border-radius: 1.25rem;
     background: linear-gradient(180deg, #0b135b 40.24%, rgba(1, 3, 20, 0) 100%),
@@ -17,14 +36,6 @@ export const ClaimPageStyle = styled.div`
     align-items: center;
     flex-direction: column;
     gap: 0.75rem;
-    h1 {
-      color: #fff;
-      font-style: normal;
-      text-align: center;
-      font-size: 2.5rem;
-      font-weight: 500;
-      line-height: 3.0625rem; /* 122.5% */
-    }
     p {
       color: #babcd2;
       text-align: center;
@@ -88,12 +99,17 @@ export const ClaimPageStyle = styled.div`
     }
   }
   @media (max-width: 600px) {
+    h1 {
+      font-size: 1.35rem;
+      line-height: 1.5625rem; /* 122.5% */
+    }
+    h2 {
+      font-size: 1.25rem;
+      line-height: 1.5625rem; /* 122.5% */
+    }
     .banner {
       padding-right: 1rem;
       padding-left: 1rem;
-      h1 {
-        font-size: 1.35rem;
-      }
       gap: 0.5rem;
       p {
         font-size: 0.8125rem;
@@ -215,7 +231,7 @@ export const DropCompStyle = styled(motion.div)`
   .inner .mini,
   .text-completed {
     font-variant-numeric: lining-nums proportional-nums;
-    font-size: 0.625rem;
+    font-size: 0.575rem;
     font-style: normal;
     font-weight: 600;
     line-height: 1.5rem; /* 342.857% */
@@ -275,7 +291,7 @@ export const DropListStyle = styled.div`
   }
 `;
 
-export const AbsoluteContStyle = styled.div`
+export const AbsoluteContStyle = styled(motion.div)`
   position: fixed;
   transition: 0.4s;
   left: 50%;
@@ -295,16 +311,142 @@ export const FlexAbsoluteModalStyles = styled(AbsoluteContStyle)`
   align-items: center;
 `;
 
-export const ClaimModalStyles = styled.div`
-  border-radius: 2rem;
-  background: #050c19;
-  button {
-    width: 150px;
-    height: 40px;
-    border: 1px solid #2c67ff;
-  }
+export const ClaimModalStyles = styled(motion.div)`
   width: 60%;
+  .modal {
+    border-radius: 2rem;
+    background: #050c19;
+    display: flex;
+    padding: 2.9375rem 2.5625rem 1.625rem 2.625rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.8125rem;
+    flex-shrink: 0;
+    .reward-pool {
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+      background: linear-gradient(
+          180deg,
+          rgba(11, 19, 91, 0.7) 40.24%,
+          rgba(1, 3, 20, 0) 100%
+        ),
+        radial-gradient(
+          65.08% 85.05% at 50% 50%,
+          rgba(0, 0, 0, 0) 37.41%,
+          rgba(43, 117, 255, 0.3) 75%,
+          rgba(38, 198, 253, 0.3) 100%
+        );
+    }
+    .deet {
+      h4 {
+        color: var(--Grey-50, #f9fafb);
+        font-variant-numeric: lining-nums proportional-nums;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 1.5rem; /* 184.615% */
+      }
+      p {
+        color: var(--Grey-300, #d0d5dd);
+        font-variant-numeric: lining-nums proportional-nums;
+        font-size: 0.8125rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 1.5rem; /* 240% */
+      }
+    }
+    .required {
+      p {
+        font-variant-numeric: lining-nums proportional-nums;
+        font-size: 0.75rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 1.5rem; /* 200% */
+        background: var(
+          --okay,
+          linear-gradient(180deg, #26c6fd 0%, #097aec 100%)
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+    .addy {
+      h4 {
+        color: var(--Grey-50, #f9fafb);
+        font-variant-numeric: lining-nums proportional-nums;
+        font-size: 0.8125rem;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 1.5rem; /* 184.615% */
+      }
+      p {
+        color: var(--Grey-300, #d0d5dd);
+        font-variant-numeric: lining-nums proportional-nums;
+        font-size: 0.875rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 1.5rem; /* 171.429% */
+        opacity: 0.5;
+      }
+    }
+    .btn button {
+      border-radius: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      width: 100%;
+      height: 3rem;
+      color: #f5f5f5;
+      text-align: center;
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 2rem; /* 228.571% */
+      letter-spacing: -0.02rem;
+      &:hover {
+        background: #01a7ff;
+        box-shadow: 0px 4px 6.8px 0px #2b75ff inset;
+      }
+    }
+    .cards {
+      p {
+        color: var(--Grey-300, #d0d5dd);
+        font-variant-numeric: lining-nums proportional-nums;
+        font-size: 0.6875rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 1.5rem; /* 218.182% */
+      }
+      h4 {
+        color: var(--Grey-50, #f9fafb);
+        font-variant-numeric: lining-nums proportional-nums;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 1.5rem; /* 150% */
+      }
+      .inner .mini,
+      .text-completed {
+        font-variant-numeric: lining-nums proportional-nums;
+        font-size: 0.575rem;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 1.5rem; /* 342.857% */
+        color: #000;
+      }
+      .text-completed {
+        color: #36bc7b;
+      }
+    }
+    .cards .inner {
+      background: var(
+        --coughs,
+        linear-gradient(164deg, #2c67ff -21.47%, #27c4fd 88.84%)
+      );
+    }
+  }
   @media (max-width: 500px) {
+    .modal {
+      padding: 2.9375rem 1rem 3.3125rem 1rem;
+    }
     width: 91%;
   }
   @media (min-width: 998px) {
