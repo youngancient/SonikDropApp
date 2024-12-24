@@ -84,8 +84,8 @@ export const ClaimPageStyle = styled.div`
       width: 100%;
       height: 3.5rem;
       padding: 1rem;
-      padding-right: 1.8rem;
-      padding-left: 1.8rem;
+      padding-right: 3rem;
+      padding-left: 3rem;
       border-radius: 1.875rem;
       border: 1px solid rgba(152, 162, 179, 0.3);
       background: #050c19;
@@ -452,4 +452,20 @@ export const ClaimModalStyles = styled(motion.div)`
   @media (min-width: 998px) {
     width: 35%;
   }
+`;
+
+export const SonikNotConnectedStyles = styled(motion.div)`
+  text-align: center;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 2rem; /* 228.571% */
+  letter-spacing: -0.02rem;
+  background: var(
+    --coughs,
+    linear-gradient(164deg, #2c67ff -21.47%, #27c4fd 88.84%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;

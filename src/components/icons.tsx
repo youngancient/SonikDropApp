@@ -516,3 +516,45 @@ export const InfoIcon = () => {
     </svg>
   );
 };
+
+export const ConnectBtnIcon = () => {
+  return (
+    <div className="flex w-[1.5rem] h-[1.5rem] items-center justify-center rounded-[12.5rem] border-2 border-[var(--okay,#26C6FD)] shadow-[0px_4px_8px_-2px_rgba(0,0,0,0.08),_0px_2px_4px_-2px_rgba(0,0,0,0.04)]">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
+        fill="none"
+      >
+        <g clipPath="url(#clip0_2001_679)">
+          <path
+            d="M5.64645 8.82812C5.64645 9.02339 5.80474 9.18168 6 9.18168C6.19526 9.18168 6.35355 9.02339 6.35355 8.82813L6.35355 6.35325L8.82843 6.35325C9.02369 6.35325 9.18198 6.19496 9.18198 5.9997C9.18198 5.80444 9.02369 5.64614 8.82843 5.64614L6.35355 5.64614L6.35355 3.17127C6.35355 2.97601 6.19526 2.81772 6 2.81772C5.80474 2.81772 5.64645 2.97601 5.64645 3.17127L5.64645 5.64614L3.17157 5.64614C2.97631 5.64614 2.81802 5.80444 2.81802 5.9997C2.81802 6.19496 2.97631 6.35325 3.17157 6.35325L5.64645 6.35325L5.64645 8.82812Z"
+            fill="url(#paint0_linear_2001_679)"
+          />
+        </g>
+        <defs>
+          <linearGradient
+            id="paint0_linear_2001_679"
+            x1="3.28171"
+            y1="9.253"
+            x2="6.39232"
+            y2="3.6311"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stopColor="#2C67FF" />
+            <stop offset="1" stopColor="#27C4FD" />
+          </linearGradient>
+          <clipPath id="clip0_2001_679">
+            <rect
+              width="8.48528"
+              height="8.48528"
+              fill="white"
+              transform="translate(6 12) rotate(-135)"
+            />
+          </clipPath>
+        </defs>
+      </svg>
+    </div>
+  );
+};
