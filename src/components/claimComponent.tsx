@@ -439,12 +439,22 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                 <InfoIcon />
                 <p>NFT is required to claim Airdrop</p>
               </div>
-              <div className="flex flex-col addy">
-                <h4>End Date</h4>
-                <div className="flex items-center gap-[0.25rem]">
-                  <CalendarIcon />
-                  <p className="w-[70%] whitespace-normal">
-                    {date ? date : "No End date"}
+              <div className="flex items-stretch justify-between gap-[1rem]">
+                <div className="flex flex-col addy">
+                  <h4>End Date</h4>
+                  <div className="flex items-center gap-[0.25rem]">
+                    <CalendarIcon />
+                    <p className="w-[70%] whitespace-normal">
+                      {date ? date : "No End date"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className=" addy flex items-center justify-between w-full">
+                <div className="flex items-center justify-between w-full">
+                  <h4>Estimated Gas Fee</h4>
+                  <p className="break-words">
+                    {0.0005}ETH &asymp; ${0.5}
                   </p>
                 </div>
               </div>

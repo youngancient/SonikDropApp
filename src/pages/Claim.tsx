@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import { POAPDrops, TokenDrops } from "../constants/data.ts";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
+import { SonikNotConnected } from "../components/notConnected.tsx";
 
 interface TabSwitch {
   name: "Tokens" | "POAPs";
@@ -91,7 +92,7 @@ const ClaimPage = () => {
             ))}
           </div>
           <div className="inp relative">
-            <div className="absolute top-[1.125rem] left-[0.5rem]">
+            <div className="absolute top-[1.155rem] left-[1.5rem]">
               <MagnifyingGlass />
             </div>
             <input
@@ -99,7 +100,7 @@ const ClaimPage = () => {
               name="query"
               placeholder="Search Airdrop listing/ Creators address"
             />
-            <div className="absolute top-[1.125rem] right-[0.5rem]">
+            <div className="absolute top-[1.155rem] right-[1.5rem]">
               <CircleCancel />
             </div>
           </div>
@@ -116,26 +117,7 @@ const ClaimPage = () => {
           </DropListStyle>
         )}
         <AnimatePresence>
-        {!isConnected && (
-          <motion.div
-            className="flex flex-col h-[40vh] w-full justify-center items-center mb-[4rem]"
-            initial="initial"
-            animate="final"
-            exit="exit"
-            key="claimpage"
-            variants={textVariant}
-
-          >
-            <div className="sonic-img h-full">
-              <img
-                src="/sonic.png"
-                alt="sonic image"
-                className="w-full h-full"
-              />
-            </div>
-            <h2>Please Connect Wallet</h2>
-          </motion.div>
-        )}
+          {!isConnected && <SonikNotConnected />}
         </AnimatePresence>
       </ClaimPageStyle>
       <FooterComponent />
