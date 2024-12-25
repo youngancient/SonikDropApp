@@ -5,12 +5,11 @@ import { ClaimPageStyle, DropListStyle } from "../components/styles/claimpage";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleCancel, MagnifyingGlass } from "../components/icons";
 import { DropComp, POAPDropComp } from "../components/claimComponent";
-
-import { v4 as uuidv4 } from "uuid";
 import { POAPDrops, TokenDrops } from "../constants/data.ts";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
 import { SonikNotConnected } from "../components/notConnected.tsx";
+import { ethers } from "ethers";
 
 interface TabSwitch {
   name: "Tokens" | "POAPs";
@@ -36,8 +35,53 @@ const ClaimPage = () => {
     setStateTabs(newTabs);
   };
 
-  // const [drops, set]
+  const [query, setQuery] = useState<string>("");
 
+  const [tokendrops, setTokenDrops] = useState(TokenDrops);
+  const [poapdrops, setPOAPDrops] = useState(POAPDrops);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (query === "" || query.trim() === "") {
+      clearForm();
+      return;
+    }
+    if (ethers.isAddress(query)) {
+      // search by address
+      if (selectedTabName === "Tokens") {
+        const filteredTokenDrops = TokenDrops.filter(
+          (drop) => drop.creator.toLowerCase() === query.toLowerCase()
+        );
+        setTokenDrops(filteredTokenDrops);
+      } else if (selectedTabName === "POAPs") {
+        const filteredPOAPDrops = POAPDrops.filter(
+          (drop) => drop.creator.toLowerCase() === query.toLowerCase()
+        );
+        setPOAPDrops(filteredPOAPDrops);
+      }
+    } else {
+      // search by name
+      if (selectedTabName === "Tokens") {
+        const filteredTokenDrops = TokenDrops.filter((drop) =>
+          drop.name.toLowerCase().includes((query as string).toLowerCase())
+        );
+        // console.log(filteredTokenDrops.length === 0);
+        setTokenDrops(filteredTokenDrops);
+      } else if (selectedTabName === "POAPs") {
+        const filteredPOAPDrops = POAPDrops.filter((drop) =>
+          drop.name.toLowerCase().includes((query as string).toLowerCase())
+        );
+        setPOAPDrops(filteredPOAPDrops);
+      }
+    }
+    console.log(query);
+  };
+
+  const clearForm = () => {
+    setTokenDrops(TokenDrops);
+    setPOAPDrops(POAPDrops);
+    setQuery("");
+  };
   return (
     <div
       style={{ backgroundColor: "#050C19" }}
@@ -70,7 +114,7 @@ const ClaimPage = () => {
           </div>
         </div>
         <div className="filters mt-[1.75rem] md:mt-[2.5rem]">
-          <div className="tabs">
+          <div className="tabs overflow-hidden">
             {stateTabs.map((ele) => (
               <button key={ele.name} onClick={() => handleTabSwitch(ele.name)}>
                 <p
@@ -92,15 +136,22 @@ const ClaimPage = () => {
             ))}
           </div>
           <div className="inp relative">
-            <div className="absolute top-[1.155rem] left-[1.5rem]">
+            <div className="absolute top-[1.155rem] left-[1.5rem] cursor-pointer">
               <MagnifyingGlass />
             </div>
-            <input
-              type="text"
-              name="query"
-              placeholder="Search Airdrop listing/ Creators address"
-            />
-            <div className="absolute top-[1.155rem] right-[1.5rem]">
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="query"
+                value={query}
+                placeholder="Search Airdrop listing/ Creators address"
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </form>
+            <div
+              className="absolute top-[1.155rem] right-[1.5rem] cursor-pointer"
+              onClick={() => clearForm()}
+            >
               <CircleCancel />
             </div>
           </div>
@@ -108,11 +159,20 @@ const ClaimPage = () => {
         {isConnected && (
           <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem]">
             {selectedTabName == "Tokens" &&
-              TokenDrops.map((drop) => <DropComp key={uuidv4()} {...drop} />)}
-
+              tokendrops.map((drop, index) => (
+                <DropComp key={index} {...drop} />
+              ))}
             {selectedTabName == "POAPs" &&
-              POAPDrops.map((drop) => (
-                <POAPDropComp key={uuidv4()} {...drop} />
+              poapdrops.map((drop, index) => (
+                <POAPDropComp key={index} {...drop} />
+              ))}
+
+            {/* fix this later */}
+            {tokendrops.length === 0 ||
+              (poapdrops.length === 0 && (
+                <div>
+                  <h2 className="border-2 border-[red]">No Drops Found</h2>
+                </div>
               ))}
           </DropListStyle>
         )}

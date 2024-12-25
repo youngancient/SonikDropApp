@@ -321,7 +321,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
         exit="exit"
       >
         <ClickOutsideWrapper onClickOutside={closeModal}>
-          <div className="modal overflow-y-auto overflow-x-hidden max-h-[80vh]">
+          <div className="modal overflow-y-auto max-h-[80vh] w-full max-w-[90vw] mx-auto px-4">
             <BackButton action={closeModal} />
             {type === "token" && (
               <div className="reward-pool flex flex-col items-center justify-center w-full">
@@ -338,7 +338,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                 />
               </div>
             )}
-            <div className="flex flex-col gap-[1rem]">
+            <div className="flex flex-col gap-[1rem] w-full">
               <div className="deet flex gap-[0.5rem]">
                 <div className="img w-[2.5rem] h-[2.5rem]">
                   <img
