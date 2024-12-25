@@ -89,6 +89,10 @@ export const ClaimPageStyle = styled.div`
       border-radius: 1.875rem;
       border: 1px solid rgba(152, 162, 179, 0.3);
       background: #050c19;
+      &:focus {
+        border: 1px solid rgba(38, 198, 253, 0.7);
+        box-shadow: 0px 4px 10px 0px rgba(204, 215, 246, 0.12);
+      }
     }
     input::placeholder {
       color: var(--Grey-400, #98a2b3);
