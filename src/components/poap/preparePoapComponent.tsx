@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 // import { Parser } from "@json2csv/plainjs";
 // import { saveAs } from "file-saver";
 import { useAppDispatch } from "../../store/hooks";
-import { setStep } from "../../store/slices/stepSlice";
+import { setStep } from "../../store/slices/poapStepSlice";
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 // import ClickOutsideWrapper from "../outsideClick";
@@ -28,12 +28,11 @@ import Joi from "joi";
 // import { setTokenDetail } from "../../store/slices/prepareSlice";
 
 export function PreparePoapComponent() {
-
   const [eventName, setEventName] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [eventType, setEventType] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+  const [selectedFile, setSelectedFile] = useState<any | null>(null);
+  const [uploadedEvnetFlyer, setUploadedEventFlyer] = useState("");
 
   const dispatch = useAppDispatch();
 
@@ -77,7 +76,6 @@ export function PreparePoapComponent() {
   //   }
   // };
 
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
       // Send only the first accepted file to the callback
@@ -88,14 +86,14 @@ export function PreparePoapComponent() {
     maxSize: 2 * 1024 * 1024,
     maxFiles: 1,
     accept: {
-      "image/*": []
-    }
+      "image/*": [],
+    },
   });
 
   useEffect(() => {
     const poapEventDetails = sessionStorage.getItem("poapEventDetails");
 
-    if(poapEventDetails) {
+    if (poapEventDetails) {
       const parsedPoapEventDetails: IPoapEvent = JSON.parse(poapEventDetails);
 
       setEventName(parsedPoapEventDetails.eventName);
@@ -103,7 +101,6 @@ export function PreparePoapComponent() {
       setEventType(parsedPoapEventDetails.eventType);
       setSelectedFile(parsedPoapEventDetails.selectedFile);
     }
-
   }, []);
 
   const nextPage = async () => {
@@ -114,53 +111,64 @@ export function PreparePoapComponent() {
       return;
     }
 
-    const {error} = Joi.object({
+    const { error } = Joi.object({
       eventName: Joi.string().required().messages({
         "any.required": "Event name is required",
-        "string.base": "Event name must be a string"
+        "string.base": "Event name must be a string",
       }),
       eventDescription: Joi.string().min(20).required().messages({
         "any.required": "Event details is required",
         "string.base": "Event details must be a string",
-        "string.min": "Event details have to be more than 20 characters"
+        "string.min": "Event details have to be more than 20 characters",
       }),
-      eventType: Joi.string().valid("conference", "meetup", "hackathon").required().messages({
-        "any.required": "Event type is required",
-        "string.valid": `Values for event type has to be either "conference", "meetup" or "hackathon"`
-      }),
+      eventType: Joi.string()
+        .valid("conference", "meetup", "hackathon")
+        .required()
+        .messages({
+          "any.required": "Event type is required",
+          "string.valid": `Values for event type has to be either "conference", "meetup" or "hackathon"`,
+        }),
       selectedFile: Joi.any().required().messages({
-        "any.required": "Event picture is required"
-      })
+        "any.required": "Event picture is required",
+      }),
     }).validate({
       eventName,
       eventDescription,
       eventType,
-      selectedFile
+      selectedFile,
     });
 
-    if(error) {
+    if (error) {
       toast.error(error.message);
       return;
     }
 
-    if(!selectedFile) {
+    if (!selectedFile) {
       toast.error("Kindly select a file to continue");
       return;
     }
 
-    if(selectedFile!!.size > (2 * 1024 * 1024)) {
+    if (selectedFile!!.size > 2 * 1024 * 1024) {
       toast.error("File size is too large");
       return;
     }
 
     const upload = await pinata.upload.file(selectedFile!!);
-    
-    console.log("eventName", eventName)
-    console.log("eventDescription", eventDescription)
-    console.log("eventType", eventType)
+
+    console.log("eventName", eventName);
+    console.log("eventDescription", eventDescription);
+    console.log("eventType", eventType);
     console.log("Picture", upload);
 
-    sessionStorage.setItem("poapEventDetails", JSON.stringify({eventName, eventDescription, eventType, selectedFile} as IPoapEvent));
+    sessionStorage.setItem(
+      "poapEventDetails",
+      JSON.stringify({
+        eventName,
+        eventDescription,
+        eventType,
+        selectedFile,
+      } as IPoapEvent)
+    );
 
     // if (tokenDetail == null) {
     //   toast.error("Token metadata is missing");
@@ -188,6 +196,9 @@ export function PreparePoapComponent() {
 
   useEffect(() => {
     console.log("selectedFile", selectedFile);
+    if (selectedFile) {
+      setUploadedEventFlyer(selectedFile.name);
+    }
   }, [selectedFile]);
 
   return (
@@ -231,8 +242,14 @@ export function PreparePoapComponent() {
 
             <div>
               <div className="text-left">Event type</div>
-              <select value={eventType} onChange={(e) => {setEventType(e.target.value)}} className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1">
-              <option className="text-black" value="">
+              <select
+                value={eventType}
+                onChange={(e) => {
+                  setEventType(e.target.value);
+                }}
+                className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
+              >
+                <option className="text-black" value="">
                   Select event type
                 </option>
                 <option className="text-black" value="conference">
@@ -247,12 +264,12 @@ export function PreparePoapComponent() {
               </select>
             </div>
 
-                <div>
-                  <div
-                    className="mb-4 w-full h-[200px] flex justify-center items-center border-dashed border-[#FFFFFF17] border-[4px] rounded-[10px] flex-col outline-none"
-                    {...getRootProps()}
-                  >
-                    {/* <input
+            <div>
+              <div
+                className="mb-4 w-full h-[200px] flex justify-center items-center border-dashed border-[#FFFFFF17] border-[4px] rounded-[10px] flex-col outline-none"
+                {...getRootProps()}
+              >
+                {/* <input
                       type="file" 
                       id="file-upload" 
                       className="file-upload hidden"
@@ -264,24 +281,46 @@ export function PreparePoapComponent() {
                           <div>Upload file</div>
                       </label> */}
 
-                    <input {...getInputProps()} />
-                    {isDragActive ? (
-                      <div className="text-center flex flex-col items-center">
-                        <div>
-                          <AiOutlinePicture className="w-[100px] h-[100px]" />
-                        </div>
-                        <div>Drop here</div>
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                  <div className="text-center flex flex-col items-center">
+                    <div>
+                      <AiOutlinePicture className="w-[100px] h-[100px]" />
+                    </div>
+                    <div>Drop here</div>
+                  </div>
+                ) : (
+                  <div className="text-center flex flex-col items-center">
+                    {uploadedEvnetFlyer ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div>{uploadedEvnetFlyer}</div>
                       </div>
                     ) : (
-                      <div className="text-center flex flex-col items-center">
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
+                      >
                         <div>
                           <AiOutlinePicture className="w-[100px] h-[100px]" />
                         </div>
-                        <button className="bg-[#00A7FF] px-4 py-2 rounded-[20px]">Upload file</button>
+                        <button className="bg-[#00A7FF] px-4 py-2 rounded-[20px]">
+                          Upload file
+                        </button>
                       </div>
                     )}
                   </div>
-                </div>
+                )}
+              </div>
+            </div>
           </div>
           <button
             className={`w-full py-2 rounded-md ${

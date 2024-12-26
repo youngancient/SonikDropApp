@@ -156,16 +156,19 @@ export function PrepareComponent() {
       Papa.parse(file, {
         complete: (results: any) => {
           const invalidAddresses = results.data.filter(
-            (result: ICSV) => !ethers.isAddress(result.address)
+            (result: ICSV) => {
+              console.log(result.address, " valid ", ethers.isAddress(result.address));
+              return ethers.isAddress(result.address) == false
+            }
           );
 
           dispatch(setInvalidAirdropAddresses(invalidAddresses));
 
-          // console.log(invalidAddresses);
+          console.log("Invalid", invalidAddresses);
 
 
           if (invalidAddresses.length > 0) {
-            toast.error(invalidAddresses.join(", ") + invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses");
+            toast.error(invalidAddresses.map((a: ICSV) => a.address.toString()).join(", ") + (invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses"));
             return;
           }
 
@@ -175,11 +178,11 @@ export function PrepareComponent() {
           }
 
           const invalidAmounts = results.data.filter(
-            (result: ICSV) => !(/^(\d+(\.\d+)?|\.\d+)$/.test(result.address))
+            (result: ICSV) => !(/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString()))
           );
 
           if(invalidAmounts.length > 0) {
-            toast.error(invalidAmounts.join(", ") + invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts");
+            toast.error(invalidAmounts.map((a: ICSV) => a.amount).join(", ") + (invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts"));
             return;
           }
 
@@ -251,6 +254,7 @@ export function PrepareComponent() {
       }
 
       if (invalidAirdropAddresses.length > 0) {
+        console.log(invalidAirdropAddresses);
         toast.error(
           invalidAirdropAddresses.join(", ") + " are invalid addresses"
         );
