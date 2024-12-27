@@ -33,12 +33,12 @@ const Dashboard = () => {
 
   const [tokendrops, setTokenDrops] = useState(() =>
     TokenDrops.filter(
-      (drop) => drop.creator.toLowerCase() === address.toLowerCase()
+      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
     )
   );
   const [poapdrops, setPOAPDrops] = useState(() =>
     POAPDrops.filter(
-      (drop) => drop.creator.toLowerCase() === address.toLowerCase()
+      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
     )
   );
 
