@@ -19,6 +19,8 @@ import { DropComp, POAPDropComp } from "../components/claimComponent";
 import { SonikNotConnected } from "../components/notConnected";
 
 const Dashboard = () => {
+  // Note: Here only the airdrops created by the user are displayed
+
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [stateTabs, setStateTabs] = useState(tabs);
@@ -90,27 +92,27 @@ const Dashboard = () => {
         radial-gradient(65.08% 85.05% at 50% 50%, rgba(0, 0, 0, 0.00) 37.41%, 
         #2B75FF 75%, #26C6FD 100%)`,
       }}
-      className="h-screen overflow-auto"
+      className="min-h-screen overflow-auto"
     >
       <HeaderComponent showBackButton={false} />
-      <DashboardStyles className="mt-[1.5rem] md:mt-[2rem] h-full">
+      <DashboardStyles className="mt-[1.5rem] md:mt-[2rem] h-fit">
         <div className="top px-[1rem] md:px-[200px]">
           <h2>Dashboard Overview</h2>
-          <div className="cards grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 gap-[0.25rem] md:gap-[1.5rem] flex-wrap mt-[1rem] pb-[3.4rem] md:pb-[4.4rem] rounded-[1.25rem] md:rounded-[0rem]">
-            <div className="flex flex-col justify-start p-[1.35rem] gap-[1.7rem]">
+          <div className="stat-cards grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 gap-[0.25rem] md:gap-[1.5rem] flex-wrap mt-[1rem] pb-[3.4rem] md:pb-[4.4rem] rounded-[1.25rem] md:rounded-[0rem]">
+            <div className="flex flex-col justify-start p-[1.35rem] gap-[1.7rem] stat">
               <p>Airdrops Created</p>
               <h3 className="text-center md:text-left w-full">0</h3>
             </div>
-            <div className="flex flex-col justify-start p-[1.35rem] gap-[1.7rem]">
+            <div className="flex flex-col justify-start p-[1.35rem] gap-[1.7rem] stat">
               <p>Airdrops Claimed</p>
               <h3 className="text-center md:text-left">0</h3>
             </div>
-            <div className="flex flex-col justify-start p-[1.35rem] gap-[1.7rem]">
-              <p>Total Token Reward</p>
+            <div className="flex flex-col justify-start p-[1.35rem] gap-[1.7rem] stat">
+              <p>Total Token Rewards</p>
               <h3 className="text-center md:text-left">0</h3>
             </div>
-            <div className="flex flex-col justify-start p-[1.35rem] gap-[1.7rem]">
-              <p>Total POAP Reward</p>
+            <div className="flex flex-col justify-start p-[1.35rem] gap-[1.7rem] stat">
+              <p>Total POAP Rewards</p>
               <h3 className="text-center md:text-left">0</h3>
             </div>
           </div>
@@ -182,7 +184,7 @@ const Dashboard = () => {
             </div>
           </div>
           {isConnected && (
-            <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem]">
+            <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] pb-[4rem] min-h-[40vh]">
               {selectedTabName == "Tokens" &&
                 tokendrops.map((drop, index) => (
                   <DropComp key={index} {...drop} />
@@ -202,11 +204,13 @@ const Dashboard = () => {
             </DropListStyle>
           )}
           <AnimatePresence>
-            {!isConnected && <SonikNotConnected />}
+            {!isConnected && (
+              <SonikNotConnected classNames="mt-[0rem] pt-[2rem] md:mt-[0rem] md:pt-[3rem] mb-[0rem] pb-[4rem]" />
+            )}
           </AnimatePresence>
         </div>
       </DashboardStyles>
-      <FooterComponent classNames="bg-[#050C19]" />
+      <FooterComponent classNames="bg-[#050C19] mt-[0rem] pt-[0rem]" />
       <AnimatePresence>
         {showModal && (
           <OptionComponent closeModal={() => setShowModal(false)} />

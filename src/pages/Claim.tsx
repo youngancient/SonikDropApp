@@ -17,6 +17,7 @@ export interface TabSwitch {
 }
 
 const ClaimPage = () => {
+  // Note: Here only the airdrops the user is eligible for are displayed
   const [stateTabs, setStateTabs] = useState(tabs);
 
   const [selectedTabName, setSelectedTabName] = useState("Tokens");
@@ -153,7 +154,7 @@ const ClaimPage = () => {
           </div>
         </div>
         {isConnected && (
-          <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem]">
+          <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] mb-[4rem] min-h-[40vh]">
             {selectedTabName == "Tokens" &&
               tokendrops.map((drop, index) => (
                 <DropComp key={index} {...drop} />

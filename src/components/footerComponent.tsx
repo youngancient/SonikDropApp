@@ -1,10 +1,10 @@
 import { FaGithub } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-interface IFooter {
+export interface IClassStyle {
   classNames?: string;
 }
-export const FooterComponent: React.FC<IFooter> = ({ classNames }) => {
+export const FooterComponent: React.FC<IClassStyle> = ({ classNames }) => {
   return (
     <div
       className={`flex justify-center text-white h-[100px] items-center px-2 md:px-[200px] mt-[1rem] ${classNames}`}

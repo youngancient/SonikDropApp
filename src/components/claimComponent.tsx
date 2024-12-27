@@ -20,6 +20,7 @@ import {
 } from "./styles/claimpage";
 import ClickOutsideWrapper from "./outsideClick";
 import { AnimatePresence } from "framer-motion";
+import { useAppKitAccount } from "@reown/appkit/react";
 
 export interface IDropComp {
   name: string;
@@ -50,6 +51,7 @@ export const DropComp: React.FC<IDropComp> = ({
       ? percentageRaw.toFixed(0)
       : percentageRaw.toFixed(1)
   );
+  const { address } = useAppKitAccount();
 
   return (
     <>
@@ -145,6 +147,7 @@ export const DropComp: React.FC<IDropComp> = ({
               nftAddress,
               totalClaims,
               type: "token",
+              isCreator: creator.toLowerCase() === address?.toLowerCase(),
             }}
             closeModal={() => setShowModal(false)}
           />
@@ -170,6 +173,8 @@ export const POAPDropComp: React.FC<IDropComp> = ({
       ? percentageRaw.toFixed(0)
       : percentageRaw.toFixed(1)
   );
+  const { address } = useAppKitAccount();
+
   return (
     <>
       <ThreeDHoverWrapper>
@@ -266,6 +271,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
               totalRewardPool,
               totalClaims,
               type: "poap",
+              isCreator: creator.toLowerCase() === address?.toLowerCase(),
             }}
             closeModal={() => setShowModal(false)}
           />
@@ -278,6 +284,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
 interface IClaimModal extends IDropComp {
   closeModal: () => void;
   type: "token" | "poap";
+  isCreator?: boolean;
 }
 export const ClaimModal: React.FC<IClaimModal> = ({
   closeModal,
@@ -290,18 +297,43 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   totalRewardPool,
   totalClaims,
   type,
+  isCreator,
 }) => {
-  const percentageRaw = (totalClaims * 100) / totalParticipants;
-  const [percentClaimed] = useState(
-    percentageRaw % 1 === 0
-      ? percentageRaw.toFixed(0)
-      : percentageRaw.toFixed(1)
+  // for participants
+  const participantPercentageRaw = (totalClaims * 100) / totalParticipants;
+  const [participantPercentClaimed] = useState(
+    participantPercentageRaw % 1 === 0
+      ? participantPercentageRaw.toFixed(0)
+      : participantPercentageRaw.toFixed(1)
   );
+
+  // for rewards
+  const rewardPercentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
+  const [rewardPercentageClaimed] = useState(
+    rewardPercentageRaw % 1 === 0
+      ? rewardPercentageRaw.toFixed(0)
+      : rewardPercentageRaw.toFixed(1)
+  );
+
   const handleClaim = (dropType: "token" | "poap") => {
     if (dropType === "token") {
       // handle token claim
     } else if (dropType === "poap") {
       // handle poap claim
+    }
+  };
+  const editAirdrop = (dropType: "token" | "poap") => {
+    if (dropType === "token") {
+      // handle edit token airdrop
+    } else if (dropType === "poap") {
+      // handle edit poap airdrop
+    }
+  };
+  const endAirdrop = (dropType: "token" | "poap") => {
+    if (dropType === "token") {
+      // handle token airdrop end
+    } else if (dropType === "poap") {
+      // handle poap airdrop end
     }
   };
   const [isCreatorAddressCopied, setIsCreatorAddressCopied] = useState(false);
@@ -353,35 +385,35 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                 </div>
               </div>
               <div className="cards flex gap-[1rem] justify-between items-stretch">
-                <div className="flex flex-col rounded-md bg-[#1E2430] gap-[0.75rem] p-[1rem] w-full">
+                <div className="flex flex-col rounded-md bg-[#1E2430] gap-[0.625rem] p-[1rem] w-full">
                   <div className="flex flex-col">
                     <p>No Of Recipients</p>
                     <h4>{totalParticipants.toLocaleString()}</h4>
                   </div>
                   <div
                     className={`rounded-md h-[0.75rem] flex items-center gap-[0.25rem] ${
-                      parseInt(percentClaimed) !== 100
+                      parseInt(participantPercentClaimed) !== 100
                         ? "bg-[#283245]"
                         : "bg-[rgba(157,211,175,0.28)] p-[0.25rem]"
                     }`}
                   >
-                    {parseInt(percentClaimed) !== 100 && (
+                    {parseInt(participantPercentClaimed) !== 100 && (
                       <div
                         className="rounded-md inner h-[0.75rem] flex items-center justify-end pr-[0.75rem]"
                         style={{
-                          width: `${percentClaimed}%`,
+                          width: `${participantPercentClaimed}%`,
                         }}
                       >
-                        {parseInt(percentClaimed) > 80 &&
-                          parseInt(percentClaimed) !== 100 && (
-                            <p className="mini">{percentClaimed}%</p>
+                        {parseInt(participantPercentClaimed) > 80 &&
+                          parseInt(participantPercentClaimed) !== 100 && (
+                            <p className="mini">{participantPercentClaimed}%</p>
                           )}
                       </div>
                     )}
-                    {parseInt(percentClaimed) < 80 && (
-                      <p className="tiny">{percentClaimed}%</p>
+                    {parseInt(participantPercentClaimed) < 80 && (
+                      <p className="tiny">{participantPercentClaimed}%</p>
                     )}
-                    {parseInt(percentClaimed) === 100 && (
+                    {parseInt(participantPercentClaimed) === 100 && (
                       <>
                         <CheckedIcon />
                         <p className="text-completed">Completed</p>
@@ -397,6 +429,38 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                       {type === "token" && "ETH"}
                     </h4>
                   </div>
+                  {isCreator && (
+                    <div
+                      className={`rounded-md h-[0.75rem] flex items-center gap-[0.25rem] ${
+                        parseInt(rewardPercentageClaimed) !== 100
+                          ? "bg-[#283245]"
+                          : "bg-[rgba(157,211,175,0.28)] p-[0.25rem]"
+                      }`}
+                    >
+                      {parseInt(rewardPercentageClaimed) !== 100 && (
+                        <div
+                          className="rounded-md inner h-[0.75rem] flex items-center justify-end pr-[0.75rem]"
+                          style={{
+                            width: `${rewardPercentageClaimed}%`,
+                          }}
+                        >
+                          {parseInt(rewardPercentageClaimed) > 80 &&
+                            parseInt(rewardPercentageClaimed) !== 100 && (
+                              <p className="mini">{rewardPercentageClaimed}%</p>
+                            )}
+                        </div>
+                      )}
+                      {parseInt(rewardPercentageClaimed) < 80 && (
+                        <p className="tiny">{rewardPercentageClaimed}%</p>
+                      )}
+                      {parseInt(rewardPercentageClaimed) === 100 && (
+                        <>
+                          <CheckedIcon />
+                          <p className="text-completed">Completed</p>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="addy flex items-center justify-between gap-[1rem]">
@@ -444,7 +508,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                   <h4>End Date</h4>
                   <div className="flex items-center gap-[0.25rem]">
                     <CalendarIcon />
-                    <p className="w-[70%] whitespace-normal">
+                    <p className="whitespace-normal">
                       {date ? date : "No End date"}
                     </p>
                   </div>
@@ -459,11 +523,19 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                 </div>
               </div>
             </div>
-            <div className="btn flex w-full justify-center items-center">
+            {!isCreator && <div className="btn flex w-full justify-center items-center gap-[1rem]">
               <button onClick={() => handleClaim(type)}>
                 {type === "token" ? "Claim Airdrop" : "Mint POAP"}
               </button>
-            </div>
+            </div>}
+            {isCreator && <div className="btn flex w-full justify-between items-center gap-[1rem]">
+              <button onClick={() => editAirdrop(type)}>
+                {type === "token" ? "Edit Airdrop" : "Edit POAP"}
+              </button>
+              <button onClick={() => endAirdrop(type)} className="second-btn">
+                {type === "token" ? "End Airdrop" : "End POAP"}
+              </button>
+            </div>}
           </div>
         </ClickOutsideWrapper>
       </ClaimModalStyles>

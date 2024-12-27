@@ -1,15 +1,17 @@
 import styled from "styled-components";
+import { FilterStyles } from "./claimpage";
 
-export const DashboardStyles = styled.div`
+export const DashboardStyles = styled(FilterStyles)`
   h2 {
     color: #fff;
     font-size: 1.25rem;
     font-style: normal;
     font-weight: 700;
     line-height: 3.0625rem; /* 245% */
+    text-align: left;
   }
-  .cards {
-    div {
+  .stat-cards {
+    .stat {
       border-radius: 0.625rem;
       background: rgba(133, 136, 145, 0.3);
       p {
@@ -50,7 +52,7 @@ export const DashboardStyles = styled.div`
     letter-spacing: -0.02rem;
   }
   @media (max-width: 500px) {
-    .cards div {
+    .stat-cards .stat {
       h3 {
         font-size: 1.5rem;
       }
