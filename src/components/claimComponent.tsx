@@ -31,6 +31,7 @@ export interface IDropComp {
   totalParticipants: number;
   totalClaims: number;
   nftAddress?: string;
+  isEditable ?: boolean;
   // img ?: string; havent figure how best to get this
 }
 
@@ -43,6 +44,7 @@ export const DropComp: React.FC<IDropComp> = ({
   totalRewardPool,
   nftAddress,
   totalClaims,
+  isEditable,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
@@ -147,7 +149,7 @@ export const DropComp: React.FC<IDropComp> = ({
               nftAddress,
               totalClaims,
               type: "token",
-              isCreator: creator.toLowerCase() === address?.toLowerCase(),
+              isCreator: (creator.toLowerCase() === address?.toLowerCase()) && isEditable,
             }}
             closeModal={() => setShowModal(false)}
           />
@@ -165,6 +167,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
   totalRewardClaimed,
   totalRewardPool,
   totalClaims,
+  isEditable,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
@@ -271,7 +274,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
               totalRewardPool,
               totalClaims,
               type: "poap",
-              isCreator: creator.toLowerCase() === address?.toLowerCase(),
+              isCreator: (creator.toLowerCase() === address?.toLowerCase()) && isEditable,
             }}
             closeModal={() => setShowModal(false)}
           />

@@ -27,12 +27,20 @@ const Dashboard = () => {
 
   const [selectedTabName, setSelectedTabName] = useState("Tokens");
 
-  const { isConnected } = useAppKitAccount();
+  const { isConnected, address } = useAppKitAccount();
 
   const [query, setQuery] = useState<string>("");
 
-  const [tokendrops, setTokenDrops] = useState(TokenDrops);
-  const [poapdrops, setPOAPDrops] = useState(POAPDrops);
+  const [tokendrops, setTokenDrops] = useState(() =>
+    TokenDrops.filter(
+      (drop) => drop.creator.toLowerCase() === address.toLowerCase()
+    )
+  );
+  const [poapdrops, setPOAPDrops] = useState(() =>
+    POAPDrops.filter(
+      (drop) => drop.creator.toLowerCase() === address.toLowerCase()
+    )
+  );
 
   const handleTabSwitch = (tabName: string) => {
     setSelectedTabName(tabName);
@@ -187,11 +195,11 @@ const Dashboard = () => {
             <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] pb-[4rem] min-h-[40vh]">
               {selectedTabName == "Tokens" &&
                 tokendrops.map((drop, index) => (
-                  <DropComp key={index} {...drop} />
+                  <DropComp key={index} {...drop} isEditable={true} />
                 ))}
               {selectedTabName == "POAPs" &&
                 poapdrops.map((drop, index) => (
-                  <POAPDropComp key={index} {...drop} />
+                  <POAPDropComp key={index} {...drop} isEditable={true} />
                 ))}
 
               {/* fix this later */}
