@@ -174,7 +174,7 @@ const ClaimPage = () => {
           </DropListStyle>
         )}
         <AnimatePresence>
-          {!isConnected && <SonikNotConnected />}
+          {!isConnected && <SonikNotConnected classNames="pt-[2rem] md:mt-[0rem] md:pt-[3rem] pb-[4rem]" />}
         </AnimatePresence>
       </ClaimPageStyle>
       <FooterComponent />

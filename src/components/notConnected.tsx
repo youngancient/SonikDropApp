@@ -10,7 +10,7 @@ export const SonikNotConnected:React.FC<IClassStyle> = ({classNames}) => {
   const { open } = useAppKit();
   return (
     <SonikNotConnectedStyles
-      className={`flex flex-col w-full justify-center items-center mt-[2rem] md:mt-[3rem] mb-[4rem] gap-[2rem] md:gap-[3rem] ${classNames}`}
+      className={`flex flex-col w-full justify-center items-center gap-[2rem] md:gap-[3rem] ${classNames}`}
       initial="initial"
       animate="final"
       exit="exit"
