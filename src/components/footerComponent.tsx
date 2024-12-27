@@ -7,7 +7,7 @@ export interface IClassStyle {
 export const FooterComponent: React.FC<IClassStyle> = ({ classNames }) => {
   return (
     <div
-      className={`flex justify-center text-white h-[100px] items-center px-2 md:px-[200px] mt-[1rem] ${classNames}`}
+      className={`flex justify-center text-white h-[100px] items-center px-2 md:px-[200px] pt-[1rem] ${classNames}`}
     >
       <div className="flex gap-2 items-center">
         <Link to="https://github.com/youngancient/SonikDropApp" target="_blank">
