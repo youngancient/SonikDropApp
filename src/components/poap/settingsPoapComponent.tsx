@@ -1,6 +1,6 @@
-import { ethers, Numeric } from "ethers";
+import { ethers } from "ethers";
 import Papa from "papaparse";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 import { IAirdropList, ICSV } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
@@ -20,7 +20,6 @@ import {
   selectEligibleParticipantAmount,
   selectInvalidAirdropAddresses,
   selectShowCSVMaker,
-  selectTokenAddress,
   setAirdropMakerList,
   setCsvData,
   setEligibleParticipantAddress,
@@ -29,10 +28,8 @@ import {
   setCsvDataError,
   setCsvToJSONData,
   setShowCSVMaker,
-  setTokenAddressError,
-  setTokenDetail,
-  selectTokenDetail,
-} from "../../store/slices/prepareSlice";
+  // selectTokenDetail,
+} from "../../store/slices/preparePoapSlice";
 import { moodVariant, parentVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import ClickOutsideWrapper from "../outsideClick";
@@ -40,8 +37,8 @@ import {
   useAppKit,
   useAppKitAccount
 } from "@reown/appkit/react";
-import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
-import { ethSettings } from "../../constants/chains";
+// import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
+// import { ethSettings } from "../../constants/chains";
 
 export function SettingsPoapComponent() {
   //   const navigate = useNavigate();
@@ -50,7 +47,7 @@ export function SettingsPoapComponent() {
 
   const airdropMakerList = useAppSelector(selectAirdropMakerList);
   const csvData = useAppSelector(selectCsvData);
-  const tokenAddress = useAppSelector(selectTokenAddress);
+  // const tokenAddress = useAppSelector(selectTokenAddress);
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
   const csvDataError = useAppSelector(selectCsvDataError);
   const invalidAirdropAddresses = useAppSelector(selectInvalidAirdropAddresses);
@@ -63,7 +60,7 @@ export function SettingsPoapComponent() {
   );
   // const powerValue = useAppSelector(selectPowerValue);
 
-  const tokenDetail = useAppSelector(selectTokenDetail);
+  // const tokenDetail = useAppSelector(selectTokenDetail);
 
   const addEligibleParticipant = () => {
     const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
@@ -157,26 +154,23 @@ export function SettingsPoapComponent() {
             return;
           }
 
-          if (tokenDetail?.decimals == null) {
-            toast.error("Token metadata is missing");
-            return;
-          }
+          // if (tokenDetail?.decimals == null) {
+          //   toast.error("Token metadata is missing");
+          //   return;
+          // }
 
           const invalidAmounts = results.data.filter(
-            (result: ICSV) => !(/^(\d+(\.\d+)?|\.\d+)$/.test(result.address))
+            (result: ICSV) => !(/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString()))
           );
 
           if(invalidAmounts.length > 0) {
-            toast.error(invalidAmounts.join(", ") + invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts");
+            toast.error(invalidAmounts.map((a: ICSV) => a.amount).join(", ") + (invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts"));
             return;
           }
 
           const stringResult = results.data
             .map((result: ICSV) => {
-              return `${result.address},${ethers.formatUnits(
-                result.amount.toString(),
-                tokenDetail.decimals as string | Numeric // Type assertion to ensure it's not null
-              )}`;
+              return `${result.address},${result.amount}`;
             })
             .join(`\n`);
 
@@ -193,28 +187,27 @@ export function SettingsPoapComponent() {
   const { open } = useAppKit();
   
 
-  const alchemy = new Alchemy(ethSettings);
-  const [_isLoadingData, setIsLoadingData] = useState(false);
-  const getTokenMetadata = async (
-    address: string
-  ): Promise<TokenMetadataResponse | null> => {
-    try {
-      setIsLoadingData(true);
-      const metadata = await alchemy.core.getTokenMetadata(address);
-      dispatch(setTokenDetail(metadata));
-      // if (!metadata) {
-      // }
-      return metadata;
-    } catch (error) {
-      console.error("Error fetching token metadata:", error);
-      return null;
-    } finally {
-      setIsLoadingData(false);
-    }
-  };
+  // const alchemy = new Alchemy(ethSettings);
+  // const [_isLoadingData, setIsLoadingData] = useState(false);
+  // const getTokenMetadata = async (
+  //   address: string
+  // ): Promise<TokenMetadataResponse | null> => {
+  //   try {
+  //     setIsLoadingData(true);
+  //     const metadata = await alchemy.core.getTokenMetadata(address);
+  //     dispatch(setTokenDetail(metadata));
+  //     if (!metadata) {
+  //     }
+  //     return metadata;
+  //   } catch (error) {
+  //     console.error("Error fetching token metadata:", error);
+  //     return null;
+  //   } finally {
+  //     setIsLoadingData(false);
+  //   }
+  // };
   const nextPage = async () => {
   
-    const isTokenAddressValid = ethers.isAddress(tokenAddress);
     if (!isConnected) {
       open();
       return;
@@ -224,12 +217,6 @@ export function SettingsPoapComponent() {
       !csvData ||
       invalidAirdropAddresses.length > 0
     ) {
-      if (!isTokenAddressValid) {
-        dispatch(setTokenAddressError("Kindly enter a valid token address"));
-        toast.error("Kindly enter a valid token address");
-      } else {
-        dispatch(setTokenAddressError(""));
-      }
       if (!csvData) {
         dispatch(setCsvDataError("Kindly upload a csv"));
         toast.error("Kindly upload a csv");
@@ -246,53 +233,46 @@ export function SettingsPoapComponent() {
       return;
     }
 
-    if (tokenDetail == null) {
-      toast.error("Token metadata is missing");
-      return;
-    }
-    sessionStorage.setItem("tokenAddress", tokenAddress);
+    // if (tokenDetail == null) {
+    //   toast.error("Token metadata is missing");
+    //   return;
+    // }
+    // sessionStorage.setItem("tokenAddress", tokenAddress);
     sessionStorage.setItem(
       "csvData",
       JSON.stringify(
         JSON.parse(JSON.stringify(csvToJSONData)).map((data: ICSV) => {
-          console.log("Data", data.amount);
-          if (tokenDetail?.decimals !== null) {
-            data.amount = ethers.formatUnits(
-              data.amount.toString(),
-              tokenDetail.decimals
-            );
-          }
           return data;
         })
       )
     );
 
-    dispatch(setStep("settings"));
+    dispatch(setStep("approve"));
   };
 
   useEffect(() => {
-    const fetchMetadata = async () => {
-      const metadata = await getTokenMetadata(tokenAddress);
-      if (metadata) {
-        console.log("Token Metadata:", metadata);
-        if (metadata.decimals == null) {
-          dispatch(setTokenAddressError("Kindly enter a valid token address"));
-          return;
-        }
+    // const fetchMetadata = async () => {
+    //   const metadata = await getTokenMetadata(tokenAddress);
+    //   if (metadata) {
+    //     console.log("Token Metadata:", metadata);
+    //     if (metadata.decimals == null) {
+    //       dispatch(setTokenAddressError("Kindly enter a valid token address"));
+    //       return;
+    //     }
 
-        // Process the metadata as needed
-      } else {
-        toast.error("Failed to fetch token metadata.");
-      }
-    };
-    const isTokenAddressValid = ethers.isAddress(tokenAddress);
+    //     // Process the metadata as needed
+    //   } else {
+    //     toast.error("Failed to fetch token metadata.");
+    //   }
+    // };
+    // const isTokenAddressValid = ethers.isAddress(tokenAddress);
 
-    if (!isTokenAddressValid) {
-      dispatch(setTokenAddressError("Kindly enter a valid token address"));
-    } else {
-      fetchMetadata();
-      dispatch(setTokenAddressError(""));
-    }
+    // if (!isTokenAddressValid) {
+    //   dispatch(setTokenAddressError("Kindly enter a valid token address"));
+    // } else {
+    //   fetchMetadata();
+    //   dispatch(setTokenAddressError(""));
+    // }
 
     if (!csvData) {
       dispatch(setCsvDataError("Kindly upload a csv"));
@@ -302,10 +282,10 @@ export function SettingsPoapComponent() {
 
     if (invalidAirdropAddresses.length > 0) {
       toast.error(
-        invalidAirdropAddresses.join(", ") + " are invalid addresses"
+        invalidAirdropAddresses.join(", ") + (invalidAirdropAddresses.length == 1 ? " is an invalid address": " are invalid addresses")
       );
     }
-  }, [csvData, tokenAddress]);
+  }, [csvData]);
 
   return (
     <AnimatePresence>
@@ -373,13 +353,6 @@ export function SettingsPoapComponent() {
                       type="file"
                       accept=".csv"
                       id="upload-button"
-                      onClick={(e) => {
-                        if (!ethers.isAddress(tokenAddress)) {
-                          e.preventDefault();
-                          toast.error("Enter Token address first!");
-                          return;
-                        }
-                      }}
                       onChange={handleChange}
                     />
                     <label

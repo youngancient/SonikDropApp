@@ -19,7 +19,7 @@ import { ethers } from "ethers";
 import { toast } from "react-toastify";
 import { ButtonLoader } from "../icons";
 
-export function ApproveComponent() {
+export function ApprovePoapComponent() {
   const alchemy = new Alchemy(ethSettings);
   const { address } = useAppKitAccount();
   const dispatch = useAppDispatch();
