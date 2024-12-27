@@ -5,22 +5,19 @@ import { ClaimPageStyle, DropListStyle } from "../components/styles/claimpage";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleCancel, MagnifyingGlass } from "../components/icons";
 import { DropComp, POAPDropComp } from "../components/claimComponent";
-import { POAPDrops, TokenDrops } from "../constants/data.ts";
+import { POAPDrops, tabs, TokenDrops } from "../constants/data.ts";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
 import { SonikNotConnected } from "../components/notConnected.tsx";
 import { ethers } from "ethers";
 
-interface TabSwitch {
+export interface TabSwitch {
   name: "Tokens" | "POAPs";
   isSelected: boolean;
 }
-const tabs: TabSwitch[] = [
-  { name: "Tokens", isSelected: true },
-  { name: "POAPs", isSelected: false },
-];
 
 const ClaimPage = () => {
+  // Note: Here only the airdrops the user is eligible for are displayed
   const [stateTabs, setStateTabs] = useState(tabs);
 
   const [selectedTabName, setSelectedTabName] = useState("Tokens");
@@ -88,7 +85,7 @@ const ClaimPage = () => {
       className="h-screen overflow-auto"
     >
       <HeaderComponent showBackButton={false} />
-      <ClaimPageStyle className="px-2 md:px-[200px] mt-[2.5rem] md:mt-[3rem]">
+      <ClaimPageStyle className="px-[1rem] md:px-[200px] mt-[2.5rem] md:mt-[3rem]">
         <div className="banner relative">
           <motion.h1
             initial="initial"
@@ -157,7 +154,7 @@ const ClaimPage = () => {
           </div>
         </div>
         {isConnected && (
-          <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem]">
+          <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] mb-[4rem] min-h-[40vh]">
             {selectedTabName == "Tokens" &&
               tokendrops.map((drop, index) => (
                 <DropComp key={index} {...drop} />

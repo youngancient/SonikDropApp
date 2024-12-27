@@ -1,50 +1,7 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 
-export const ClaimPageStyle = styled.div`
-  h1,
-  h2 {
-    color: #fff;
-    font-style: normal;
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: 500;
-    line-height: 3.0625rem; /* 122.5% */
-  }
-  h2 {
-    font-size: 2rem;
-    background: var(
-      --coughs,
-      linear-gradient(164deg, #2c67ff -21.47%, #27c4fd 88.84%)
-    );
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .banner {
-    border-radius: 1.25rem;
-    background: linear-gradient(180deg, #0b135b 40.24%, rgba(1, 3, 20, 0) 100%),
-      radial-gradient(
-        65.08% 85.05% at 50% 50%,
-        rgba(0, 0, 0, 0) 37.41%,
-        #2b75ff 75%,
-        #26c6fd 100%
-      );
-    min-height: 12.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 0.75rem;
-    p {
-      color: #babcd2;
-      text-align: center;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 1.395rem; /* 148.8% */
-      font-size: 0.9375rem;
-    }
-  }
+export const FilterStyles = styled.div`
   .filters {
     display: flex;
     gap: 1rem;
@@ -102,6 +59,64 @@ export const ClaimPageStyle = styled.div`
       line-height: 1.25rem; /* 142.857% */
     }
   }
+  @media (max-width: 600px) {
+    .filters {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+    }
+    .inp {
+      width: 100%;
+      input {
+        width: 100%;
+      }
+    }
+  }
+`;
+export const ClaimPageStyle = styled(FilterStyles)`
+  h1,
+  h2 {
+    color: #fff;
+    font-style: normal;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 500;
+    line-height: 3.0625rem; /* 122.5% */
+  }
+  .drop-list h2 {
+    font-size: 2rem;
+    background: var(
+      --coughs,
+      linear-gradient(164deg, #2c67ff -21.47%, #27c4fd 88.84%)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .banner {
+    border-radius: 1.25rem;
+    background: linear-gradient(180deg, #0b135b 40.24%, rgba(1, 3, 20, 0) 100%),
+      radial-gradient(
+        65.08% 85.05% at 50% 50%,
+        rgba(0, 0, 0, 0) 37.41%,
+        #2b75ff 75%,
+        #26c6fd 100%
+      );
+    min-height: 12.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.75rem;
+    p {
+      color: #babcd2;
+      text-align: center;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1.395rem; /* 148.8% */
+      font-size: 0.9375rem;
+    }
+  }
+
   @media (max-width: 600px) {
     h1 {
       font-size: 1.35rem;
@@ -273,7 +288,6 @@ export const DropListStyle = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  margin-bottom: 4rem;
 
   @media (min-width: 500px) {
     display: grid;
@@ -317,6 +331,14 @@ export const FlexAbsoluteModalStyles = styled(AbsoluteContStyle)`
 
 export const ClaimModalStyles = styled(motion.div)`
   width: 60%;
+  h1 {
+    color: #fff;
+    font-style: normal;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 500;
+    line-height: 3.0625rem; /* 122.5% */
+  }
   .modal {
     border-radius: 2rem;
     background: #050c19;
@@ -405,9 +427,17 @@ export const ClaimModalStyles = styled(motion.div)`
       font-weight: 500;
       line-height: 2rem; /* 228.571% */
       letter-spacing: -0.02rem;
+      border: 2px solid transparent;
       &:hover {
-        background: #01a7ff;
-        box-shadow: 0px 4px 6.8px 0px #2b75ff inset;
+        border: 2px solid #01a7ff;
+      }
+    }
+    .btn .second-btn {
+      background: #01a7ff;
+      box-shadow: 0px 4px 6.8px 0px #2b75ff inset;
+      border: none;
+      &:hover {
+        border: none;
       }
     }
     .cards {
@@ -445,6 +475,12 @@ export const ClaimModalStyles = styled(motion.div)`
         --coughs,
         linear-gradient(164deg, #2c67ff -21.47%, #27c4fd 88.84%)
       );
+    }
+  }
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.35rem;
+      line-height: 1.5625rem; /* 122.5% */
     }
   }
   @media (max-width: 500px) {
