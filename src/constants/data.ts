@@ -176,3 +176,5 @@ export const POAPDrops: IDropComp[] = [
     totalClaims: 1500,
   },
 ];
+
+

@@ -93,59 +93,94 @@ const moveBottomRight = keyframes`
   50% { transform: translate(10px, 10px); }
 `;
 
-export const BNB = () => {
+export interface ILink {
+  href?: string;
+}
+export const BNB: React.FC<ILink> = ({ href }) => {
   return (
-    <ChainDivStyle top={130} left={0}>
+    <ChainDivStyle
+      top={130}
+      left={0}
+      onClick={() => href && window.open(href, "_blank")}
+    >
       <img src="/BNB.avif" alt="bnb" />
     </ChainDivStyle>
   );
 };
-export const ETH = () => {
+export const ETH: React.FC<ILink> = ({ href }) => {
   return (
-    <ChainDivStyle top={130} right={0}>
+    <ChainDivStyle
+      top={130}
+      right={0}
+      onClick={() => href && window.open(href, "_blank")}
+    >
       <img src="/Ethereum.avif" alt="eth" />
     </ChainDivStyle>
   );
 };
-export const Optimism = () => {
+export const Optimism: React.FC<ILink> = ({ href }) => {
   return (
-    <ChainDivStyle bottom={100} left={200}>
+    <ChainDivStyle
+      bottom={100}
+      left={200}
+      onClick={() => href && window.open(href, "_blank")}
+    >
       <img src="/Optimism.avif" alt="op" />
     </ChainDivStyle>
   );
 };
-export const Base = () => {
+export const Base: React.FC<ILink> = ({ href }) => {
   return (
-    <ChainDivStyle top={180} left={150}>
+    <ChainDivStyle
+      top={180}
+      left={150}
+      onClick={() => href && window.open(href, "_blank")}
+    >
       <img src="/Base.png" alt="base" />
     </ChainDivStyle>
   );
 };
-export const Polygon = () => {
+export const Polygon: React.FC<ILink> = ({ href }) => {
   return (
-    <ChainDivStyle bottom={180} left={90}>
+    <ChainDivStyle
+      bottom={180}
+      left={90}
+      onClick={() => href && window.open(href, "_blank")}
+    >
       <img src="/Polygon.avif" alt="polygon" />
     </ChainDivStyle>
   );
 };
-export const Arbitrum = () => {
+export const Arbitrum: React.FC<ILink> = ({ href }) => {
   return (
-    <ChainDivStyle bottom={100} right={150}>
+    <ChainDivStyle
+      bottom={100}
+      right={150}
+      onClick={() => href && window.open(href, "_blank")}
+    >
       <img src="/Arbitrum.svg" alt="arbitrum" />
     </ChainDivStyle>
   );
 };
-export const Kaia = () => {
+export const Kaia: React.FC<ILink> = ({ href }) => {
   return (
-    <ChainDivStyle bottom={200} right={50}>
+    <ChainDivStyle
+      bottom={200}
+      right={50}
+      onClick={() => href && window.open(href, "_blank")}
+    >
       <img src="/kaia.png" alt="sol" />
     </ChainDivStyle>
   );
 };
 
-export const Lisk = () => {
+export const Lisk: React.FC<ILink> = ({ href }) => {
   return (
-    <ChainDivStyle bottom={300} right={110}>
+    <ChainDivStyle
+      bottom={300}
+      right={110}
+      onClick={() => href && window.open(href, "_blank")}
+    >
       <img src="/Lisk.png" alt="sol" />
     </ChainDivStyle>
   );
