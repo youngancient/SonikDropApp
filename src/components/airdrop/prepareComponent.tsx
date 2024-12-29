@@ -41,9 +41,7 @@ import { moodVariant, parentVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import ClickOutsideWrapper from "../outsideClick";
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
-import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
-import { ethSettings } from "../../constants/chains";
-import { useTokenDetail } from "../../hooks/specific/useERC20";
+import { ITokenDetails, useTokenDetail } from "../../hooks/specific/useERC20";
 
 export function PrepareComponent() {
   //   const navigate = useNavigate();
@@ -68,8 +66,7 @@ export function PrepareComponent() {
 
   const tokenDetail = useAppSelector(selectTokenDetail);
 
-  const { fetchDetails } =
-    useTokenDetail(tokenAddress); 
+  const { fetchDetails } = useTokenDetail(tokenAddress);
 
   const addEligibleParticipant = () => {
     const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
@@ -222,17 +219,22 @@ export function PrepareComponent() {
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
 
-  const alchemy = new Alchemy(ethSettings);
   const [isLoadingData, setIsLoadingData] = useState(false);
+
+  // mock api call
   const getTokenMetadata = async (
     address: string
-  ): Promise<TokenMetadataResponse | null> => {
+  ): Promise<ITokenDetails | null> => {
     try {
+      console.log(address);
       setIsLoadingData(true);
-      const metadata = await alchemy.core.getTokenMetadata(address);
+      const metadata: ITokenDetails = {
+        name: "ABBA Token",
+        symbol: "ABBA",
+        decimals: 18,
+      };
       dispatch(setTokenDetail(metadata));
-      // if (!metadata) {
-      // }
+
       return metadata;
     } catch (error) {
       console.error("Error fetching token metadata:", error);

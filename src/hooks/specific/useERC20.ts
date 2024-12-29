@@ -76,7 +76,7 @@ export const useTokenApproval = (tokenAddress: string) => {
   return { approve, isApprovalLoading };
 };
 
-interface ITokenDetails {
+export interface ITokenDetails {
   name: string;
   symbol: string;
   decimals: number;
