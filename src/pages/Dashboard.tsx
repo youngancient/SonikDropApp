@@ -106,7 +106,7 @@ const Dashboard = () => {
       <DashboardStyles className="mt-[1.5rem] md:mt-[2rem] h-fit">
         <div className="top px-[1rem] md:px-[200px]">
           <h2>Dashboard Overview</h2>
-          <div className="stat-cards grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 gap-[0.25rem] md:gap-[1.5rem] flex-wrap mt-[1rem] pb-[3.4rem] md:pb-[4.4rem] rounded-[1.25rem] md:rounded-[0rem]">
+          <div className="stat-cards grid grid-cols-2 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4  gap-[0.25rem] md:gap-[1.5rem] flex-wrap mt-[1rem] pb-[3.4rem] md:pb-[4.4rem] rounded-[1.25rem] md:rounded-[0rem]">
             <div className="flex flex-col justify-start p-[1.35rem] gap-[1.7rem] stat">
               <p className="text-center md:text-left">Airdrops Created</p>
               <h3 className="text-center md:text-left w-full">0</h3>
@@ -128,7 +128,7 @@ const Dashboard = () => {
         <div className="bottom px-[1rem] bg-[#050C19] px-2 md:px-[200px] h-full">
           <div className="pt-[2rem]">
             <h2>Quick Actions</h2>
-            <div className="quick flex items-center gap-[1rem] justify-between md:justify-start">
+            <div className="quick flex items-center gap-[1rem] justify-start md:justify-start">
               <button
                 className="flex flex-col p-[0.625rem] gap-[0.25rem] items-center justify-center rounded-[1.25rem] create h-[8.75rem] w-[10rem] cursor-pointer"
                 onClick={() => setShowModal(true)}
