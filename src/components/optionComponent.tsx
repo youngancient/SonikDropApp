@@ -90,6 +90,7 @@ export const OptionComponent:React.FC<IOptionComp> =({closeModal})=>{
                     </OptionStyles>
                   ))}
                 </div>
+              
               </motion.div>
             </ClickOutsideWrapper>
           </motion.div>
