@@ -68,8 +68,8 @@ export function PrepareComponent() {
 
   const tokenDetail = useAppSelector(selectTokenDetail);
 
-  const { tokenDetails, isLoadingDetails, fetchDetails } =
-    useTokenDetail(tokenAddress);
+  const { fetchDetails } =
+    useTokenDetail(tokenAddress); 
 
   const addEligibleParticipant = () => {
     const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
