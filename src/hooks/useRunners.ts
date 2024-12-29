@@ -1,7 +1,6 @@
 import { useAppKitProvider } from "@reown/appkit/react";
 import { BrowserProvider, Eip1193Provider, JsonRpcSigner } from "ethers";
 import { useEffect, useMemo, useState } from "react";
-import { jsonRpcProvider } from "../constants/provider";
 
 const useRunners = () => {
   const [signer, setSigner] = useState<JsonRpcSigner>();
@@ -20,7 +19,7 @@ const useRunners = () => {
       setSigner(newSigner);
     });
   }, [provider, signer]);
-  return { provider, signer, readOnlyProvider: jsonRpcProvider };
+  return { provider, signer};
 };
 
 export default useRunners;

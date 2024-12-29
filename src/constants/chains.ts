@@ -1,5 +1,3 @@
-import { Network } from "alchemy-sdk";
-
 interface INetworkDetail {
   [key: number]: string;
 }
@@ -26,19 +24,6 @@ export const supportedNetworksDetails: INetworkDetail = {
 //   4202: "",
 // }
 
-export const ethSettings = {
-  apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
-  network: Network.ETH_SEPOLIA,
-};
-export const baseSettings = {
-  apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
-  network: Network.BASE_SEPOLIA,
-};
-
-export const bnbSettings = {
-  apiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
-  network: Network.BNB_TESTNET,
-};
 
 export interface IChains {
   name: string;

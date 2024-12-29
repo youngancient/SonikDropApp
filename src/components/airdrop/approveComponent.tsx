@@ -12,19 +12,16 @@ import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useClearFormInput } from "../../hooks/useClearForm";
 import { selectTokenDetail } from "../../store/slices/prepareSlice";
-import { Alchemy } from "alchemy-sdk";
-import { ethSettings } from "../../constants/chains";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
 import { toast } from "react-toastify";
 import { ButtonLoader } from "../icons";
 
 export function ApproveComponent() {
-  const alchemy = new Alchemy(ethSettings);
   const { address } = useAppKitAccount();
   const dispatch = useAppDispatch();
   const [balance, setBalance] = useState("");
-  const tokenAddress = sessionStorage.getItem("tokenAddress") as string;
+  // const tokenAddress = sessionStorage.getItem("tokenAddress") as string;
 
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
 
@@ -52,22 +49,9 @@ export function ApproveComponent() {
           return;
         }
         setLoadingBal(true);
-        const balances = await alchemy.core.getTokenBalances(address, [
-          tokenAddress,
-        ]);
-        if (balances.tokenBalances[0].tokenBalance == null) {
-          toast.error("Token balance not found");
-          return;
-        }
-        if (tokenDetail?.decimals == null) {
-          toast.error("Invalid Token decimals");
-          return;
-        }
+       
         setBalance(
-          ethers.formatUnits(
-            balances.tokenBalances[0].tokenBalance,
-            tokenDetail.decimals
-          )
+          "100000"
         );
       } catch (error) {
         console.error("Error fetching token balance:", error);
@@ -144,7 +128,7 @@ export function ApproveComponent() {
               </div>
               <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                 <div className="font-bold text-white text-[20px]">
-                  {isLoadingBal ? <ButtonLoader /> : balance}
+                  {isLoadingBal ? <ButtonLoader /> : parseFloat(balance).toLocaleString()}
                 </div>
                 <div className="text-sm text-white/[0.8]">Token balance</div>
               </div>

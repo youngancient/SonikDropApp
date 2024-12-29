@@ -5,7 +5,7 @@ import FACTORY_ABI from "../ABI/factory.json";
 import AIRDROP_ABI from "../ABI/airdrop.json";
 
 export const useFactoryContract = (withSigner = false) => {
-  const { readOnlyProvider, signer } = useRunners();
+  const { provider, signer } = useRunners();
 
   return useMemo(() => {
     if (withSigner) {
@@ -19,16 +19,16 @@ export const useFactoryContract = (withSigner = false) => {
     return new Contract(
       import.meta.env.VITE_FACTORY_CONTRACT_ADDRESS,
       FACTORY_ABI,
-      readOnlyProvider
+      provider
     );
-  }, [readOnlyProvider, signer, withSigner]);
+  }, [provider, signer, withSigner]);
 };
 
 export const useAirdropContract = (
   withSigner = false,
   airdropContractAddress: string
 ) => {
-  const { readOnlyProvider, signer } = useRunners();
+  const { provider, signer } = useRunners();
 
   return useMemo(() => {
     if (!airdropContractAddress) {
@@ -44,12 +44,12 @@ export const useAirdropContract = (
         return new Contract(
           airdropContractAddress,
           AIRDROP_ABI,
-          readOnlyProvider
+          provider
         );
       }
     } catch (error) {
       console.error("Error creating Airdrop contract:", error);
       return null;
     }
-  }, [airdropContractAddress, readOnlyProvider, signer, withSigner]);
+  }, [airdropContractAddress, provider, signer, withSigner]);
 };

@@ -7,7 +7,7 @@ export const useERC20Contract = (
   withSigner = false,
   tokenContractAddress: string
 ) => {
-  const { readOnlyProvider, signer } = useRunners();
+  const { provider, signer } = useRunners();
 
   return useMemo(() => {
     if (!tokenContractAddress) {
@@ -20,11 +20,11 @@ export const useERC20Contract = (
         if (!signer) return null;
         return new Contract(tokenContractAddress, ERC20_ABI, signer);
       } else {
-        return new Contract(tokenContractAddress, ERC20_ABI, readOnlyProvider);
+        return new Contract(tokenContractAddress, ERC20_ABI, provider);
       }
     } catch (error) {
       console.error("Error creating ERC20 contract:", error);
       return null;
     }
-  }, [tokenContractAddress, withSigner, signer, readOnlyProvider]);
+  }, [tokenContractAddress, withSigner, signer, provider]);
 };
