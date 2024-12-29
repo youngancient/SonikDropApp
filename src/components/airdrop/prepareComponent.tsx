@@ -1,4 +1,4 @@
-import { ethers, Numeric, } from "ethers";
+import { ethers, Numeric } from "ethers";
 import Papa from "papaparse";
 import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
@@ -40,12 +40,10 @@ import {
 import { moodVariant, parentVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import ClickOutsideWrapper from "../outsideClick";
-import {
-  useAppKit,
-  useAppKitAccount
-} from "@reown/appkit/react";
+import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
 import { ethSettings } from "../../constants/chains";
+import { useTokenDetail } from "../../hooks/specific/useERC20";
 
 export function PrepareComponent() {
   //   const navigate = useNavigate();
@@ -69,6 +67,9 @@ export function PrepareComponent() {
   const powerValue = useAppSelector(selectPowerValue);
 
   const tokenDetail = useAppSelector(selectTokenDetail);
+
+  const { tokenDetails, isLoadingDetails, fetchDetails } =
+    useTokenDetail(tokenAddress);
 
   const addEligibleParticipant = () => {
     const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
@@ -155,20 +156,28 @@ export function PrepareComponent() {
     if (file) {
       Papa.parse(file, {
         complete: (results: any) => {
-          const invalidAddresses = results.data.filter(
-            (result: ICSV) => {
-              console.log(result.address, " valid ", ethers.isAddress(result.address));
-              return ethers.isAddress(result.address) == false
-            }
-          );
+          const invalidAddresses = results.data.filter((result: ICSV) => {
+            console.log(
+              result.address,
+              " valid ",
+              ethers.isAddress(result.address)
+            );
+            return ethers.isAddress(result.address) == false;
+          });
 
           dispatch(setInvalidAirdropAddresses(invalidAddresses));
 
           console.log("Invalid", invalidAddresses);
 
-
           if (invalidAddresses.length > 0) {
-            toast.error(invalidAddresses.map((a: ICSV) => a.address.toString()).join(", ") + (invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses"));
+            toast.error(
+              invalidAddresses
+                .map((a: ICSV) => a.address.toString())
+                .join(", ") +
+                (invalidAddresses.length == 1
+                  ? " is an invalid address"
+                  : " are invalid addresses")
+            );
             return;
           }
 
@@ -178,11 +187,17 @@ export function PrepareComponent() {
           }
 
           const invalidAmounts = results.data.filter(
-            (result: ICSV) => !(/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString()))
+            (result: ICSV) =>
+              !/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString())
           );
 
-          if(invalidAmounts.length > 0) {
-            toast.error(invalidAmounts.map((a: ICSV) => a.amount).join(", ") + (invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts"));
+          if (invalidAmounts.length > 0) {
+            toast.error(
+              invalidAmounts.map((a: ICSV) => a.amount).join(", ") +
+                (invalidAmounts.length == 1
+                  ? " is an invalid amount"
+                  : " are invalid amounts")
+            );
             return;
           }
 
@@ -206,7 +221,6 @@ export function PrepareComponent() {
 
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
-  
 
   const alchemy = new Alchemy(ethSettings);
   const [isLoadingData, setIsLoadingData] = useState(false);
@@ -228,13 +242,11 @@ export function PrepareComponent() {
     }
   };
   const nextPage = async () => {
-  
     const isTokenAddressValid = ethers.isAddress(tokenAddress);
     if (!isConnected) {
       open();
       return;
     }
-
     if (
       !isTokenAddressValid ||
       !csvData ||
@@ -323,6 +335,13 @@ export function PrepareComponent() {
       );
     }
   }, [csvData, tokenAddress]);
+
+  useEffect(() => {
+    if (ethers.isAddress(tokenAddress)) {
+      console.log("Valid token address detected, fetching details...");
+      fetchDetails();
+    }
+  }, [tokenAddress, fetchDetails]);
 
   return (
     <AnimatePresence>
