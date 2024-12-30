@@ -476,6 +476,29 @@ export const ClaimModalStyles = styled(motion.div)`
       );
     }
   }
+  .modal {
+    /* Custom scrollbar styles */
+    &::-webkit-scrollbar {
+      width: 8px; /* Width of the scrollbar */
+    }
+    &::-webkit-scrollbar-track {
+      background: rgba(
+        255,
+        255,
+        255,
+        0.07
+      ); /* Background of the scrollbar track */
+      border-radius: 0.625rem; /* Rounded edges for the track */
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #5a9bd6;
+      border-radius: 1rem;
+      box-shadow: 0px 4px 6.8px rgba(0, 0, 0, 0.2);
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: #2b75ff; /* Change color on hover */
+    }
+  }
   @media (max-width: 600px) {
     h1 {
       font-size: 1.35rem;
