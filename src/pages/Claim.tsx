@@ -4,7 +4,11 @@ import { HeaderComponent } from "../components/headerComponent";
 import { ClaimPageStyle, DropListStyle } from "../components/styles/claimpage";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleCancel, MagnifyingGlass } from "../components/icons";
-import { DropComp, IDropComp, POAPDropComp } from "../components/claimComponent";
+import {
+  DropComp,
+  IDropComp,
+  POAPDropComp,
+} from "../components/claimComponent";
 import { POAPDrops, tabs, TokenDrops } from "../constants/data.ts";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
@@ -35,8 +39,8 @@ const ClaimPage = () => {
 
   const [query, setQuery] = useState<string>("");
 
-  const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(null);
-  const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(null);
+  const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(TokenDrops);
+  const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(POAPDrops);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -155,29 +159,30 @@ const ClaimPage = () => {
           </div>
         </div>
 
-        {isConnected && (tokendrops?.length === 0 || poapdrops?.length === 0) && (
-          <motion.div
-            className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
-            initial="initial"
-            animate="final"
-            exit="exit"
-            key="empty"
-            variants={textVariant}
-          >
-            <h1 className="text-center">No Drops Found🧐</h1>
-          </motion.div>
-        )}
+        {isConnected &&
+          (tokendrops?.length === 0 || poapdrops?.length === 0) && (
+            <motion.div
+              className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
+              initial="initial"
+              animate="final"
+              exit="exit"
+              key="empty"
+              variants={textVariant}
+            >
+              <h1 className="text-center">No Drops Found🧐</h1>
+            </motion.div>
+          )}
 
         {isConnected && (
           <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] mb-[4rem]">
-             {selectedTabName == "Tokens" &&
-                (tokendrops ?? []).map((drop, index) => (
-                  <DropComp key={index} {...drop} isEditable={true} />
-                ))}
-              {selectedTabName == "POAPs" &&
-                (poapdrops ?? []).map((drop, index) => (
-                  <POAPDropComp key={index} {...drop} isEditable={true} />
-                ))}
+            {selectedTabName == "Tokens" &&
+              (tokendrops ?? []).map((drop, index) => (
+                <DropComp key={index} {...drop} />
+              ))}
+            {selectedTabName == "POAPs" &&
+              (poapdrops ?? []).map((drop, index) => (
+                <POAPDropComp key={index} {...drop} />
+              ))}
           </DropListStyle>
         )}
 

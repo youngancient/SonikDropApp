@@ -479,7 +479,7 @@ export const ClaimModalStyles = styled(motion.div)`
   .modal {
     /* Custom scrollbar styles */
     &::-webkit-scrollbar {
-      width: 8px; /* Width of the scrollbar */
+      width: 6px; /* Width of the scrollbar */
     }
     &::-webkit-scrollbar-track {
       background: rgba(

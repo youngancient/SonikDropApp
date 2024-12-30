@@ -490,6 +490,53 @@ export const CopyIcon = () => {
   );
 };
 
+export const FilledCopyIcon = () => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g opacity="0.7">
+        <path
+          d="M18 15C19.6569 15 21 13.6569 21 12V6C21 4.34315 19.6569 3 18 3H14C12.3431 3 11 4.34315 11 6V7.7H11.5C13.1569 7.7 14.5 9.04315 14.5 10.7V15H18Z"
+          fill="url(#paint0_linear_395_8695)"
+        />
+        <path
+          d="M6 9C4.34315 9 3 10.3431 3 12V18C3 19.6569 4.34315 21 6 21H10C11.6569 21 13 19.6569 13 18V12C13 10.3431 11.6569 9 10 9H6Z"
+          fill="url(#paint1_linear_395_8695)"
+        />
+      </g>
+      <defs>
+        <linearGradient
+          id="paint0_linear_395_8695"
+          x1="12"
+          y1="3"
+          x2="12"
+          y2="21"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#26C6FD" />
+          <stop offset="1" stopColor="#097AEC" />
+        </linearGradient>
+        <linearGradient
+          id="paint1_linear_395_8695"
+          x1="12"
+          y1="3"
+          x2="12"
+          y2="21"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#26C6FD" />
+          <stop offset="1" stopColor="#097AEC" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+};
+
 export const InfoIcon = () => {
   return (
     <svg
