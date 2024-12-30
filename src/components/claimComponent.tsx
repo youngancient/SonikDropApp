@@ -11,6 +11,7 @@ import {
   CalendarIcon,
   CheckedIcon,
   CopyIcon,
+  FilledCopyIcon,
   InfoIcon,
 } from "./icons";
 import {
@@ -481,7 +482,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                       )
                     }
                   >
-                    {isCreatorAddressCopied ? <CopyIcon /> : <CopyIcon />}
+                    {isCreatorAddressCopied ? <FilledCopyIcon /> : <CopyIcon />}
                   </button>
                 </div>
               </div>
@@ -499,7 +500,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                         )
                       }
                     >
-                      {isNftAddressCopied ? <CopyIcon /> : <CopyIcon />}
+                      {isNftAddressCopied ? <FilledCopyIcon /> : <CopyIcon />}
                     </button>
                   </div>
                 </div>

@@ -35,8 +35,8 @@ const ClaimPage = () => {
 
   const [query, setQuery] = useState<string>("");
 
-  const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(null);
-  const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(null);
+  const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(TokenDrops);
+  const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(POAPDrops);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -74,6 +74,7 @@ const ClaimPage = () => {
     }
     console.log(query);
   };
+
 
   const clearForm = () => {
     setTokenDrops(TokenDrops);
