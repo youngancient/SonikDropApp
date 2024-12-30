@@ -10,7 +10,7 @@ import {
   IoChevronDown,
   IoCheckmark,
 } from "react-icons/io5";
-import { LogoIcon } from "./icons";
+import { DashboardIcon, LogoIcon } from "./icons";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { goBack } from "../store/slices/stepSlice";
 import { useClearFormInput } from "../hooks/useClearForm";
@@ -69,7 +69,14 @@ export function HeaderComponent({
             <p className="text-base font-bold">SonikDrop</p>
           </span>
         </div>
-        <div className="w3m flex gap-2">
+        <div className="w3m flex gap-2 items-center">
+          <button
+            type="button"
+            className="px-4 py-1 h-[1.75rem] md:h-[2rem] rounded-md flex items-center justify-center bg-[rgba(255,255,255,0.08)] shadow-[0px_0px_0px_1px_rgba(225,228,234,0.20)] cursor-pointer"
+            onClick={() => navigate("/dashboard")}
+          >
+            <DashboardIcon />
+          </button>
           <SwitchChainComp />
           <button
             className="px-4 py-1 rounded-md bg-[#0096E6] text-white"
@@ -140,7 +147,7 @@ export const SwitchChainComp = () => {
     <ClickOutsideWrapper onClickOutside={() => setShowdropdown(false)}>
       <SwitchChainCompStyles>
         <button
-          className="border-[2px] px-4 py-1 rounded-md border-[#FFFFFF17] flex items-center gap-1"
+          className="px-4 py-1 rounded-md flex items-center gap-1 bg-[rgba(255,255,255,0.08)] shadow-[0px_0px_0px_1px_rgba(225,228,234,0.20)]"
           onClick={() => setShowdropdown(!showDropdown)}
         >
           {selectedChain !== null ? (

@@ -10,12 +10,12 @@ import {
 import { DashboardStyles } from "../components/styles/dashboard";
 import { AnimatePresence, motion } from "framer-motion";
 import { OptionComponent } from "../components/optionComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { POAPDrops, tabs, TokenDrops } from "../constants/data";
 import { ethers } from "ethers";
 import { DropListStyle } from "../components/styles/claimpage";
-import { DropComp, POAPDropComp } from "../components/claimComponent";
+import { DropComp, IDropComp, POAPDropComp } from "../components/claimComponent";
 import { SonikNotConnected } from "../components/notConnected";
 import { textVariant } from "../animations/animation";
 
@@ -32,14 +32,9 @@ const Dashboard = () => {
 
   const [query, setQuery] = useState<string>("");
 
-  const userCreatedTokenDrops = TokenDrops.filter(
-    (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
-  );
-  const userCreatedPOAPDrops = POAPDrops.filter(
-    (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
-  );
-  const [tokendrops, setTokenDrops] = useState(() => userCreatedTokenDrops);
-  const [poapdrops, setPOAPDrops] = useState(() => userCreatedPOAPDrops);
+  
+  const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(null);
+  const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(null);
 
   const handleTabSwitch = (tabName: string) => {
     setSelectedTabName(tabName);
@@ -49,6 +44,17 @@ const Dashboard = () => {
     clearForm();
     setStateTabs(newTabs);
   };
+
+  useEffect(()=>{
+    const userCreatedTokenDrops = TokenDrops.filter(
+      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
+    );
+    const userCreatedPOAPDrops = POAPDrops.filter(
+      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
+    );
+    setTokenDrops(userCreatedTokenDrops);
+    setPOAPDrops(userCreatedPOAPDrops);
+  },[address])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -88,6 +94,13 @@ const Dashboard = () => {
   };
 
   const clearForm = () => {
+    const userCreatedTokenDrops = TokenDrops.filter(
+      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
+    );
+    const userCreatedPOAPDrops = POAPDrops.filter(
+      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
+    );
+
     setTokenDrops(userCreatedTokenDrops);
     setPOAPDrops(userCreatedPOAPDrops);
     setQuery("");
@@ -193,7 +206,7 @@ const Dashboard = () => {
           </div>
 
           {isConnected &&
-            (tokendrops.length === 0 || poapdrops.length === 0) && (
+            (tokendrops?.length === 0 || poapdrops?.length === 0) && (
               <motion.div
                 className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
                 initial="initial"
@@ -209,11 +222,11 @@ const Dashboard = () => {
           {isConnected && (
             <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] pb-[4rem">
               {selectedTabName == "Tokens" &&
-                tokendrops.map((drop, index) => (
+                (tokendrops ?? []).map((drop, index) => (
                   <DropComp key={index} {...drop} isEditable={true} />
                 ))}
               {selectedTabName == "POAPs" &&
-                poapdrops.map((drop, index) => (
+                (poapdrops ?? []).map((drop, index) => (
                   <POAPDropComp key={index} {...drop} isEditable={true} />
                 ))}
             </DropListStyle>
