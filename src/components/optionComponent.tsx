@@ -35,7 +35,7 @@ export const OptionComponent:React.FC<IOptionComp> =({closeModal})=>{
 
     return(
         <motion.div
-            className="h-screen w-full flex justify-center items-center bg-[transparent] absolute top-[0] left-[0] backdrop-blur-lg p-4"
+            className="h-screen w-full flex justify-center items-center bg-[transparent] fixed top-[0] left-[0] backdrop-blur-lg p-4"
             variants={parentVariant}
             style={{ zIndex: 5 }}
             initial="initial"
