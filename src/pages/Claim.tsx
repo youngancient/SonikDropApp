@@ -4,7 +4,7 @@ import { HeaderComponent } from "../components/headerComponent";
 import { ClaimPageStyle, DropListStyle } from "../components/styles/claimpage";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleCancel, MagnifyingGlass } from "../components/icons";
-import { DropComp, POAPDropComp } from "../components/claimComponent";
+import { DropComp, IDropComp, POAPDropComp } from "../components/claimComponent";
 import { POAPDrops, tabs, TokenDrops } from "../constants/data.ts";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
@@ -29,13 +29,14 @@ const ClaimPage = () => {
     const newTabs = stateTabs.map((ele) => {
       return { ...ele, isSelected: ele.name === tabName };
     });
+    clearForm();
     setStateTabs(newTabs);
   };
 
   const [query, setQuery] = useState<string>("");
 
-  const [tokendrops, setTokenDrops] = useState(TokenDrops);
-  const [poapdrops, setPOAPDrops] = useState(POAPDrops);
+  const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(null);
+  const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(null);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -153,28 +154,37 @@ const ClaimPage = () => {
             </div>
           </div>
         </div>
-        {isConnected && (
-          <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] mb-[4rem] min-h-[40vh]">
-            {selectedTabName == "Tokens" &&
-              tokendrops.map((drop, index) => (
-                <DropComp key={index} {...drop} />
-              ))}
-            {selectedTabName == "POAPs" &&
-              poapdrops.map((drop, index) => (
-                <POAPDropComp key={index} {...drop} />
-              ))}
 
-            {/* fix this later */}
-            {tokendrops.length === 0 ||
-              (poapdrops.length === 0 && (
-                <div>
-                  <h2 className="border-2 border-[red]">No Drops Found</h2>
-                </div>
-              ))}
+        {isConnected && (tokendrops?.length === 0 || poapdrops?.length === 0) && (
+          <motion.div
+            className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
+            initial="initial"
+            animate="final"
+            exit="exit"
+            key="empty"
+            variants={textVariant}
+          >
+            <h1 className="text-center">No Drops Found🧐</h1>
+          </motion.div>
+        )}
+
+        {isConnected && (
+          <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] mb-[4rem]">
+             {selectedTabName == "Tokens" &&
+                (tokendrops ?? []).map((drop, index) => (
+                  <DropComp key={index} {...drop} isEditable={true} />
+                ))}
+              {selectedTabName == "POAPs" &&
+                (poapdrops ?? []).map((drop, index) => (
+                  <POAPDropComp key={index} {...drop} isEditable={true} />
+                ))}
           </DropListStyle>
         )}
+
         <AnimatePresence>
-          {!isConnected && <SonikNotConnected classNames="pt-[2rem] md:mt-[0rem] md:pt-[3rem] pb-[4rem]" />}
+          {!isConnected && (
+            <SonikNotConnected classNames="pt-[2rem] md:mt-[0rem] md:pt-[3rem] pb-[4rem]" />
+          )}
         </AnimatePresence>
       </ClaimPageStyle>
       <FooterComponent />

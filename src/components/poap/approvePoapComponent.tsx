@@ -14,8 +14,8 @@ import { useClearFormInput } from "../../hooks/useClearForm";
 import { selectTokenDetail } from "../../store/slices/prepareSlice";
 import { useAppKitAccount } from "@reown/appkit/react";
 // import { ethers } from "ethers";
-import { toast } from "react-toastify";
 import { ButtonLoader } from "../icons";
+import { CompletedModal } from "../completedModal";
 
 export function ApprovePoapComponent() {
 
@@ -84,16 +84,20 @@ export function ApprovePoapComponent() {
   }, []);
 
   const { clear } = useClearFormInput();
+  const [showModal, setShowModal] = useState(false);
 
   const approve = () => {
-    if (parseFloat(balance) < totalOutput) {
-      toast.error("Insufficient balance to approve");
-      return;
-    }
+    
+    // call contract 
+    setTimeout(() => {
+      setShowModal(true);
+    }, 1200);
+
     clear();
   };
 
   return (
+    <>
     <AnimatePresence>
       <motion.div
         className="w-full flex justify-center items-center text-white p-2"
@@ -164,5 +168,7 @@ export function ApprovePoapComponent() {
         </div>
       </motion.div>
     </AnimatePresence>
+    {showModal && <CompletedModal />}
+    </>
   );
 }
