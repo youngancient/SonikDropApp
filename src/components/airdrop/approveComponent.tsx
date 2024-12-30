@@ -90,7 +90,10 @@ export function ApproveComponent() {
       return;
     }
     // call contract 
-    setShowModal(true);
+    setTimeout(() => {
+      setShowModal(true);
+    }, 1200);
+    
     clear();
   };
 

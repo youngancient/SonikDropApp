@@ -17,6 +17,7 @@ import { ethers } from "ethers";
 import { DropListStyle } from "../components/styles/claimpage";
 import { DropComp, POAPDropComp } from "../components/claimComponent";
 import { SonikNotConnected } from "../components/notConnected";
+import { textVariant } from "../animations/animation";
 
 const Dashboard = () => {
   // Note: Here only the airdrops created by the user are displayed
@@ -31,22 +32,21 @@ const Dashboard = () => {
 
   const [query, setQuery] = useState<string>("");
 
-  const [tokendrops, setTokenDrops] = useState(() =>
-    TokenDrops.filter(
-      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
-    )
+  const userCreatedTokenDrops = TokenDrops.filter(
+    (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
   );
-  const [poapdrops, setPOAPDrops] = useState(() =>
-    POAPDrops.filter(
-      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
-    )
+  const userCreatedPOAPDrops = POAPDrops.filter(
+    (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
   );
+  const [tokendrops, setTokenDrops] = useState(() => userCreatedTokenDrops);
+  const [poapdrops, setPOAPDrops] = useState(() => userCreatedPOAPDrops);
 
   const handleTabSwitch = (tabName: string) => {
     setSelectedTabName(tabName);
     const newTabs = stateTabs.map((ele) => {
       return { ...ele, isSelected: ele.name === tabName };
     });
+    clearForm();
     setStateTabs(newTabs);
   };
 
@@ -88,8 +88,8 @@ const Dashboard = () => {
   };
 
   const clearForm = () => {
-    setTokenDrops(TokenDrops);
-    setPOAPDrops(POAPDrops);
+    setTokenDrops(userCreatedTokenDrops);
+    setPOAPDrops(userCreatedPOAPDrops);
     setQuery("");
   };
 
@@ -191,8 +191,23 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+
+          {isConnected &&
+            (tokendrops.length === 0 || poapdrops.length === 0) && (
+              <motion.div
+                className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
+                initial="initial"
+                animate="final"
+                exit="exit"
+                key="empty"
+                variants={textVariant}
+              >
+                <h1 className="text-center">No Drops Created🧐</h1>
+              </motion.div>
+            )}
+
           {isConnected && (
-            <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] pb-[4rem] min-h-[40vh]">
+            <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] pb-[4rem">
               {selectedTabName == "Tokens" &&
                 tokendrops.map((drop, index) => (
                   <DropComp key={index} {...drop} isEditable={true} />
@@ -201,16 +216,9 @@ const Dashboard = () => {
                 poapdrops.map((drop, index) => (
                   <POAPDropComp key={index} {...drop} isEditable={true} />
                 ))}
-
-              {/* fix this later */}
-              {tokendrops.length === 0 ||
-                (poapdrops.length === 0 && (
-                  <div>
-                    <h2 className="border-2 border-[red]">No Drops Found</h2>
-                  </div>
-                ))}
             </DropListStyle>
           )}
+
           <AnimatePresence>
             {!isConnected && (
               <SonikNotConnected classNames="pt-[2rem] md:pt-[3rem] mb-[0rem] pb-[4rem]" />
