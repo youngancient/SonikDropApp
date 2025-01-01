@@ -90,19 +90,18 @@ export function HeaderComponent({
     }
   };
 
-// how do we prevent the sign message from being called after a reload of the browser?
+  // how do we prevent the sign message from being called after a reload of the browser?
 
   // Effect to handle sign message on connection
   useEffect(() => {
+    console.log({isConnected, token});
     // added timeout to prevent immediate sign message
     const delayTimeout = setTimeout(() => {
       if (isConnected && !token) {
-        if (!Cookies.get("token")) {
-          onSignMessage();
-        }
+        onSignMessage();
       }
-    }, 2000); 
-  
+    }, 2000);
+
     // Cleanup timeout on component unmount or when dependencies change
     return () => {
       clearTimeout(delayTimeout);
