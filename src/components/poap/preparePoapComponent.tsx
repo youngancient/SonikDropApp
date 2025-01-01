@@ -1,31 +1,17 @@
-// import { ethers, Numeric } from "ethers";
-// import Papa from "papaparse";
 import { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
 import { IPoapEvent } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
-// import { CgClose } from "react-icons/cg";
-// import { BiTrash } from "react-icons/bi";
-// import { nanoid } from "nanoid";
-// import { Parser } from "@json2csv/plainjs";
-// import { saveAs } from "file-saver";
+
 import { useAppDispatch } from "../../store/hooks";
 import { setStep } from "../../store/slices/poapStepSlice";
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
-// import ClickOutsideWrapper from "../outsideClick";
-import {
-  useAppKit,
-  useAppKitAccount,
-  // useAppKitNetwork,
-} from "@reown/appkit/react";
-// import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
-// import { ethSettings } from "../../constants/chains";
+import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
+
 import { pinata } from "../../utils/pinataConfig";
 import { AiOutlinePicture } from "react-icons/ai";
 import { useDropzone } from "react-dropzone";
 import Joi from "joi";
-// import { setTokenDetail } from "../../store/slices/prepareSlice";
 
 export function PreparePoapComponent() {
   const [eventName, setEventName] = useState("");
@@ -36,45 +22,8 @@ export function PreparePoapComponent() {
 
   const dispatch = useAppDispatch();
 
-  // const airdropMakerList = useAppSelector(selectAirdropMakerList);
-  // const csvData = useAppSelector(selectCsvData);
-  // const tokenAddress = useAppSelector(selectTokenAddress);
-  // const csvToJSONData = useAppSelector(selectCsvToJSONData);
-  // const tokenAddressError = useAppSelector(selectTokenAddressError);
-  // const csvDataError = useAppSelector(selectCsvDataError);
-  // const invalidAirdropAddresses = useAppSelector(selectInvalidAirdropAddresses);
-  // const showCSVMaker = useAppSelector(selectShowCSVMaker);
-  // const eligibleParticipantAddress = useAppSelector(
-  //   selectEligibleParticipantAddress
-  // );
-  // const eligibleParticipantAmount = useAppSelector(
-  //   selectEligibleParticipantAmount
-  // );
-  // const powerValue = useAppSelector(selectPowerValue);
-
-  // const tokenDetail = useAppSelector(selectTokenDetail);
-
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
-  // const { caipNetwork } = useAppKitNetwork();
-
-  // const alchemy = new Alchemy(ethSettings);
-  // const [_isLoadingData, setIsLoadingData] = useState(false);
-  // const getTokenMetadata = async (
-  //   address: string
-  // ): Promise<TokenMetadataResponse | null> => {
-  //   try {
-  //     setIsLoadingData(true);
-  //     const metadata = await alchemy.core.getTokenMetadata(address);
-  //     dispatch(setTokenDetail(metadata));
-  //     return metadata;
-  //   } catch (error) {
-  //     console.error("Error fetching token metadata:", error);
-  //     return null;
-  //   } finally {
-  //     setIsLoadingData(false);
-  //   }
-  // };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -90,7 +39,10 @@ export function PreparePoapComponent() {
     },
   });
 
+  // The useEffect code below fetches and updates the poap details
+  // if there's any that was previously saved.
   useEffect(() => {
+
     const poapEventDetails = sessionStorage.getItem("poapEventDetails");
 
     if (poapEventDetails) {
@@ -104,13 +56,12 @@ export function PreparePoapComponent() {
   }, []);
 
   const nextPage = async () => {
-    // console.log(caipNetwork?.name, caipNetwork?.imageUrl, caipNetwork?.chainId);
-
     if (!isConnected) {
       open();
       return;
     }
 
+    // The code below validates the input object using the object schema
     const { error } = Joi.object({
       eventName: Joi.string().required().messages({
         "any.required": "Event name is required",
@@ -138,26 +89,29 @@ export function PreparePoapComponent() {
       selectedFile,
     });
 
+    // Throws an toast message if there is an error
     if (error) {
       toast.error(error.message);
       return;
     }
 
+    // Checks if there is no selected file
     if (!selectedFile) {
       toast.error("Kindly select a file to continue");
       return;
     }
 
+    // Checks if the selected file is above 2MB
     if (selectedFile!!.size > 2 * 1024 * 1024) {
-      toast.error("File size is too large");
+      toast.error("File size is too large. File size should be less than or equal to 2MB");
       return;
     }
 
     const upload = await pinata.upload.file(selectedFile!!);
 
-    console.log("eventName", eventName);
-    console.log("eventDescription", eventDescription);
-    console.log("eventType", eventType);
+    // console.log("eventName", eventName);
+    // console.log("eventDescription", eventDescription);
+    // console.log("eventType", eventType);
     console.log("Picture", upload);
 
     sessionStorage.setItem(
@@ -169,27 +123,6 @@ export function PreparePoapComponent() {
         selectedFile,
       } as IPoapEvent)
     );
-
-    // if (tokenDetail == null) {
-    //   toast.error("Token metadata is missing");
-    //   return;
-    // }
-    // sessionStorage.setItem("tokenAddress", tokenAddress);
-    // sessionStorage.setItem(
-    //   "csvData",
-    //   JSON.stringify(
-    //     JSON.parse(JSON.stringify(csvToJSONData)).map((data: ICSV) => {
-    //       console.log("Data", data.amount);
-    //       if (tokenDetail?.decimals !== null) {
-    //         data.amount = ethers.formatUnits(
-    //           data.amount.toString(),
-    //           tokenDetail.decimals
-    //         );
-    //       }
-    //       return data;
-    //     })
-    //   )
-    // );
 
     dispatch(setStep("settings"));
   };
@@ -269,18 +202,6 @@ export function PreparePoapComponent() {
                 className="mb-4 w-full h-[200px] flex justify-center items-center border-dashed border-[#FFFFFF17] border-[4px] rounded-[10px] flex-col outline-none"
                 {...getRootProps()}
               >
-                {/* <input
-                      type="file" 
-                      id="file-upload" 
-                      className="file-upload hidden"
-                    />
-                      <label htmlFor="file-upload" className="w-full h-[200px] flex justify-center items-center border-dashed border-[#FFFFFF17] border-[2px] rounded-[10px] flex-col">
-                          <div>
-                            <AiOutlinePicture className="w-[100px] h-[100px]" />
-                          </div>
-                          <div>Upload file</div>
-                      </label> */}
-
                 <input {...getInputProps()} />
                 {isDragActive ? (
                   <div className="text-center flex flex-col items-center">

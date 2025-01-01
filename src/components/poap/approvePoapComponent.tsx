@@ -13,7 +13,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useClearFormInput } from "../../hooks/useClearForm";
 import { selectTokenDetail } from "../../store/slices/prepareSlice";
 import { useAppKitAccount } from "@reown/appkit/react";
-// import { ethers } from "ethers";
 import { ButtonLoader } from "../icons";
 import { CompletedModal } from "../completedModal";
 
@@ -22,7 +21,6 @@ export function ApprovePoapComponent() {
   const { address } = useAppKitAccount();
   const dispatch = useAppDispatch();
   const [balance, setBalance] = useState("");
-  // const tokenAddress = sessionStorage.getItem("tokenAddress") as string;
 
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
 
@@ -61,11 +59,9 @@ export function ApprovePoapComponent() {
       }
     };
     getTokenBalance();
-    // setTokenAddress(sessionStorage.getItem("tokenAddress")  as string);
     dispatch(
       setCsvToJSONData(JSON.parse(sessionStorage.getItem("csvData") as string))
     );
-    // JSON.stringify({onlyNFTOwnersCanClaim, airdropStart, airdropEnd})
     const settings = JSON.parse(localStorage.getItem("settings") as string);
 
     if (settings) {
