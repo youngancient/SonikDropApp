@@ -47,7 +47,15 @@ export function HeaderComponent({
     try {
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
-      const message = "Hello, this is Sonikdrop";
+
+      const message = `Welcome to SonikDrop! Please sign this message to authenticate.
+      Wallet: ${address}
+      Nonce: ${Math.floor(Math.random() * 1000000)}
+      Timestamp: ${new Date().toISOString()}
+      Domain: sonikdrop.app
+      This signature does not trigger any blockchain transaction or cost gas fees.
+      `;
+
       const signature = await signer?.signMessage(message);
       await callBackend(signature, message, address);
     } catch (error) {
@@ -82,11 +90,23 @@ export function HeaderComponent({
     }
   };
 
+// how do we prevent the sign message from being called after a reload of the browser?
+
   // Effect to handle sign message on connection
   useEffect(() => {
-    if (isConnected && !token) {
-      onSignMessage();
-    }
+    // added timeout to prevent immediate sign message
+    const delayTimeout = setTimeout(() => {
+      if (isConnected && !token) {
+        if (!Cookies.get("token")) {
+          onSignMessage();
+        }
+      }
+    }, 2000); 
+  
+    // Cleanup timeout on component unmount or when dependencies change
+    return () => {
+      clearTimeout(delayTimeout);
+    };
   }, [isConnected, onSignMessage, token]);
 
   useEffect(() => {
