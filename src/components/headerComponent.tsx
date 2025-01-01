@@ -2,6 +2,7 @@ import {
   useAppKit,
   useAppKitAccount,
   useAppKitNetwork,
+  useAppKitProvider,
 } from "@reown/appkit/react";
 import { useNavigate } from "react-router-dom";
 import { formatAddress } from "../utils/helpers";
@@ -18,8 +19,9 @@ import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
 import ClickOutsideWrapper from "./outsideClick";
 import { IChains, supportedNetworks } from "../constants/chains";
+import { BrowserProvider, Eip1193Provider } from "ethers";
 import { toast } from "react-toastify";
-// import { appkit } from "../connection";
+import Cookies from "js-cookie";
 
 export function HeaderComponent({
   showBackButton,
@@ -32,6 +34,46 @@ export function HeaderComponent({
 
   const stepToGoBackTo = useAppSelector((state) => state.step.backStack);
   const dispatch = useAppDispatch();
+
+  // test sign message
+  const token = Cookies.get("token");
+  const { walletProvider } = useAppKitProvider("eip155");
+
+  const onSignMessage = useCallback(async () => {
+    if (!address) {
+      toast.error("Please connect wallet");
+      return;
+    }
+    try {
+      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
+      const signer = await provider.getSigner();
+
+      const message = `Welcome to SonikDrop! Please sign this message to authenticate.
+      Wallet: ${address}
+      Nonce: ${Math.floor(Math.random() * 1000000)}
+      Timestamp: ${new Date().toISOString()}
+      Domain: sonikdrop.app
+      This signature does not trigger any blockchain transaction or cost gas fees.
+      `;
+
+      const signature = await signer?.signMessage(message);
+      await callBackend(signature, message, address);
+    } catch (error) {
+      console.error("Error signing message:", error);
+      toast.error("Failed to sign the message");
+    }
+  }, [address, walletProvider]);
+
+  const callBackend = async (
+    signature: string,
+    message: string,
+    signerAddress: string
+  ) => {
+    setTimeout(() => {
+      Cookies.set("token", "Some JWT token here");
+      console.log(signature, signerAddress, message);
+    }, 1200);
+  };
 
   const handleButtonClick = () => {
     open();
@@ -47,6 +89,30 @@ export function HeaderComponent({
       dispatch(goBack());
     }
   };
+
+  // how do we prevent the sign message from being called after a reload of the browser?
+
+  // Effect to handle sign message on connection
+  useEffect(() => {
+    console.log({isConnected, token});
+    // added timeout to prevent immediate sign message
+    const delayTimeout = setTimeout(() => {
+      if (isConnected && !token) {
+        onSignMessage();
+      }
+    }, 2000);
+
+    // Cleanup timeout on component unmount or when dependencies change
+    return () => {
+      clearTimeout(delayTimeout);
+    };
+  }, [isConnected, onSignMessage, token]);
+
+  useEffect(() => {
+    if (!isConnected) {
+      Cookies.remove("token");
+    }
+  }, [isConnected]);
 
   return (
     <div className="px-2 px-[20px] md:px-[100px] lg:px-[200px]">
@@ -105,13 +171,14 @@ export function HeaderComponent({
 }
 
 export const SwitchChainComp = () => {
-  // const handleSwitchChain = () => {};
-  const [showDropdown, setShowdropdown] = useState(false);
-  const [selectedChain, setSelectedChain] = useState<IChains | null>(null);
   const { chainId } = useAppKitNetwork();
   const { address } = useAppKitAccount();
 
   const { open } = useAppKit();
+  const [showDropdown, setShowdropdown] = useState(false);
+  const [selectedChain, setSelectedChain] = useState<IChains | null>(
+    supportedNetworks.find((ele) => ele.id === Number(chainId)) ?? null
+  );
 
   const setChain = useCallback(
     async (id: number, calledByUser?: boolean) => {
@@ -167,7 +234,11 @@ export const SwitchChainComp = () => {
           <IoChevronDown size={18} />
         </button>
         {showDropdown && (
-          <div className="dropdown absolute flex flex-col">
+          <div
+            role="menu"
+            aria-labelledby="switch-chain-button"
+            className="dropdown absolute flex flex-col"
+          >
             {supportedNetworks.map((ele: IChains) => (
               <div
                 className="dropdown-item cursor-pointer flex gap-1 items-center"

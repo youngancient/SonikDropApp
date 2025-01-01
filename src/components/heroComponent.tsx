@@ -6,29 +6,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { OptionComponent } from "./optionComponent";
 
-// import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
-// import { BrowserProvider, Eip1193Provider } from "ethers";
-// import { toast } from "react-toastify";
 
 export const Hero = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
-  // test sign message
 
-  // const {walletProvider} = useAppKitProvider("eip155");
-  // const {address} = useAppKitAccount();
-
-  // const onSignMessage = async()=> {
-  //   if(!address){
-  //     toast.error('Please connect wallet');
-  //     return;
-  //   }
-  //   const provider = new BrowserProvider(walletProvider as Eip1193Provider)
-  //   const signer = await provider.getSigner()
-  //   const signature = await signer?.signMessage('Hello, this is Sonikdrop')
-  //   console.log(signature, address, 'Hello, this is Sonikdrop')
-  // }
 
   return (
     <HeroStyles>
