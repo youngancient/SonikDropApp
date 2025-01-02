@@ -1,12 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import {
-  selectCsvToJSONData,
-  setAirdropEnd,
-  setAirdropStart,
-  setCsvToJSONData,
-  setOnlyNFTOwnersCanClaim,
-} from "../../store/slices/approveSlice";
 
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,31 +11,17 @@ import { CompletedModal } from "../completedModal";
 import { ICSV, IPoapEvent } from "../../interfaces/CSVInterface";
 
 export function ApprovePoapComponent() {
-  const { address } = useAppKitAccount();
-  const dispatch = useAppDispatch();
-  const [balance, setBalance] = useState("");
 
   const [eventName, setEventName] = useState("");
   const [eventType, setEventType] = useState("");
 
   const [csvToJSONData, setCSVToJSONData] = useState<ICSV[]>([]);
 
-  const tokenDetail = useAppSelector(selectTokenDetail);
 
   const [isLoadingBal, _setLoadingBal] = useState(false);
 
-  const [totalOutput, setTotalOutput] = useState(0);
+  const [estimatedGasFee, setEstimatedGasFee] = useState(0);
 
-  const calculateTotalOutput = useCallback(() => {
-    const total = csvToJSONData.reduce((accumulator: number, current: any) => {
-      return accumulator + parseFloat(current.amount);
-    }, 0);
-    setTotalOutput(total);
-  }, [csvToJSONData]);
-
-  useEffect(() => {
-    calculateTotalOutput();
-  }, [calculateTotalOutput]);
 
   useEffect(() => {
     
@@ -99,13 +78,13 @@ export function ApprovePoapComponent() {
                 </div>
                 <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                   <div className="font-bold text-white break-words overflow-hidden text-[20px] ">
-                    {eventType}
+                    {eventType[0]?.toLocaleUpperCase() + eventType?.slice(1)}
                   </div>
                   <div className="text-sm text-white/[0.8]">POAP Type</div>
                 </div>
                 <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                   <div className="font-bold text-white text-[20px]">
-                    {eventType}
+                  {csvToJSONData.length}
                   </div>
                   <div className="text-sm text-white/[0.8]">Recipients</div>
                 </div>
@@ -114,7 +93,7 @@ export function ApprovePoapComponent() {
                     {isLoadingBal ? (
                       <ButtonLoader />
                     ) : (
-                      0
+                      estimatedGasFee
                     )}
                   </div>
                   <div className="text-sm text-white/[0.8]">Gas Estimate</div>

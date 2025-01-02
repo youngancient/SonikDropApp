@@ -1,14 +1,13 @@
-import { useLocation } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import { selectStep } from "../../store/slices/poapStepSlice";
 
 
 export function StepComponent() {
-  const loc = useLocation();
+  // const loc = useLocation();
 
   const step = useAppSelector(selectStep);
 
-  console.log(loc.pathname);
+  console.log("step", step);
 
   return (
     <div className="text-center my-2">

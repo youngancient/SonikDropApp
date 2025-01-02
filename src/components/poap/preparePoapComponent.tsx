@@ -20,6 +20,8 @@ export function PreparePoapComponent() {
   const [selectedFile, setSelectedFile] = useState<any | null>(null);
   const [uploadedEvnetFlyer, setUploadedEventFlyer] = useState("");
 
+  const [isNextLoading, setNextLoading] = useState(false);
+
   const dispatch = useAppDispatch();
 
   const { isConnected } = useAppKitAccount();
@@ -62,70 +64,81 @@ export function PreparePoapComponent() {
       return;
     }
 
-    // The code below validates the input object using the object schema
-    const { error } = Joi.object({
-      eventName: Joi.string().required().messages({
-        "any.required": "Event name is required",
-        "string.base": "Event name must be a string",
-      }),
-      eventDescription: Joi.string().min(20).required().messages({
-        "any.required": "Event details is required",
-        "string.base": "Event details must be a string",
-        "string.min": "Event details have to be more than 20 characters",
-      }),
-      eventType: Joi.string()
-        .valid("conference", "meetup", "hackathon")
-        .required()
-        .messages({
-          "any.required": "Event type is required",
-          "string.valid": `Values for event type has to be either "conference", "meetup" or "hackathon"`,
+    try {
+      
+      // The code below validates the input object using the object schema
+      const { error } = Joi.object({
+        eventName: Joi.string().required().messages({
+          "any.required": "Event name is required",
+          "string.base": "Event name must be a string",
         }),
-      selectedFile: Joi.any().required().messages({
-        "any.required": "Event picture is required",
-      }),
-    }).validate({
-      eventName,
-      eventDescription,
-      eventType,
-      selectedFile,
-    });
-
-    // Throws an toast message if there is an error
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-
-    // Checks if there is no selected file
-    if (!selectedFile) {
-      toast.error("Kindly select a file to continue");
-      return;
-    }
-
-    // Checks if the selected file is above 2MB
-    if (selectedFile!!.size > 2 * 1024 * 1024) {
-      toast.error("File size is too large. File size should be less than or equal to 2MB");
-      return;
-    }
-
-    const upload = await pinata.upload.file(selectedFile!!);
-
-    // console.log("eventName", eventName);
-    // console.log("eventDescription", eventDescription);
-    // console.log("eventType", eventType);
-    console.log("Picture", upload);
-
-    sessionStorage.setItem(
-      "poapEventDetails",
-      JSON.stringify({
+        eventDescription: Joi.string().min(20).required().messages({
+          "any.required": "Event details is required",
+          "string.base": "Event details must be a string",
+          "string.min": "Event details have to be more than 20 characters",
+        }),
+        eventType: Joi.string()
+          .valid("conference", "meetup", "hackathon")
+          .required()
+          .messages({
+            "any.required": "Event type is required",
+            "string.valid": `Values for event type has to be either "conference", "meetup" or "hackathon"`,
+          }),
+        selectedFile: Joi.any().required().messages({
+          "any.required": "Event picture is required",
+        }),
+      }).validate({
         eventName,
         eventDescription,
         eventType,
         selectedFile,
-      } as IPoapEvent)
-    );
+      });
 
-    dispatch(setStep("settings"));
+      setNextLoading(true);
+  
+      // Throws an toast message if there is an error
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+  
+      // Checks if there is no selected file
+      if (!selectedFile) {
+        toast.error("Kindly select a file to continue");
+        return;
+      }
+  
+      // Checks if the selected file is above 2MB
+      if (selectedFile!!.size > 2 * 1024 * 1024) {
+        toast.error("File size is too large. File size should be less than or equal to 2MB");
+        return;
+      }
+  
+      const upload = await pinata.upload.file(selectedFile!!);
+  
+      // console.log("eventName", eventName);
+      // console.log("eventDescription", eventDescription);
+      // console.log("eventType", eventType);
+      console.log("Picture", upload);
+  
+      sessionStorage.setItem(
+        "poapEventDetails",
+        JSON.stringify({
+          eventName,
+          eventDescription,
+          eventType,
+          selectedFile,
+        } as IPoapEvent)
+      );
+  
+      dispatch(setStep("settings"));
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setNextLoading(false);
+    }
+
   };
 
   useEffect(() => {
@@ -245,6 +258,7 @@ export function PreparePoapComponent() {
             </div>
           </div>
           <button
+          disabled={isNextLoading}
             className={`w-full py-2 rounded-md ${
               isConnected
                 ? "bg-[#00A7FF] text-white"
@@ -252,7 +266,7 @@ export function PreparePoapComponent() {
             }`}
             onClick={nextPage}
           >
-            {!isConnected ? "Connect Wallet" : "Continue"}
+            {!isConnected ? "Connect Wallet" : (isNextLoading ? "Loading... Please wait": "Continue")}
           </button>
         </div>
       </motion.div>
