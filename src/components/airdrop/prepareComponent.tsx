@@ -1,6 +1,6 @@
 import { ethers, Numeric } from "ethers";
 import Papa from "papaparse";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 // import { useNavigate } from "react-router-dom";
 import { IAirdropList, ICSV } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
@@ -221,28 +221,22 @@ export function PrepareComponent() {
 
   const [isLoadingData, setIsLoadingData] = useState(false);
 
-  // mock api call
-  const getTokenMetadata = async (
-    address: string
-  ): Promise<ITokenDetails | null> => {
-    try {
-      console.log(address);
-      setIsLoadingData(true);
+  const getTokenMetadata = useCallback(() => {
+    setIsLoadingData(true);
+    console.log("Here");
+    setTimeout(() => {
       const metadata: ITokenDetails = {
-        name: "ABBA Token",
-        symbol: "ABBA",
+        name: "TEST Token",
+        symbol: "TST",
         decimals: 18,
       };
+      console.log("Here2");
       dispatch(setTokenDetail(metadata));
 
-      return metadata;
-    } catch (error) {
-      console.error("Error fetching token metadata:", error);
-      return null;
-    } finally {
       setIsLoadingData(false);
-    }
-  };
+    }, 1200);
+  }, [dispatch]);
+
   const nextPage = async () => {
     const isTokenAddressValid = ethers.isAddress(tokenAddress);
     if (!isConnected) {
@@ -301,49 +295,52 @@ export function PrepareComponent() {
     dispatch(setStep("settings"));
   };
 
-  useEffect(() => {
-    const fetchMetadata = async () => {
-      const metadata = await getTokenMetadata(tokenAddress);
-      if (metadata) {
-        console.log("Token Metadata:", metadata);
-        if (metadata.decimals == null) {
-          dispatch(setTokenAddressError("Kindly enter a valid token address"));
-          return;
-        }
+  // useEffect(() => {
+  //   const fetchMetadata = async () => {
+  //     const metadata = await getTokenMetadata(tokenAddress);
+  //     if (metadata) {
+  //       console.log("Token Metadata:", metadata);
+  //       if (metadata.decimals == null) {
+  //         dispatch(setTokenAddressError("Kindly enter a valid token address"));
+  //         return;
+  //       }
 
-        // Process the metadata as needed
-      } else {
-        toast.error("Failed to fetch token metadata.");
-      }
-    };
-    // const isTokenAddressValid = ethers.isAddress(tokenAddress);
+  //       // Process the metadata as needed
+  //     } else {
+  //       toast.error("Failed to fetch token metadata.");
+  //     }
+  //   };
+  //   // const isTokenAddressValid = ethers.isAddress(tokenAddress);
 
-    fetchMetadata();
-    // if (!isTokenAddressValid) {
-    //   dispatch(setTokenAddressError("Kindly enter a valid token address"));
-    // } else {
-    //   dispatch(setTokenAddressError(""));
-    // }
+  //   fetchMetadata();
+  //   // if (!isTokenAddressValid) {
+  //   //   dispatch(setTokenAddressError("Kindly enter a valid token address"));
+  //   // } else {
+  //   //   dispatch(setTokenAddressError(""));
+  //   // }
 
-    // if (!csvData) {
-    //   dispatch(setCsvDataError("Kindly upload a csv"));
-    // } else {
-    //   dispatch(setCsvDataError(""));
-    // }
+  //   // if (!csvData) {
+  //   //   dispatch(setCsvDataError("Kindly upload a csv"));
+  //   // } else {
+  //   //   dispatch(setCsvDataError(""));
+  //   // }
 
-    // if (invalidAirdropAddresses.length > 0) {
-    //   toast.error(
-    //     invalidAirdropAddresses.join(", ") + " are invalid addresses"
-    //   );
-    // }
-  }, [csvData, tokenAddress]);
+  //   // if (invalidAirdropAddresses.length > 0) {
+  //   //   toast.error(
+  //   //     invalidAirdropAddresses.join(", ") + " are invalid addresses"
+  //   //   );
+  //   // }
+  // }, [csvData, tokenAddress]);
 
   useEffect(() => {
     if (ethers.isAddress(tokenAddress)) {
       console.log("Valid token address detected, fetching details...");
       fetchDetails();
+      getTokenMetadata();
+    } else {
+      dispatch(setTokenDetail(null));
     }
-  }, [tokenAddress, fetchDetails]);
+  }, [tokenAddress, fetchDetails, getTokenMetadata, dispatch]);
 
   return (
     <AnimatePresence>
@@ -377,15 +374,11 @@ export function PrepareComponent() {
                   dispatch(setTokenAddress(e.target.value));
                 }}
               />
-              <small
-                className={`${
-                  tokenAddressError ? "block text-red-400" : "text-gray-300"
-                } mt-2`}
-              >
+              <small className={`${"text-gray-300"} mt-2`}>
                 {isLoadingData
                   ? "Loading..."
-                  : tokenAddressError
-                  ? tokenAddressError
+                  : tokenDetail == null
+                  ? "Token metadata will be fetched automatically"
                   : `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`}
               </small>
             </div>

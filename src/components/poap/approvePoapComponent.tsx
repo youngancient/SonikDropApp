@@ -1,4 +1,4 @@
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,21 +8,19 @@ import { CompletedModal } from "../completedModal";
 import { ICSV, IPoapEvent } from "../../interfaces/CSVInterface";
 
 export function ApprovePoapComponent() {
-
   const [eventName, setEventName] = useState("");
   const [eventType, setEventType] = useState("");
 
   const [csvToJSONData, setCSVToJSONData] = useState<ICSV[]>([]);
 
-
   const [isLoadingBal, _setLoadingBal] = useState(false);
 
-  const [estimatedGasFee, _setEstimatedGasFee] = useState(0);
-
+  const [estimatedGasFee, _setEstimatedGasFee] = useState(0.05);
 
   useEffect(() => {
-    
-    const csvData: ICSV[] = JSON.parse(sessionStorage.getItem("csvData") as any);
+    const csvData: ICSV[] = JSON.parse(
+      sessionStorage.getItem("csvData") as any
+    );
 
     setCSVToJSONData(csvData);
 
@@ -69,9 +67,7 @@ export function ApprovePoapComponent() {
                   <div className="font-bold text-white text-[20px]">
                     {eventName}
                   </div>
-                  <div className="text-sm text-white/[0.8]">
-                    POAP Name/symbol
-                  </div>
+                  <div className="text-sm text-white/[0.8]">POAP Name</div>
                 </div>
                 <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                   <div className="font-bold text-white break-words overflow-hidden text-[20px] ">
@@ -81,7 +77,7 @@ export function ApprovePoapComponent() {
                 </div>
                 <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                   <div className="font-bold text-white text-[20px]">
-                  {csvToJSONData.length}
+                    {csvToJSONData.length}
                   </div>
                   <div className="text-sm text-white/[0.8]">Recipients</div>
                 </div>
@@ -90,7 +86,7 @@ export function ApprovePoapComponent() {
                     {isLoadingBal ? (
                       <ButtonLoader />
                     ) : (
-                      estimatedGasFee
+                      `$${estimatedGasFee.toFixed(2)}`
                     )}
                   </div>
                   <div className="text-sm text-white/[0.8]">Gas Estimate</div>
