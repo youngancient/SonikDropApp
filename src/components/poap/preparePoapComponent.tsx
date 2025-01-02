@@ -20,6 +20,13 @@ export function PreparePoapComponent() {
   const [selectedFile, setSelectedFile] = useState<any | null>(null);
   const [uploadedEvnetFlyer, setUploadedEventFlyer] = useState("");
 
+  const [eventNameError, setEventNameError] = useState("");
+  const [eventDescriptionError, setEventDescriptionError] = useState("");
+  const [eventTypeError, setEventTypeError] = useState("");
+  const [eventFlyerError, setEventFlyerError] = useState("");
+
+  const [isNextLoading, setNextLoading] = useState(false);
+
   const dispatch = useAppDispatch();
 
   const { isConnected } = useAppKitAccount();
@@ -61,70 +68,81 @@ export function PreparePoapComponent() {
       return;
     }
 
-    // The code below validates the input object using the object schema
-    const { error } = Joi.object({
-      eventName: Joi.string().required().messages({
-        "any.required": "Event name is required",
-        "string.base": "Event name must be a string",
-      }),
-      eventDescription: Joi.string().min(20).required().messages({
-        "any.required": "Event details is required",
-        "string.base": "Event details must be a string",
-        "string.min": "Event details have to be more than 20 characters",
-      }),
-      eventType: Joi.string()
-        .valid("conference", "meetup", "hackathon")
-        .required()
-        .messages({
-          "any.required": "Event type is required",
-          "string.valid": `Values for event type has to be either "conference", "meetup" or "hackathon"`,
+    try {
+      
+      // The code below validates the input object using the object schema
+      const { error } = Joi.object({
+        eventName: Joi.string().required().messages({
+          "any.required": "Event name is required",
+          "string.base": "Event name must be a string",
         }),
-      selectedFile: Joi.any().required().messages({
-        "any.required": "Event picture is required",
-      }),
-    }).validate({
-      eventName,
-      eventDescription,
-      eventType,
-      selectedFile,
-    });
-
-    // Throws an toast message if there is an error
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-
-    // Checks if there is no selected file
-    if (!selectedFile) {
-      toast.error("Kindly select a file to continue");
-      return;
-    }
-
-    // Checks if the selected file is above 2MB
-    if (selectedFile!!.size > 2 * 1024 * 1024) {
-      toast.error("File size is too large. File size should be less than or equal to 2MB");
-      return;
-    }
-
-    const upload = await pinata.upload.file(selectedFile!!);
-
-    // console.log("eventName", eventName);
-    // console.log("eventDescription", eventDescription);
-    // console.log("eventType", eventType);
-    console.log("Picture", upload);
-
-    sessionStorage.setItem(
-      "poapEventDetails",
-      JSON.stringify({
+        eventDescription: Joi.string().min(20).required().messages({
+          "any.required": "Event details is required",
+          "string.base": "Event details must be a string",
+          "string.min": "Event details have to be more than 20 characters",
+        }),
+        eventType: Joi.string()
+          .valid("conference", "meetup", "hackathon")
+          .required()
+          .messages({
+            "any.required": "Event type is required",
+            "string.valid": `Values for event type has to be either "conference", "meetup" or "hackathon"`,
+          }),
+        selectedFile: Joi.any().required().messages({
+          "any.required": "Event picture is required",
+        }),
+      }).validate({
         eventName,
         eventDescription,
         eventType,
         selectedFile,
-      } as IPoapEvent)
-    );
+      });
 
-    dispatch(setStep("settings"));
+      setNextLoading(true);
+  
+      // Throws an toast message if there is an error
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+  
+      // Checks if there is no selected file
+      if (!selectedFile) {
+        toast.error("Kindly select a file to continue");
+        return;
+      }
+  
+      // Checks if the selected file is above 2MB
+      if (selectedFile!!.size > 2 * 1024 * 1024) {
+        toast.error("File size is too large. File size should be less than or equal to 2MB");
+        return;
+      }
+  
+      const upload = await pinata.upload.file(selectedFile!!);
+  
+      // console.log("eventName", eventName);
+      // console.log("eventDescription", eventDescription);
+      // console.log("eventType", eventType);
+      console.log("Picture", upload);
+  
+      sessionStorage.setItem(
+        "poapEventDetails",
+        JSON.stringify({
+          eventName,
+          eventDescription,
+          eventType,
+          selectedFile,
+        } as IPoapEvent)
+      );
+  
+      dispatch(setStep("settings"));
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setNextLoading(false);
+    }
+
   };
 
   useEffect(() => {
@@ -155,10 +173,30 @@ export function PreparePoapComponent() {
                 className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
                 placeholder="Event name"
                 value={eventName}
+                onBlur={() => {
+                  const {error} = Joi.string().required().messages({
+                    "any.required": "Event name is required",
+                    "string.base": "Event name must be a string",
+                    "string.empty": "Event name can not be empty"
+                  }).validate(eventName);
+                  if(error) {
+                    setEventNameError(error.message);
+                  } else {
+                    setEventNameError("");
+
+                  }
+                }}
                 onChange={(e) => {
                   setEventName(e.target.value);
                 }}
               />
+              <small
+                    className={`${
+                      eventNameError ? "block text-red-400" : "hidden"
+                    } mt-2 text-center`}
+                  >
+                    {eventNameError}
+                  </small>
             </div>
 
             <div>
@@ -167,16 +205,53 @@ export function PreparePoapComponent() {
                 className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
                 placeholder="The event description"
                 value={eventDescription}
+                onBlur={() => {
+                  const {error} = Joi.string().min(20).required().messages({
+                    "any.required": "Event details is required",
+                    "string.base": "Event details must be a string",
+                    "string.min": "Event details have to be more than 20 characters",
+                    "string.empty": "Event name can not be empty"
+                  }).validate(eventDescription);
+
+                  if(error) {
+                    setEventDescriptionError(error.message);
+                  } else {
+                    setEventDescriptionError("");
+                  }
+                }}
                 onChange={(e) => {
                   setEventDescription(e.target.value);
                 }}
               />
+              <small
+                    className={`${
+                      eventDescriptionError ? "block text-red-400" : "hidden"
+                    } mt-2 text-center`}
+                  >
+                    {eventDescriptionError}
+                  </small>
             </div>
 
             <div>
               <div className="text-left">Event type</div>
               <select
                 value={eventType}
+                onBlur={() => {
+                  const {error} = Joi.string()
+                  .valid("conference", "meetup", "hackathon")
+                  .required()
+                  .messages({
+                    "any.required": "Event type is required",
+                    "any.only": `Values for event type has to be either "conference", "meetup" or "hackathon"`,
+                  }).validate(eventType);
+
+                  if(error) {
+                    setEventTypeError(error.message);
+                  } else {
+                    setEventTypeError("");
+                  }
+
+                }}
                 onChange={(e) => {
                   setEventType(e.target.value);
                 }}
@@ -195,6 +270,13 @@ export function PreparePoapComponent() {
                   Hackathon
                 </option>
               </select>
+              <small
+                    className={`${
+                      eventTypeError ? "block text-red-400" : "hidden"
+                    } mt-2 text-center`}
+                  >
+                    {eventTypeError}
+                  </small>
             </div>
 
             <div>
@@ -202,7 +284,18 @@ export function PreparePoapComponent() {
                 className="mb-4 w-full h-[200px] flex justify-center items-center border-dashed border-[#FFFFFF17] border-[4px] rounded-[10px] flex-col outline-none"
                 {...getRootProps()}
               >
-                <input {...getInputProps()} />
+                <input {...getInputProps()} onBlur={() => {
+                  const {error} = Joi.any().required().messages({
+                    "any.required": "Event picture is required",
+                  }).validate(uploadedEvnetFlyer);
+
+                  if(error) {
+                    setEventFlyerError(error.message);
+                  } else {
+                    setEventFlyerError("");
+                  }
+
+                }} />
                 {isDragActive ? (
                   <div className="text-center flex flex-col items-center">
                     <div>
@@ -240,10 +333,18 @@ export function PreparePoapComponent() {
                     )}
                   </div>
                 )}
+                <small
+                    className={`${
+                      eventFlyerError ? "block text-red-400" : "hidden"
+                    } mt-2 text-center`}
+                  >
+                    {eventFlyerError}
+                  </small>
               </div>
             </div>
           </div>
           <button
+          disabled={isNextLoading}
             className={`w-full py-2 rounded-md ${
               isConnected
                 ? "bg-[#00A7FF] text-white"
@@ -251,7 +352,7 @@ export function PreparePoapComponent() {
             }`}
             onClick={nextPage}
           >
-            {!isConnected ? "Connect Wallet" : "Continue"}
+            {!isConnected ? "Connect Wallet" : (isNextLoading ? "Loading... Please wait": "Continue")}
           </button>
         </div>
       </motion.div>

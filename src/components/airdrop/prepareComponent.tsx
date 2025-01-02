@@ -316,26 +316,26 @@ export function PrepareComponent() {
         toast.error("Failed to fetch token metadata.");
       }
     };
-    const isTokenAddressValid = ethers.isAddress(tokenAddress);
+    // const isTokenAddressValid = ethers.isAddress(tokenAddress);
 
-    if (!isTokenAddressValid) {
-      dispatch(setTokenAddressError("Kindly enter a valid token address"));
-    } else {
-      fetchMetadata();
-      dispatch(setTokenAddressError(""));
-    }
+    fetchMetadata();
+    // if (!isTokenAddressValid) {
+    //   dispatch(setTokenAddressError("Kindly enter a valid token address"));
+    // } else {
+    //   dispatch(setTokenAddressError(""));
+    // }
 
-    if (!csvData) {
-      dispatch(setCsvDataError("Kindly upload a csv"));
-    } else {
-      dispatch(setCsvDataError(""));
-    }
+    // if (!csvData) {
+    //   dispatch(setCsvDataError("Kindly upload a csv"));
+    // } else {
+    //   dispatch(setCsvDataError(""));
+    // }
 
-    if (invalidAirdropAddresses.length > 0) {
-      toast.error(
-        invalidAirdropAddresses.join(", ") + " are invalid addresses"
-      );
-    }
+    // if (invalidAirdropAddresses.length > 0) {
+    //   toast.error(
+    //     invalidAirdropAddresses.join(", ") + " are invalid addresses"
+    //   );
+    // }
   }, [csvData, tokenAddress]);
 
   useEffect(() => {
@@ -366,6 +366,13 @@ export function PrepareComponent() {
                 className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
                 placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8"
                 value={tokenAddress}
+                onBlur={() => {
+                  if (!ethers.isAddress(eligibleParticipantAddress)) {
+                    dispatch(
+                      setTokenAddressError("Kindly enter a valid token address")
+                    );
+                  }
+                }}
                 onChange={(e) => {
                   dispatch(setTokenAddress(e.target.value));
                 }}
@@ -387,6 +394,20 @@ export function PrepareComponent() {
               <textarea
                 className="w-full p-2 h-[200px] overflow-y-auto border-2 border-[2px] border-[#FFFFFF17] rounded-md bg-transparent"
                 value={csvData}
+                onBlur={() => {
+                  if (invalidAirdropAddresses.length > 0) {
+                    toast.error(
+                      invalidAirdropAddresses.join(", ") +
+                        " are invalid addresses"
+                    );
+                  }
+
+                  if (!csvData) {
+                    dispatch(setCsvDataError("Kindly upload a csv"));
+                  } else {
+                    dispatch(setCsvDataError(""));
+                  }
+                }}
               ></textarea>
               <div className="flex justify-between md:items-center flex-col md:flex-row">
                 <div className="text-center md:text-left">
@@ -411,6 +432,13 @@ export function PrepareComponent() {
                       type="file"
                       accept=".csv"
                       id="upload-button"
+                      onBlur={() => {
+                        if (!csvData) {
+                          dispatch(setCsvDataError("Kindly upload a csv"));
+                        } else {
+                          dispatch(setCsvDataError(""));
+                        }
+                      }}
                       onClick={(e) => {
                         if (!ethers.isAddress(tokenAddress)) {
                           e.preventDefault();
