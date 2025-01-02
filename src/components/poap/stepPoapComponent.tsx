@@ -2,7 +2,7 @@ import { useAppSelector } from "../../store/hooks";
 import { selectStep } from "../../store/slices/poapStepSlice";
 
 
-export function StepComponent() {
+export function StepPoapComponent() {
   // const loc = useLocation();
 
   const step = useAppSelector(selectStep);

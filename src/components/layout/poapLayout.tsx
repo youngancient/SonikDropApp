@@ -1,6 +1,6 @@
 import { FooterComponent } from "../footerComponent";
 import { HeaderComponent } from "../headerComponent";
-import { StepComponent } from "../poap/stepPoapComponent";
+import { StepPoapComponent } from "../poap/stepPoapComponent";
 import { useNavigate } from "react-router-dom";
 
 export default function PoapLayout(props: any) {
@@ -8,7 +8,7 @@ export default function PoapLayout(props: any) {
     return (
         <div style={{backgroundColor: "#0F195B"}} className="h-screen overflow-auto">
             <HeaderComponent showBackButton={props.showBackButton} />
-            <StepComponent />
+            <StepPoapComponent />
             {props.children}
             <div className="flex items-center mt-[1rem] gap-[0.875rem] justify-center">
                 <p>Already a User?</p>
