@@ -52,6 +52,7 @@ export function PreparePoapComponent() {
       setEventDescription(parsedPoapEventDetails.eventDescription);
       setEventType(parsedPoapEventDetails.eventType);
       setSelectedFile(parsedPoapEventDetails.selectedFile);
+      console.log(parsedPoapEventDetails.selectedFile);
     }
   }, []);
 
