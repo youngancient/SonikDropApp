@@ -22,7 +22,7 @@ import {
   selectPowerValue,
   selectShowCSVMaker,
   selectTokenAddress,
-  selectTokenAddressError,
+  // selectTokenAddressError,
   setAirdropMakerList,
   setCsvData,
   setEligibleParticipantAddress,
@@ -52,7 +52,7 @@ export function PrepareComponent() {
   const csvData = useAppSelector(selectCsvData);
   const tokenAddress = useAppSelector(selectTokenAddress);
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
-  const tokenAddressError = useAppSelector(selectTokenAddressError);
+  // const tokenAddressError = useAppSelector(selectTokenAddressError);
   const csvDataError = useAppSelector(selectCsvDataError);
   const invalidAirdropAddresses = useAppSelector(selectInvalidAirdropAddresses);
   const showCSVMaker = useAppSelector(selectShowCSVMaker);
