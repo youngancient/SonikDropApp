@@ -1,11 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {useEffect, useState } from "react";
 
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useClearFormInput } from "../../hooks/useClearForm";
-import { selectTokenDetail } from "../../store/slices/prepareSlice";
-import { useAppKitAccount } from "@reown/appkit/react";
 import { ButtonLoader } from "../icons";
 import { CompletedModal } from "../completedModal";
 import { ICSV, IPoapEvent } from "../../interfaces/CSVInterface";
@@ -20,7 +17,7 @@ export function ApprovePoapComponent() {
 
   const [isLoadingBal, _setLoadingBal] = useState(false);
 
-  const [estimatedGasFee, setEstimatedGasFee] = useState(0);
+  const [estimatedGasFee, _setEstimatedGasFee] = useState(0);
 
 
   useEffect(() => {
