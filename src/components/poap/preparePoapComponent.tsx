@@ -347,7 +347,7 @@ export function PreparePoapComponent() {
                 <small
                   className={`${
                     eventFlyerError ? "block text-red-400" : "hidden"
-                  } mt-2 text-center`}
+                  } mt-2`}
                 >
                   {eventFlyerError}
                 </small>

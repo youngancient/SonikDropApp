@@ -377,7 +377,7 @@ export function PrepareComponent() {
               <small
                     className={`${
                       tokenAddressError ? "block text-red-400" : "hidden"
-                    } mt-2 text-center`}
+                    } mt-2`}
                   >
                     {tokenAddressError}
                   </small>
