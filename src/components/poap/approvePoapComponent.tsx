@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useClearFormInput } from "../../hooks/useClearForm";
 import { ButtonLoader } from "../icons";
 import { CompletedModal } from "../completedModal";
 import { ICSV, IPoapEvent } from "../../interfaces/CSVInterface";
+import { useClearPoapFormInput } from "../../hooks/useClearPoapForm";
 
 export function ApprovePoapComponent() {
   const [eventName, setEventName] = useState("");
@@ -34,7 +34,7 @@ export function ApprovePoapComponent() {
     }
   }, []);
 
-  const { clear } = useClearFormInput();
+  const { clearPoap } = useClearPoapFormInput();
   const [showModal, setShowModal] = useState(false);
 
   const approve = () => {
@@ -43,7 +43,7 @@ export function ApprovePoapComponent() {
       setShowModal(true);
     }, 1200);
 
-    clear();
+    clearPoap();
   };
 
   return (
