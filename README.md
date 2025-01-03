@@ -1,6 +1,8 @@
 # SonikDrop
 
-SonikDrop is an OpenSource tool that streamlines the entire airdrop experience by letting you effortlessly create, manage, and claim token airdrops and POAPs, all in one place. This is to support and improve community reward systems making it cheaper and faster.
+![image](https://github.com/user-attachments/assets/dcee8545-cf6a-40aa-87dd-e972142e996e)
+
+SonikDrop is an open-source tool that streamlines the entire airdrop experience by letting you effortlessly create, manage, and claim token airdrops and POAPs, all in one place. This is to support and improve community reward systems making it cheaper and faster.
 
 [SonikDrop Smart contract](https://github.com/youngancient/SonikFoundry)
 
