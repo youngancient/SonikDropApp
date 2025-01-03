@@ -18,5 +18,5 @@ Contributions to **SonikDrop** are welcome! If you'd like to contribute checkout
 
 ## License
 
-This package is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more information.
+This package is licensed under the MIT License. See the [LICENSE](./LICENSE.md) file for more information.
 
