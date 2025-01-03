@@ -8,9 +8,9 @@ SonikDrop is an OpenSource tool that streamlines the entire airdrop experience b
 
 Contributions to **SonikDrop** are welcome! If you'd like to contribute checkout:
 
-1. [Contribution guildlines](https://github.com/youngancient/diamonds/blob/main/CONTRIBUTION_GUIDELINES.md)  
-2. [Git guildlines](https://github.com/youngancient/diamonds/blob/main/GIT_GUIDELINES.md)  
-3. [Issues guildlines](https://github.com/youngancient/diamonds/blob/main/ISSUES_GUIDELINES.md)  
+1. [Contribution guidelines](https://github.com/youngancient/SonikDropApp/blob/main/CONTRIBUTION_GUIDELINES.md)  
+2. [Git guidelines](https://github.com/youngancient/SonikDropApp/blob/main/GIT_GUIDELINES.md)  
+3. [Issues guidelines](https://github.com/youngancient/SonikDropApp/blob/main/ISSUES_GUIDELINES.md)  
 
 ## License
 
