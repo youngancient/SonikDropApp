@@ -77,7 +77,7 @@ export function ApprovePoapComponent() {
                 </div>
                 <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                   <div className="font-bold text-white text-[20px]">
-                    {csvToJSONData.length}
+                    {csvToJSONData?.length}
                   </div>
                   <div className="text-sm text-white/[0.8]">Recipients</div>
                 </div>
@@ -95,7 +95,7 @@ export function ApprovePoapComponent() {
               <div>
                 <div className="mt-4">List of recipients</div>
                 <div className="mb-8 h-[200px] overflow-y-auto p-2">
-                  {csvToJSONData.map((recepients: any, index: number) => {
+                  {csvToJSONData?.map((recepients: any, index: number) => {
                     return (
                       <div className="flex items-start border-b-solid border-b-[1px] border-b-[#D0D5DD] py-4 gap-2 min-w-max w-full">
                         <p>{index + 1}.</p>

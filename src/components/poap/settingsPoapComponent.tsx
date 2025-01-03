@@ -159,7 +159,7 @@ export function SettingsPoapComponent() {
 
           // console.log(stringResult);
           dispatch(setCsvData(stringResult));
-          dispatch(setCsvToJSONData(results.data));
+          dispatch(setCsvToJSONData(results?.data));
         },
         header: true, // Set to true if your CSV has headers
       });
