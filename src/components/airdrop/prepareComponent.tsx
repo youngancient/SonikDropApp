@@ -375,18 +375,18 @@ export function PrepareComponent() {
                 }}
               />
               <small
-                    className={`${
-                      tokenAddressError ? "block text-red-400" : "hidden"
-                    } mt-2`}
-                  >
-                    {tokenAddressError}
-                  </small>
+                className={`${
+                  tokenAddressError ? "block text-red-400" : "hidden"
+                } mt-2`}
+              >
+                {tokenAddressError}
+              </small>
               <small className={`${"text-gray-300"} mt-2`}>
                 {isLoadingData
                   ? "Loading..."
-                  : tokenDetail == null
-                  ? "Token metadata will be fetched automatically"
-                  : `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`}
+                  : tokenDetail != null
+                  ? `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`
+                  : ""}
               </small>
             </div>
             <div>
