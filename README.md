@@ -4,9 +4,11 @@
 
 **SonikDrop** is an open-source tool that streamlines the entire airdrop experience by letting you effortlessly create, manage, and claim token airdrops and POAPs, all in one place. This is to support and improve community reward systems making it cheaper and faster.
 
-[SonikDrop Smart contract](https://github.com/youngancient/SonikFoundry) is currently deployed on 4 EVM Test chains(Sepolia, Lisk , Base, Kaia) but we have plans to support Polygon, Arbitrum, Optimism and Binance Smartchain.
+[SonikDrop Smart contract](https://github.com/youngancient/SonikFoundry) is currently deployed on 4 EVM-compatible Test chains(Kaia, Sepolia, Lisk, Base) but we have plans to support Polygon, Arbitrum, Optimism, and Binance Smartchain.
 
-Our plan is to supported 8 chains, becoming a multichain dapp focused on improving community reward systems.
+We plan to support 8 chains, becoming a multichain dapp focused on improving community reward systems.
+
+Currently, we are in our **building and testing phase**.
 
 ## Contribution
 
