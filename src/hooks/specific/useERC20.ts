@@ -81,15 +81,24 @@ export interface ITokenDetails {
   symbol: string;
   decimals: number;
 }
+
+// works on #Sepolia and #Kaia, but not #base n #lisk, why?
+
 export const useTokenDetail = (tokenAddress: string) => {
   const [isLoadingDetails, setisLoadingDetails] = useState(false);
   const [tokenDetails, setTokenDetails] = useState<ITokenDetails | null>(null);
   const readOnlyERC20Contract = useERC20Contract(false, tokenAddress);
 
+  const { chainId } = useAppKitNetwork();
+
   const fetchDetails = useCallback(async () => {
     if (!readOnlyERC20Contract) {
       console.log("no contract found");
       setTokenDetails(null);
+      return;
+    }
+    if(!chainId){
+      console.log("Invalid chain");
       return;
     }
     try {
@@ -105,11 +114,12 @@ export const useTokenDetail = (tokenAddress: string) => {
       setTokenDetails({ name, decimals, symbol });
     } catch (error) {
       setTokenDetails(null);
+      console.log("Invalid Token");
       console.log(error);
     } finally {
       setisLoadingDetails(false);
     }
-  }, [readOnlyERC20Contract]);
+  }, [readOnlyERC20Contract, tokenAddress,chainId]);
 
 
   return { isLoadingDetails, tokenDetails, fetchDetails };
