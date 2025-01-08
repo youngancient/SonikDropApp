@@ -115,7 +115,7 @@ const Dashboard = () => {
       }}
       className="min-h-screen overflow-auto"
     >
-      <HeaderComponent formType={null} showBackButton={false} />
+      <HeaderComponent />
       <DashboardStyles className="mt-[1.5rem] md:mt-[2rem] h-fit">
         <div className="top px-[1rem] md:px-[200px]">
           <h2>Dashboard Overview</h2>

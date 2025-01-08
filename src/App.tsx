@@ -10,7 +10,7 @@ function App() {
 
   return (
     <>
-      <HeaderComponent showBackButton={false} />
+      <HeaderComponent />
       <Hero />
       <BNB href={ChainHrefs.Binance} />
       <ETH href={ChainHrefs.Ethereum} />

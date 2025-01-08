@@ -89,7 +89,7 @@ const ClaimPage = () => {
       style={{ backgroundColor: "#050C19" }}
       className="h-screen overflow-auto"
     >
-      <HeaderComponent showBackButton={false} />
+      <HeaderComponent />
       <ClaimPageStyle className="px-[1rem] md:px-[200px] mt-[2.5rem] md:mt-[3rem]">
         <div className="banner relative">
           <motion.h1

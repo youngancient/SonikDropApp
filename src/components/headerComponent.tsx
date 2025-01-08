@@ -26,10 +26,8 @@ import Cookies from "js-cookie";
 import { useClearPoapFormInput } from "../hooks/useClearPoapForm";
 
 export function HeaderComponent({
-  showBackButton,
   formType
 }: {
-  showBackButton: boolean;
   formType?: "poap" | "airdrop" | null;
 }) {
   const navigate = useNavigate();
@@ -176,7 +174,7 @@ export function HeaderComponent({
           </button>
         </div>
       </div>
-      {showBackButton && (
+      {formType && (
         <div className="mt-1 mb-2 md:mt-4">
           <button className="flex items-center gap-4" onClick={backButton}>
             <IoChevronBackOutline /> Back
