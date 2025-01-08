@@ -30,7 +30,7 @@ export function HeaderComponent({
   formType
 }: {
   showBackButton: boolean;
-  formType: "poap" | "airdrop"
+  formType?: "poap" | "airdrop" | null;
 }) {
   const navigate = useNavigate();
   const { open } = useAppKit();

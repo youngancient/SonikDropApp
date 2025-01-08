@@ -2,10 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { parentVariant } from "../animations/animation";
 import { NavModalStyles } from "./styles/approve";
 import { FlexAbsoluteModalStyles } from "./styles/claimpage";
-import { setStep, clearBack } from "../store/slices/poapStepSlice";
+import { setStep as poapStep, clearBack as poapClearBack } from "../store/slices/poapStepSlice";
+import { setStep, clearBack } from "../store/slices/stepSlice";
 import { useAppDispatch } from "../store/hooks";
 
-export const CompletedModal = () => {
+
+
+
+export const CompletedModal = ({dropType}: {dropType: "airdrop" | "poap"}) => {
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
@@ -41,8 +45,13 @@ export const CompletedModal = () => {
 
         <div className="btn w-full">
           <button type="button" className="w-full" onClick={() => {
-            dispatch(setStep("prepare"));
-            dispatch(clearBack());
+            if (dropType == "airdrop") {
+              dispatch(setStep("prepare"));
+              dispatch(clearBack());
+            } else if(dropType == "poap") {
+              dispatch(poapStep("prepare"));
+              dispatch(poapClearBack());
+            }
             navigate("/dashboard");
           }}>Go to Dashboard</button>
         </div>
