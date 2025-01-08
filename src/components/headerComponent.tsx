@@ -14,6 +14,7 @@ import {
 import { DashboardIcon, LogoIcon } from "./icons";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { goBack } from "../store/slices/stepSlice";
+import { goBack as gobackPoap } from "../store/slices/poapStepSlice";
 import { useClearFormInput } from "../hooks/useClearForm";
 import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
@@ -22,17 +23,21 @@ import { IChains, supportedNetworks } from "../constants/chains";
 import { BrowserProvider, Eip1193Provider } from "ethers";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+import { useClearPoapFormInput } from "../hooks/useClearPoapForm";
 
 export function HeaderComponent({
   showBackButton,
+  formType
 }: {
   showBackButton: boolean;
+  formType: "poap" | "airdrop"
 }) {
   const navigate = useNavigate();
   const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
 
   const stepToGoBackTo = useAppSelector((state) => state.step.backStack);
+  const poapStepToGoBackTo = useAppSelector((state) => state.poap.backStack);
   const dispatch = useAppDispatch();
 
   // test sign message
@@ -81,12 +86,24 @@ export function HeaderComponent({
 
   const { clear } = useClearFormInput();
 
+  const { clearPoap } = useClearPoapFormInput();
+
   const backButton = () => {
-    if (stepToGoBackTo.length == 0) {
-      clear();
+
+    if(formType == "airdrop") {
+      if(stepToGoBackTo.length == 0) {
+        clear();
       navigate("/");
-    } else {
-      dispatch(goBack());
+      } else {
+        dispatch(goBack());
+      }
+    } else if (formType == "poap") {
+      if(poapStepToGoBackTo.length == 0) {
+        clearPoap();
+        navigate("/");
+      } else {
+        dispatch(gobackPoap());
+      }
     }
   };
 

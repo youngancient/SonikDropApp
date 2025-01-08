@@ -36,7 +36,7 @@ export function PreparePoapComponent() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
       // Send only the first accepted file to the callback
-      if (acceptedFiles.length > 0) {
+      if (acceptedFiles?.length > 0) {
         setSelectedFile(acceptedFiles[0]);
       }
     },
@@ -172,23 +172,27 @@ export function PreparePoapComponent() {
                 className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
                 placeholder="Event name"
                 value={eventName}
-                onBlur={() => {
+                // onBlur={() => {
+                  
+                // }}
+                onChange={(e) => {
+                  setEventName(e.target.value);
                   const { error } = Joi.string()
                     .required()
+                    .min(1)
+                    .max(50)
                     .messages({
                       "any.required": "Event name is required",
                       "string.base": "Event name must be a string",
+                      "string.max": "Event details have to be maximum 50 characters",
                       "string.empty": "Event name can not be empty",
                     })
-                    .validate(eventName);
+                    .validate(e.target.value);
                   if (error) {
                     setEventNameError(error.message);
                   } else {
                     setEventNameError("");
                   }
-                }}
-                onChange={(e) => {
-                  setEventName(e.target.value);
                 }}
               />
               <small
@@ -206,27 +210,27 @@ export function PreparePoapComponent() {
                 className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
                 placeholder="The event description"
                 value={eventDescription}
-                onBlur={() => {
+                // onBlur={() => {
+                  
+                // }}
+                onChange={(e) => {
+                  setEventDescription(e.target.value);
                   const { error } = Joi.string()
                     .min(20)
                     .required()
                     .messages({
                       "any.required": "Event details is required",
                       "string.base": "Event details must be a string",
-                      "string.min":
-                        "Event details have to be more than 20 characters",
+                      "string.min": "Event details have to be more than 20 characters",
                       "string.empty": "Event name can not be empty",
                     })
-                    .validate(eventDescription);
+                    .validate(e.target.value);
 
                   if (error) {
                     setEventDescriptionError(error.message);
                   } else {
                     setEventDescriptionError("");
                   }
-                }}
-                onChange={(e) => {
-                  setEventDescription(e.target.value);
                 }}
               />
               <small
@@ -242,7 +246,8 @@ export function PreparePoapComponent() {
               <div className="text-left">Event type</div>
               <select
                 value={eventType}
-                onBlur={() => {
+                onChange={(e) => {
+                  setEventType(e.target.value);
                   const { error } = Joi.string()
                     .valid("conference", "meetup", "hackathon")
                     .required()
@@ -250,16 +255,13 @@ export function PreparePoapComponent() {
                       "any.required": "Event type is required",
                       "any.only": `Please select a valid Event type"`,
                     })
-                    .validate(eventType);
+                    .validate(e.target.value);
 
                   if (error) {
                     setEventTypeError(error.message);
                   } else {
                     setEventTypeError("");
                   }
-                }}
-                onChange={(e) => {
-                  setEventType(e.target.value);
                 }}
                 className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
               >
@@ -316,7 +318,7 @@ export function PreparePoapComponent() {
                   </div>
                 ) : (
                   <div className="text-center flex flex-col items-center">
-                    {uploadedEvnetFlyer ? (
+                    {(uploadedEvnetFlyer && selectedFile) ? (
                       <div
                         style={{
                           display: "flex",
@@ -324,6 +326,7 @@ export function PreparePoapComponent() {
                           alignItems: "center",
                         }}
                       >
+                        <img src={`${URL.createObjectURL(selectedFile)}`} className="w-full h-[140px] rounded-md" alt={uploadedEvnetFlyer} />
                         <div>{uploadedEvnetFlyer}</div>
                       </div>
                     ) : (

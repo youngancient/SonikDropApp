@@ -11,8 +11,8 @@ import {
   setShowCSVMaker,
   setTokenAddress,
   setTokenAddressError,
-
-} from "../store/slices/prepareSlice";
+  setTokenDetail
+} from "../store/slices/preparePoapSlice";
 
 export function useClearPoapFormInput() {
   const dispatch = useAppDispatch();
@@ -29,6 +29,7 @@ export function useClearPoapFormInput() {
     dispatch(setPowerValue(""));
     dispatch(setTokenAddress(""));
     dispatch(setTokenAddressError(""));
+    dispatch(setTokenDetail(null));
 
     sessionStorage.removeItem("csvData");
     sessionStorage.removeItem("poapEventDetails");

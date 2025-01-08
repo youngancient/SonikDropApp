@@ -2,9 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { parentVariant } from "../animations/animation";
 import { NavModalStyles } from "./styles/approve";
 import { FlexAbsoluteModalStyles } from "./styles/claimpage";
+import { setStep, clearBack } from "../store/slices/poapStepSlice";
+import { useAppDispatch } from "../store/hooks";
 
 export const CompletedModal = () => {
   const navigate = useNavigate();
+
+  const dispatch = useAppDispatch();
+
   return (
     <FlexAbsoluteModalStyles
       variants={parentVariant}
@@ -35,7 +40,11 @@ export const CompletedModal = () => {
         </div>
 
         <div className="btn w-full">
-          <button type="button" className="w-full" onClick={() => navigate("/dashboard")}>Go to Dashboard</button>
+          <button type="button" className="w-full" onClick={() => {
+            dispatch(setStep("prepare"));
+            dispatch(clearBack());
+            navigate("/dashboard");
+          }}>Go to Dashboard</button>
         </div>
       </NavModalStyles>
     </FlexAbsoluteModalStyles>
