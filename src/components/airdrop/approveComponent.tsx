@@ -95,7 +95,7 @@ export function ApproveComponent() {
       setShowModal(true);
     }, 1200);
 
-    dispatch(setStep("prepare"));
+    // dispatch(setStep("prepare"));
     
     clear();
   };
