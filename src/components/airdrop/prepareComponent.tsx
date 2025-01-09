@@ -147,6 +147,7 @@ export function PrepareComponent() {
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
     const files = event.target.files;
     if (!files) return;
     const file = files[0];
@@ -214,6 +215,13 @@ export function PrepareComponent() {
         header: true, // Set to true if your CSV has headers
       });
     }
+
+    if (!csvData) {
+      dispatch(setCsvDataError("Kindly upload a csv"));
+    } else {
+      dispatch(setCsvDataError(""));
+    }
+
   };
 
   const { isConnected } = useAppKitAccount();
@@ -363,15 +371,14 @@ export function PrepareComponent() {
                 className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
                 placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8"
                 value={tokenAddress}
-                onBlur={() => {
-                  if (!ethers.isAddress(eligibleParticipantAddress)) {
+                // onBlur={}
+                onChange={(e) => {
+                  dispatch(setTokenAddress(e.target.value));
+                  if (!ethers.isAddress(e.target.value)) {
                     dispatch(
                       setTokenAddressError("Kindly enter a valid token address")
                     );
                   }
-                }}
-                onChange={(e) => {
-                  dispatch(setTokenAddress(e.target.value));
                 }}
               />
               <small
@@ -394,7 +401,7 @@ export function PrepareComponent() {
               <textarea
                 className="w-full p-2 h-[200px] overflow-y-auto border-2 border-[2px] border-[#FFFFFF17] rounded-md bg-transparent"
                 value={csvData}
-                onBlur={() => {
+                onChange={() => {
                   if (invalidAirdropAddresses.length > 0) {
                     toast.error(
                       invalidAirdropAddresses.join(", ") +
@@ -432,13 +439,6 @@ export function PrepareComponent() {
                       type="file"
                       accept=".csv"
                       id="upload-button"
-                      onBlur={() => {
-                        if (!csvData) {
-                          dispatch(setCsvDataError("Kindly upload a csv"));
-                        } else {
-                          dispatch(setCsvDataError(""));
-                        }
-                      }}
                       onClick={(e) => {
                         if (!ethers.isAddress(tokenAddress)) {
                           e.preventDefault();

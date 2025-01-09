@@ -7,7 +7,7 @@ export default function AirdropLayout(props: any) {
     const navigate = useNavigate(); 
     return (
         <div style={{backgroundColor: "#0F195B"}} className="h-screen overflow-auto">
-            <HeaderComponent showBackButton={props.showBackButton} />
+            <HeaderComponent formType="airdrop" />
             <StepComponent />
             {props.children}
             <div className="flex items-center mt-[1rem] gap-[0.875rem] justify-center">
