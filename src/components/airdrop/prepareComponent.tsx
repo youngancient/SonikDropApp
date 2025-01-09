@@ -149,8 +149,17 @@ export function PrepareComponent() {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
     const files = event.target.files;
+
+    // if (csvDataError) {
+    //   dispatch(setCsvDataError("Kindly upload a csv"));
+    // } else {
+    //   dispatch(setCsvDataError(""));
+    // }
+
     if (!files) return;
     const file = files[0];
+    
+
     if (file) {
       Papa.parse(file, {
         complete: (results: any) => {
@@ -162,6 +171,8 @@ export function PrepareComponent() {
             );
             return ethers.isAddress(result.address) == false;
           });
+
+          
 
           dispatch(setInvalidAirdropAddresses(invalidAddresses));
 
@@ -199,6 +210,8 @@ export function PrepareComponent() {
             return;
           }
 
+            dispatch(setCsvDataError(""));
+
           const stringResult = results.data
             .map((result: ICSV) => {
               return `${result.address},${ethers.formatUnits(
@@ -215,13 +228,6 @@ export function PrepareComponent() {
         header: true, // Set to true if your CSV has headers
       });
     }
-
-    if (!csvData) {
-      dispatch(setCsvDataError("Kindly upload a csv"));
-    } else {
-      dispatch(setCsvDataError(""));
-    }
-
   };
 
   const { isConnected } = useAppKitAccount();
@@ -378,6 +384,8 @@ export function PrepareComponent() {
                     dispatch(
                       setTokenAddressError("Kindly enter a valid token address")
                     );
+                  } else {
+                    dispatch(setTokenAddressError(""));
                   }
                 }}
               />
@@ -443,7 +451,6 @@ export function PrepareComponent() {
                         if (!ethers.isAddress(tokenAddress)) {
                           e.preventDefault();
                           toast.error("Enter Token address first!");
-                          return;
                         }
                       }}
                       onChange={handleChange}

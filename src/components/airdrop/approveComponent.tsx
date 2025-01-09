@@ -17,7 +17,6 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "react-toastify";
 import { ButtonLoader } from "../icons";
 import { CompletedModal } from "../completedModal";
-import { setStep } from "../../store/slices/stepSlice";
 
 export function ApproveComponent() {
   const { address } = useAppKitAccount();
@@ -95,7 +94,7 @@ export function ApproveComponent() {
       setShowModal(true);
     }, 1200);
 
-    dispatch(setStep("prepare"));
+    // dispatch(setStep("prepare"));
     
     clear();
   };

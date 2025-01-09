@@ -326,8 +326,11 @@ export function PreparePoapComponent() {
                           alignItems: "center",
                         }}
                       >
-                        <img src={`${URL.createObjectURL(selectedFile)}`} className="w-full h-[140px] rounded-md" alt={uploadedEvnetFlyer} />
-                        <div>{uploadedEvnetFlyer}</div>
+                        <img src={`${URL.createObjectURL(selectedFile)}`} className="w-full h-[100px] rounded-md" alt={uploadedEvnetFlyer} />
+                        <div className="my-1">{uploadedEvnetFlyer}</div>
+                        <button className="bg-[#00A7FF] px-4 py-1 rounded-[20px]">
+                          Change file
+                        </button>
                       </div>
                     ) : (
                       <div

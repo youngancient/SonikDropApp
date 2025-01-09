@@ -175,7 +175,7 @@ export function HeaderComponent({
         </div>
       </div>
       {formType && (
-        <div className="mt-1 mb-2 md:mt-4">
+        <div className="mt-4 mb-8 md:mb-2 md:mt-2">
           <button className="flex items-center gap-4" onClick={backButton}>
             <IoChevronBackOutline /> Back
           </button>
