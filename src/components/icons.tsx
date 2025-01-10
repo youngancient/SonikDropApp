@@ -283,7 +283,7 @@ export const ChainDivStyle = styled.div<IChainDiv>`
       left: ${Math.max(left * 0.6, 5)}px;
     `}
     ${({ right }) => right !== undefined && css`
-      right: ${Math.max(right * 0, 5)}px;
+      right: ${Math.max(right * 3, 5)}px;
     `}
 
     /* Reduce blur and scale effects for mobile */
