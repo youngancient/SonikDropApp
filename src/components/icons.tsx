@@ -197,7 +197,7 @@ export const BorderStyle = styled.div`
 `;
 export const ChainDivStyle = styled.div<IChainDiv>`
   position: absolute;
-  z-index: -1;
+  z-index: 1;
   top: ${({ top }) => (top !== undefined ? `${top}px` : "auto")};
   left: ${({ left }) => (left !== undefined ? `${left}px` : "auto")};
   right: ${({ right }) => (right !== undefined ? `${right}px` : "auto")};
@@ -212,9 +212,9 @@ export const ChainDivStyle = styled.div<IChainDiv>`
   }
   filter: blur(7px);
   cursor: pointer;
-  z-index: 1;
   scale: 0.8;
-  transition: filter 0.3s ease, scale 0.3s ease; /* Add transition for filter and scale */
+  transition: filter 0.3s ease, scale 0.3s ease;
+  
   &:hover {
     filter: blur(0px);
     scale: 0.9;
@@ -246,8 +246,53 @@ export const ChainDivStyle = styled.div<IChainDiv>`
       animation: ${moveBottomRight} 3s infinite;
     `}
 
+  /* Tablet Breakpoint */
+  @media (max-width: 1024px) {
+    width: 70px;
+    height: 70px;
+    
+    /* Adjust positioning for tablet */
+    ${({ top }) => top !== undefined && css`
+      top: ${Math.max(top * 0.8, 10)}px;
+    `}
+    ${({ bottom }) => bottom !== undefined && css`
+      bottom: ${Math.max(bottom * 0.8, 10)}px;
+    `}
+    ${({ left }) => left !== undefined && css`
+      left: ${Math.max(left * 0.8, 10)}px;
+    `}
+    ${({ right }) => right !== undefined && css`
+      right: ${Math.max(right * 0.8, 10)}px;
+    `}
+  }
+
+  /* Mobile Breakpoint */
   @media (max-width: 767px) {
-    display: none;
+    display: block;
+    width: 50px;
+    height: 50px;
+    
+    /* Adjust positioning for mobile */
+    ${({ top }) => top !== undefined && css`
+      top: ${Math.max(top * 2.0, 5)}px;
+    `}
+    ${({ bottom }) => bottom !== undefined && css`
+      bottom: ${Math.max(bottom * 2.0, 60)}px; 
+    `}
+    ${({ left }) => left !== undefined && css`
+      left: ${Math.max(left * 0.6, 5)}px;
+    `}
+    ${({ right }) => right !== undefined && css`
+      right: ${Math.max(right * 0, 5)}px;
+    `}
+
+    /* Reduce blur and scale effects for mobile */
+    filter: blur(4px);
+    scale: 0.7;
+
+    &:hover {
+      scale: 0.8;
+    }
   }
 `;
 
