@@ -11,12 +11,16 @@ import {
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useClearFormInput } from "../../hooks/useClearForm";
-import { selectTokenDetail } from "../../store/slices/prepareSlice";
+import {
+  selectTokenAddress,
+  selectTokenDetail,
+} from "../../store/slices/prepareSlice";
 import { useAppKitAccount } from "@reown/appkit/react";
 // import { ethers } from "ethers";
 import { toast } from "react-toastify";
 import { ButtonLoader } from "../icons";
 import { CompletedModal } from "../completedModal";
+import { useTokenBalance } from "../../hooks/specific/useERC20";
 
 export function ApproveComponent() {
   const { address } = useAppKitAccount();
@@ -27,6 +31,9 @@ export function ApproveComponent() {
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
 
   const tokenDetail = useAppSelector(selectTokenDetail);
+  const tokenAddress = useAppSelector(selectTokenAddress);
+
+  const { tokenBalance, isLoadingBalance } = useTokenBalance(tokenAddress);
 
   const [isLoadingBal, setLoadingBal] = useState(false);
 
@@ -40,6 +47,7 @@ export function ApproveComponent() {
   }, [csvToJSONData]);
 
   useEffect(() => {
+    console.log({ tokenAddress, tokenBalance, isLoadingBalance });
     calculateTotalOutput();
   }, [calculateTotalOutput]);
 
@@ -89,13 +97,13 @@ export function ApproveComponent() {
       toast.error("Insufficient balance to approve");
       return;
     }
-    // call contract 
+    // call contract
     setTimeout(() => {
       setShowModal(true);
     }, 1200);
 
     // dispatch(setStep("prepare"));
-    
+
     clear();
   };
 
