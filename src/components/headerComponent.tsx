@@ -4,7 +4,7 @@ import {
   useAppKitNetwork,
   useAppKitProvider,
 } from "@reown/appkit/react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { formatAddress } from "../utils/helpers";
 import {
   IoChevronBackOutline,
@@ -26,7 +26,7 @@ import Cookies from "js-cookie";
 import { useClearPoapFormInput } from "../hooks/useClearPoapForm";
 
 export function HeaderComponent({
-  formType
+  formType,
 }: {
   formType?: "poap" | "airdrop" | null;
 }) {
@@ -87,16 +87,15 @@ export function HeaderComponent({
   const { clearPoap } = useClearPoapFormInput();
 
   const backButton = () => {
-
-    if(formType == "airdrop") {
-      if(stepToGoBackTo.length == 0) {
+    if (formType == "airdrop") {
+      if (stepToGoBackTo.length == 0) {
         clear();
-      navigate("/");
+        navigate("/");
       } else {
         dispatch(goBack());
       }
     } else if (formType == "poap") {
-      if(poapStepToGoBackTo.length == 0) {
+      if (poapStepToGoBackTo.length == 0) {
         clearPoap();
         navigate("/");
       } else {
@@ -109,7 +108,7 @@ export function HeaderComponent({
 
   // Effect to handle sign message on connection
   useEffect(() => {
-    console.log({isConnected, token});
+    console.log({ isConnected, token });
     // added timeout to prevent immediate sign message
     const delayTimeout = setTimeout(() => {
       if (isConnected && !token) {
@@ -194,6 +193,7 @@ export const SwitchChainComp = () => {
   const [selectedChain, setSelectedChain] = useState<IChains | null>(
     supportedNetworks.find((ele) => ele.id === Number(chainId)) ?? null
   );
+  const location = useLocation();
 
   const setChain = useCallback(
     async (id: number, calledByUser?: boolean) => {
@@ -201,6 +201,7 @@ export const SwitchChainComp = () => {
       if (!chain) {
         return;
       }
+
       if (!address && calledByUser) {
         toast.error("Please connect wallet first!");
         return;
@@ -213,7 +214,7 @@ export const SwitchChainComp = () => {
         setSelectedChain(chain); // Set the chain if there's no mismatch
       }
     },
-    [address, chainId, open]
+    [address, chainId]
   );
 
   useEffect(() => {
@@ -258,7 +259,17 @@ export const SwitchChainComp = () => {
               <div
                 className="dropdown-item cursor-pointer flex gap-1 items-center"
                 key={ele.id}
-                onClick={() => setChain(ele.id, true)}
+                onClick={() => {
+                  if (location.pathname.startsWith("/airdrop")) {
+                    toast.error("Cannot switch network on airdrop page");
+                    return;
+                  }
+                  if (location.pathname.startsWith("/poap")) {
+                    toast.error("Cannot switch network on poap page");
+                    return;
+                  }
+                  setChain(ele.id, true);
+                }}
               >
                 <img
                   src={ele.logo}
