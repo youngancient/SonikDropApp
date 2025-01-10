@@ -101,6 +101,12 @@ export const useTokenDetail = (tokenAddress: string) => {
     }
     if(!chainId){
       console.log("Invalid chain");
+      setTokenDetails(null);
+      return;
+    }
+    if(!tokenAddress){
+      console.log("Invalid Token Address");
+      setTokenDetails(null);
       return;
     }
     try {
@@ -143,6 +149,10 @@ export const useTokenBalance = (tokenAddress : string) => {
     }
     if (!address) {
       setTokenBalance(null);
+      return;
+    }
+    if(!tokenAddress){
+      console.log("Invalid Token Address");
       return;
     }
     try {
