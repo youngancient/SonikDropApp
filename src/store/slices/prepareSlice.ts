@@ -17,7 +17,7 @@ interface prepareState {
   eligibleParticipantAddress: string;
   eligibleParticipantAmount: string;
   powerValue: string;
-  tokenDetail : ITokenDetails | null;
+  tokenDetail : ITokenDetails | null ;
 }
 
 // Define the initial state using that type
