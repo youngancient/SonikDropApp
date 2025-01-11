@@ -1,6 +1,6 @@
 import { ethers, Numeric } from "ethers";
 import Papa from "papaparse";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 import { IAirdropList, ICSV } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
