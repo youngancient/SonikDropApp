@@ -245,7 +245,7 @@ export const SwitchChainComp = () => {
               {/* Hide text on mobile */}
             </div>
           ) : (
-            <>Not found</>
+            <>None</>
           )}
           <IoChevronDown size={18} />
         </button>

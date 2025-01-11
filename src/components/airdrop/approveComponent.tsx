@@ -14,8 +14,8 @@ import { useClearFormInput } from "../../hooks/useClearForm";
 import {
   selectTokenAddress,
   selectTokenDetail,
+  setTokenDetail,
 } from "../../store/slices/prepareSlice";
-import { useAppKitAccount } from "@reown/appkit/react";
 // import { ethers } from "ethers";
 import { toast } from "react-toastify";
 import { ButtonLoader } from "../icons";
@@ -23,10 +23,7 @@ import { CompletedModal } from "../completedModal";
 import { useTokenBalance } from "../../hooks/specific/useERC20";
 
 export function ApproveComponent() {
-  const { address } = useAppKitAccount();
   const dispatch = useAppDispatch();
-  const [balance, setBalance] = useState("");
-  // const tokenAddress = sessionStorage.getItem("tokenAddress") as string;
 
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
 
@@ -34,8 +31,6 @@ export function ApproveComponent() {
   const tokenAddress = useAppSelector(selectTokenAddress);
 
   const { tokenBalance, isLoadingBalance } = useTokenBalance(tokenAddress);
-
-  const [isLoadingBal, setLoadingBal] = useState(false);
 
   const [totalOutput, setTotalOutput] = useState(0);
 
@@ -47,26 +42,11 @@ export function ApproveComponent() {
   }, [csvToJSONData]);
 
   useEffect(() => {
-    console.log({ tokenAddress, tokenBalance, isLoadingBalance });
+
     calculateTotalOutput();
   }, [calculateTotalOutput]);
 
   useEffect(() => {
-    const getTokenBalance = async () => {
-      try {
-        if (!address) {
-          return;
-        }
-        setLoadingBal(true);
-
-        setBalance("100000");
-      } catch (error) {
-        console.error("Error fetching token balance:", error);
-      } finally {
-        setLoadingBal(false);
-      }
-    };
-    getTokenBalance();
     // setTokenAddress(sessionStorage.getItem("tokenAddress")  as string);
     dispatch(
       setCsvToJSONData(JSON.parse(sessionStorage.getItem("csvData") as string))
@@ -93,12 +73,17 @@ export function ApproveComponent() {
   const [showModal, setShowModal] = useState(false);
 
   const approve = () => {
-    if (parseFloat(balance) < totalOutput) {
+    if (!tokenBalance) {
+      return;
+    }
+    if (parseFloat(tokenBalance) < totalOutput) {
       toast.error("Insufficient balance to approve");
       return;
     }
+    
     // call contract
     setTimeout(() => {
+      dispatch(setTokenDetail(null));
       setShowModal(true);
     }, 1200);
 
@@ -144,10 +129,11 @@ export function ApproveComponent() {
                 </div>
                 <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                   <div className="font-bold text-white text-[20px]">
-                    {isLoadingBal ? (
+                    {isLoadingBalance ? (
                       <ButtonLoader />
                     ) : (
-                      parseFloat(balance).toLocaleString()
+                      tokenBalance !== null &&
+                      parseFloat(tokenBalance).toLocaleString()
                     )}
                   </div>
                   <div className="text-sm text-white/[0.8]">Token balance</div>

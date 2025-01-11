@@ -3,6 +3,12 @@ import { useERC20Contract } from "../useERC20Contract";
 import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  selectTokenDetail,
+  setTokenDetail,
+} from "../../store/slices/prepareSlice";
+import { ethers } from "ethers";
 // import { ethers } from "ethers";
 //import { ethers } from "ethers";
 
@@ -88,25 +94,27 @@ export interface ITokenDetails {
 
 export const useTokenDetail = (tokenAddress: string) => {
   const [isLoadingDetails, setisLoadingDetails] = useState(false);
-  const [tokenDetails, setTokenDetails] = useState<ITokenDetails | null>(null);
+  // const [tokenDetails, setTokenDetails] = useState<ITokenDetails | null>(null);
   const readOnlyERC20Contract = useERC20Contract(false, tokenAddress);
-
+  const [errorTxt, setErrorTxt] = useState("");
   const { chainId } = useAppKitNetwork();
+
+  const dispatch = useAppDispatch();
 
   const fetchDetails = useCallback(async () => {
     if (!readOnlyERC20Contract) {
       console.log("no contract found");
-      setTokenDetails(null);
+      dispatch(setTokenDetail(null));
       return;
     }
-    if(!chainId){
+    if (!chainId) {
       console.log("Invalid chain");
-      setTokenDetails(null);
+      dispatch(setTokenDetail(null));
       return;
     }
-    if(!tokenAddress){
+    if (!tokenAddress) {
       console.log("Invalid Token Address");
-      setTokenDetails(null);
+      dispatch(setTokenDetail(null));
       return;
     }
     try {
@@ -118,29 +126,30 @@ export const useTokenDetail = (tokenAddress: string) => {
 
       console.log({ name, decimals, symbol });
       console.log("Done fetching details2...");
-      
-      setTokenDetails({ name, decimals, symbol });
+      const metadata = { name, decimals: Number(decimals), symbol };
+      dispatch(setTokenDetail(metadata));
     } catch (error) {
-      setTokenDetails(null);
+      dispatch(setTokenDetail(null));
+      setErrorTxt("Invalid Token");
       console.log("Invalid Token");
       console.log(error);
     } finally {
       setisLoadingDetails(false);
     }
-  }, [readOnlyERC20Contract, tokenAddress,chainId]);
+  }, [readOnlyERC20Contract, tokenAddress, chainId, dispatch]);
 
-
-  return { isLoadingDetails, tokenDetails, fetchDetails };
+  return { isLoadingDetails, fetchDetails, errorTxt };
 };
 
-
 // Work on this nextUp
-export const useTokenBalance = (tokenAddress : string) => {
+export const useTokenBalance = (tokenAddress: string) => {
   const [tokenBalance, setTokenBalance] = useState<string | null>(null);
   const [isLoadingBalance, setisLoadingBalance] = useState(false);
 
   const { address } = useAppKitAccount();
-  const readOnlyERC20Contract = useERC20Contract(false,tokenAddress);
+  const readOnlyERC20Contract = useERC20Contract(false, tokenAddress);
+
+  const tokenDetail = useAppSelector(selectTokenDetail);
 
   const fetchBalance = useCallback(async () => {
     if (!readOnlyERC20Contract) {
@@ -151,7 +160,7 @@ export const useTokenBalance = (tokenAddress : string) => {
       setTokenBalance(null);
       return;
     }
-    if(!tokenAddress){
+    if (!tokenAddress) {
       console.log("Invalid Token Address");
       return;
     }
@@ -159,17 +168,18 @@ export const useTokenBalance = (tokenAddress : string) => {
       setisLoadingBalance(true);
       const bal = await readOnlyERC20Contract.balanceOf(address);
       console.log(bal);
-      setTokenBalance(bal);
+
+      setTokenBalance(ethers.formatUnits(bal, tokenDetail?.decimals));
     } catch (error) {
       setTokenBalance(null);
       console.log(error);
-    }finally{
+    } finally {
       setisLoadingBalance(false);
     }
-  }, [readOnlyERC20Contract, address, tokenAddress]);
+  }, [readOnlyERC20Contract, address, tokenAddress, tokenDetail?.decimals]);
 
   useEffect(() => {
-      fetchBalance();
+    fetchBalance();
   }, [fetchBalance, tokenAddress]);
 
   return { tokenBalance, isLoadingBalance };
