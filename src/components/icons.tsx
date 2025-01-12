@@ -266,33 +266,40 @@ export const ChainDivStyle = styled.div<IChainDiv>`
     `}
   }
 
+  
   /* Mobile Breakpoint */
   @media (max-width: 767px) {
     display: block;
     width: 50px;
     height: 50px;
+    z-index: -1; /* Place icons behind other elements */
     
-    /* Adjust positioning for mobile */
     ${({ top }) => top !== undefined && css`
-      top: ${Math.max(top * 2.0, 5)}px;
+      top: ${Math.max(top * 0.6, 5)}px;
     `}
     ${({ bottom }) => bottom !== undefined && css`
-      bottom: ${Math.max(bottom * 2.0, 60)}px; 
+      bottom: ${Math.max(bottom * 1.5, 60)}px;
     `}
     ${({ left }) => left !== undefined && css`
       left: ${Math.max(left * 0.6, 5)}px;
     `}
     ${({ right }) => right !== undefined && css`
-      right: ${Math.max(right * 3, 5)}px;
+      right: ${Math.max(right * 0.6, 5)}px;
     `}
 
-    /* Reduce blur and scale effects for mobile */
-    filter: blur(4px);
+    /* Increased blur effect and reduced opacity for mobile */
+    filter: blur(12px);
+    opacity: 0.8;
     scale: 0.7;
 
     &:hover {
-      scale: 0.8;
+      filter: blur(12px); /* Maintain blur effect on hover for mobile */
+      scale: 0.7; /* Disable scale effect on hover for mobile */
+      animation-play-state: running; /* Keep animation running on hover for mobile */
     }
+
+    /* Remove pointer cursor on mobile since we're disabling interactions */
+    cursor: default;
   }
 `;
 
