@@ -2,14 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 import { IAirdropList } from "../../interfaces/CSVInterface";
-import {  TokenMetadataResponse } from "alchemy-sdk";
 
 // Define a type for the slice state
 interface preparePoapState {
-  tokenAddress: string;
+
   csvData: string;
   csvToJSONData: any[];
-  tokenAddressError: string;
   csvDataError: string;
   invalidAirdropAddresses: string[];
   showCSVMaker: boolean;
@@ -17,15 +15,12 @@ interface preparePoapState {
   eligibleParticipantAddress: string;
   eligibleParticipantAmount: string;
   powerValue: string;
-  tokenDetail : TokenMetadataResponse | null;
 }
 
 // Define the initial state using that type
 const initialState: preparePoapState = {
-  tokenAddress: "",
   csvData: "",
   csvToJSONData: [],
-  tokenAddressError: "",
   csvDataError: "",
   invalidAirdropAddresses: [],
   showCSVMaker: false,
@@ -33,7 +28,6 @@ const initialState: preparePoapState = {
   eligibleParticipantAddress: "",
   eligibleParticipantAmount: "",
   powerValue: "",
-  tokenDetail: null,
 };
 
 export const preparePoapSlice = createSlice({
@@ -42,17 +36,12 @@ export const preparePoapSlice = createSlice({
   initialState,
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
-    setTokenAddress: (state, action: PayloadAction<string>) => {
-      state.tokenAddress = action.payload;
-    },
+
     setCsvData: (state, action: PayloadAction<string>) => {
       state.csvData = action.payload;
     },
     setCsvToJSONData: (state, action: PayloadAction<any[]>) => {
       state.csvToJSONData = action.payload;
-    },
-    setTokenAddressError: (state, action: PayloadAction<string>) => {
-      state.tokenAddressError = action.payload;
     },
     setCsvDataError: (state, action: PayloadAction<string>) => {
       state.csvDataError = action.payload;
@@ -74,9 +63,6 @@ export const preparePoapSlice = createSlice({
     },
     setPowerValue: (state, action: PayloadAction<string>) => {
       state.powerValue = action.payload;
-    },
-    setTokenDetail: (state, action: PayloadAction<TokenMetadataResponse | null>) => {
-      state.tokenDetail = action.payload;
     }
   },
 });
@@ -91,23 +77,17 @@ export const {
     setInvalidAirdropAddresses,
     setPowerValue,
     setShowCSVMaker,
-    setTokenAddress,
-    setTokenAddressError,
-    setTokenDetail
 } = preparePoapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectAirdropMakerList = (state: RootState) => state.prepare.airdropMakerList;
 export const selectCsvData = (state: RootState) => state.prepare.csvData;
-export const selectTokenAddress = (state: RootState) => state.prepare.tokenAddress; 
 export const selectCsvToJSONData = (state: RootState) => state.prepare.csvToJSONData;
-export const selectTokenAddressError = (state: RootState) => state.prepare.tokenAddressError;
 export const selectCsvDataError = (state: RootState) => state.prepare.csvDataError;
 export const selectInvalidAirdropAddresses = (state: RootState) => state.prepare.invalidAirdropAddresses;
 export const selectShowCSVMaker = (state: RootState) => state.prepare.showCSVMaker;
 export const selectEligibleParticipantAddress = (state: RootState) => state.prepare.eligibleParticipantAddress;
 export const selectEligibleParticipantAmount = (state: RootState) => state.prepare.eligibleParticipantAmount;
 export const selectPowerValue = (state: RootState) => state.prepare.powerValue;
-export const selectTokenDetail = (state: RootState) => state.prepare.tokenDetail;
 
 export default preparePoapSlice.reducer;

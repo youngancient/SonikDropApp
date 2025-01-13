@@ -4,7 +4,7 @@ import {
   useAppKitNetwork,
   useAppKitProvider,
 } from "@reown/appkit/react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { formatAddress } from "../utils/helpers";
 import {
   IoChevronBackOutline,
@@ -14,6 +14,7 @@ import {
 import { DashboardIcon, LogoIcon } from "./icons";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { goBack } from "../store/slices/stepSlice";
+import { goBack as gobackPoap } from "../store/slices/poapStepSlice";
 import { useClearFormInput } from "../hooks/useClearForm";
 import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
@@ -22,17 +23,19 @@ import { IChains, supportedNetworks } from "../constants/chains";
 import { BrowserProvider, Eip1193Provider } from "ethers";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+import { useClearPoapFormInput } from "../hooks/useClearPoapForm";
 
 export function HeaderComponent({
-  showBackButton,
+  formType,
 }: {
-  showBackButton: boolean;
+  formType?: "poap" | "airdrop" | null;
 }) {
   const navigate = useNavigate();
   const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
 
   const stepToGoBackTo = useAppSelector((state) => state.step.backStack);
+  const poapStepToGoBackTo = useAppSelector((state) => state.poap.backStack);
   const dispatch = useAppDispatch();
 
   // test sign message
@@ -81,12 +84,23 @@ export function HeaderComponent({
 
   const { clear } = useClearFormInput();
 
+  const { clearPoap } = useClearPoapFormInput();
+
   const backButton = () => {
-    if (stepToGoBackTo.length == 0) {
-      clear();
-      navigate("/");
-    } else {
-      dispatch(goBack());
+    if (formType == "airdrop") {
+      if (stepToGoBackTo.length == 0) {
+        clear();
+        navigate("/");
+      } else {
+        dispatch(goBack());
+      }
+    } else if (formType == "poap") {
+      if (poapStepToGoBackTo.length == 0) {
+        clearPoap();
+        navigate("/");
+      } else {
+        dispatch(gobackPoap());
+      }
     }
   };
 
@@ -94,7 +108,7 @@ export function HeaderComponent({
 
   // Effect to handle sign message on connection
   useEffect(() => {
-    console.log({isConnected, token});
+    console.log({ isConnected, token });
     // added timeout to prevent immediate sign message
     const delayTimeout = setTimeout(() => {
       if (isConnected && !token) {
@@ -159,8 +173,8 @@ export function HeaderComponent({
           </button>
         </div>
       </div>
-      {showBackButton && (
-        <div className="mt-1 mb-2 md:mt-4">
+      {formType && (
+        <div className="mt-4 mb-8 md:mb-2 md:mt-2">
           <button className="flex items-center gap-4" onClick={backButton}>
             <IoChevronBackOutline /> Back
           </button>
@@ -179,6 +193,7 @@ export const SwitchChainComp = () => {
   const [selectedChain, setSelectedChain] = useState<IChains | null>(
     supportedNetworks.find((ele) => ele.id === Number(chainId)) ?? null
   );
+  const location = useLocation();
 
   const setChain = useCallback(
     async (id: number, calledByUser?: boolean) => {
@@ -186,6 +201,7 @@ export const SwitchChainComp = () => {
       if (!chain) {
         return;
       }
+
       if (!address && calledByUser) {
         toast.error("Please connect wallet first!");
         return;
@@ -198,7 +214,7 @@ export const SwitchChainComp = () => {
         setSelectedChain(chain); // Set the chain if there's no mismatch
       }
     },
-    [address, chainId, open]
+    [address, chainId]
   );
 
   useEffect(() => {
@@ -229,7 +245,7 @@ export const SwitchChainComp = () => {
               {/* Hide text on mobile */}
             </div>
           ) : (
-            <>Not found</>
+            <>None</>
           )}
           <IoChevronDown size={18} />
         </button>
@@ -243,7 +259,17 @@ export const SwitchChainComp = () => {
               <div
                 className="dropdown-item cursor-pointer flex gap-1 items-center"
                 key={ele.id}
-                onClick={() => setChain(ele.id, true)}
+                onClick={() => {
+                  if (location.pathname.startsWith("/airdrop")) {
+                    toast.error("Cannot switch network on airdrop page");
+                    return;
+                  }
+                  if (location.pathname.startsWith("/poap")) {
+                    toast.error("Cannot switch network on poap page");
+                    return;
+                  }
+                  setChain(ele.id, true);
+                }}
               >
                 <img
                   src={ele.logo}

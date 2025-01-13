@@ -7,6 +7,8 @@ import { CompletedModal } from "../completedModal";
 import { ICSV, IPoapEvent } from "../../interfaces/CSVInterface";
 import { useClearPoapFormInput } from "../../hooks/useClearPoapForm";
 
+
+
 export function ApprovePoapComponent() {
   const [eventName, setEventName] = useState("");
   const [eventType, setEventType] = useState("");
@@ -16,6 +18,8 @@ export function ApprovePoapComponent() {
   const [isLoadingBal, _setLoadingBal] = useState(false);
 
   const [estimatedGasFee, _setEstimatedGasFee] = useState(0.05);
+
+  
 
   useEffect(() => {
     const csvData: ICSV[] = JSON.parse(
@@ -122,7 +126,7 @@ export function ApprovePoapComponent() {
           </div>
         </motion.div>
       </AnimatePresence>
-      {showModal && <CompletedModal />}
+      {showModal && <CompletedModal dropType="poap" />}
     </>
   );
 }

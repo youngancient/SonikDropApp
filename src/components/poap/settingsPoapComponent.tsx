@@ -136,8 +136,11 @@ export function SettingsPoapComponent() {
 
           dispatch(setInvalidAirdropAddresses(invalidAddresses));
 
+          console.log("results.data", results.data);
+          console.log("IvAdd", invalidAddresses);
+
           if (invalidAddresses.length > 0) {
-            toast.error(invalidAddresses.join(", ") + invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses");
+            toast.error(`${invalidAddresses.map((record: ICSV) => `"${record?.address}"`).join(", ")}` + (invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses"));
             return;
           }
 
@@ -147,7 +150,7 @@ export function SettingsPoapComponent() {
           );
 
           if(invalidAmounts.length > 0) {
-            toast.error(invalidAmounts.map((a: ICSV) => a.amount).join(", ") + (invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts"));
+            toast.error(invalidAmounts.map((record: ICSV) => `"${record?.amount}"`).join(", ") + (invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts"));
             return;
           }
 
