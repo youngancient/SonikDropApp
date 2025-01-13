@@ -1,6 +1,6 @@
 import { ethers, Numeric } from "ethers";
 import Papa from "papaparse";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 import { IAirdropList, ICSV } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
@@ -41,7 +41,7 @@ import { moodVariant, parentVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import ClickOutsideWrapper from "../outsideClick";
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
-import { ITokenDetails, useTokenDetail } from "../../hooks/specific/useERC20";
+import { useTokenDetail } from "../../hooks/specific/useERC20";
 
 export function PrepareComponent() {
   //   const navigate = useNavigate();
@@ -66,7 +66,8 @@ export function PrepareComponent() {
 
   const tokenDetail = useAppSelector(selectTokenDetail);
 
-  const { fetchDetails } = useTokenDetail(tokenAddress);
+  const { fetchDetails, isLoadingDetails, errorTxt } =
+    useTokenDetail(tokenAddress);
 
   const addEligibleParticipant = () => {
     const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
@@ -148,8 +149,16 @@ export function PrepareComponent() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
+
+    // if (csvDataError) {
+    //   dispatch(setCsvDataError("Kindly upload a csv"));
+    // } else {
+    //   dispatch(setCsvDataError(""));
+    // }
+
     if (!files) return;
     const file = files[0];
+
     if (file) {
       Papa.parse(file, {
         complete: (results: any) => {
@@ -198,6 +207,8 @@ export function PrepareComponent() {
             return;
           }
 
+          dispatch(setCsvDataError(""));
+
           const stringResult = results.data
             .map((result: ICSV) => {
               return `${result.address},${ethers.formatUnits(
@@ -218,24 +229,6 @@ export function PrepareComponent() {
 
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
-
-  const [isLoadingData, setIsLoadingData] = useState(false);
-
-  const getTokenMetadata = useCallback(() => {
-    setIsLoadingData(true);
-    console.log("Here");
-    setTimeout(() => {
-      const metadata: ITokenDetails = {
-        name: "TEST Token",
-        symbol: "TST",
-        decimals: 18,
-      };
-      console.log("Here2");
-      dispatch(setTokenDetail(metadata));
-
-      setIsLoadingData(false);
-    }, 1200);
-  }, [dispatch]);
 
   const nextPage = async () => {
     const isTokenAddressValid = ethers.isAddress(tokenAddress);
@@ -295,52 +288,16 @@ export function PrepareComponent() {
     dispatch(setStep("settings"));
   };
 
-  // useEffect(() => {
-  //   const fetchMetadata = async () => {
-  //     const metadata = await getTokenMetadata(tokenAddress);
-  //     if (metadata) {
-  //       console.log("Token Metadata:", metadata);
-  //       if (metadata.decimals == null) {
-  //         dispatch(setTokenAddressError("Kindly enter a valid token address"));
-  //         return;
-  //       }
-
-  //       // Process the metadata as needed
-  //     } else {
-  //       toast.error("Failed to fetch token metadata.");
-  //     }
-  //   };
-  //   // const isTokenAddressValid = ethers.isAddress(tokenAddress);
-
-  //   fetchMetadata();
-  //   // if (!isTokenAddressValid) {
-  //   //   dispatch(setTokenAddressError("Kindly enter a valid token address"));
-  //   // } else {
-  //   //   dispatch(setTokenAddressError(""));
-  //   // }
-
-  //   // if (!csvData) {
-  //   //   dispatch(setCsvDataError("Kindly upload a csv"));
-  //   // } else {
-  //   //   dispatch(setCsvDataError(""));
-  //   // }
-
-  //   // if (invalidAirdropAddresses.length > 0) {
-  //   //   toast.error(
-  //   //     invalidAirdropAddresses.join(", ") + " are invalid addresses"
-  //   //   );
-  //   // }
-  // }, [csvData, tokenAddress]);
-
   useEffect(() => {
     if (ethers.isAddress(tokenAddress)) {
       console.log("Valid token address detected, fetching details...");
       fetchDetails();
-      getTokenMetadata();
+
+      // getTokenMetadata();
     } else {
       dispatch(setTokenDetail(null));
     }
-  }, [tokenAddress, fetchDetails, getTokenMetadata, dispatch]);
+  }, [tokenAddress, fetchDetails, dispatch]);
 
   return (
     <AnimatePresence>
@@ -363,15 +320,16 @@ export function PrepareComponent() {
                 className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
                 placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8"
                 value={tokenAddress}
-                onBlur={() => {
-                  if (!ethers.isAddress(eligibleParticipantAddress)) {
+                // onBlur={}
+                onChange={(e) => {
+                  dispatch(setTokenAddress(e.target.value));
+                  if (!ethers.isAddress(e.target.value)) {
                     dispatch(
                       setTokenAddressError("Kindly enter a valid token address")
                     );
+                  } else {
+                    dispatch(setTokenAddressError(""));
                   }
-                }}
-                onChange={(e) => {
-                  dispatch(setTokenAddress(e.target.value));
                 }}
               />
               <small
@@ -382,11 +340,12 @@ export function PrepareComponent() {
                 {tokenAddressError}
               </small>
               <small className={`${"text-gray-300"} mt-2`}>
-                {isLoadingData
-                  ? "Loading..."
-                  : tokenDetail != null
-                  ? `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`
-                  : ""}
+                {!tokenAddressError &&
+                  (isLoadingDetails
+                    ? "Loading..."
+                    : tokenDetail != null
+                    ? `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`
+                    : errorTxt)}
               </small>
             </div>
             <div>
@@ -394,7 +353,7 @@ export function PrepareComponent() {
               <textarea
                 className="w-full p-2 h-[200px] overflow-y-auto border-2 border-[2px] border-[#FFFFFF17] rounded-md bg-transparent"
                 value={csvData}
-                onBlur={() => {
+                onChange={() => {
                   if (invalidAirdropAddresses.length > 0) {
                     toast.error(
                       invalidAirdropAddresses.join(", ") +
@@ -432,18 +391,10 @@ export function PrepareComponent() {
                       type="file"
                       accept=".csv"
                       id="upload-button"
-                      onBlur={() => {
-                        if (!csvData) {
-                          dispatch(setCsvDataError("Kindly upload a csv"));
-                        } else {
-                          dispatch(setCsvDataError(""));
-                        }
-                      }}
                       onClick={(e) => {
                         if (!ethers.isAddress(tokenAddress)) {
                           e.preventDefault();
                           toast.error("Enter Token address first!");
-                          return;
                         }
                       }}
                       onChange={handleChange}
