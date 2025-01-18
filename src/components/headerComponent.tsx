@@ -71,11 +71,10 @@ export function HeaderComponent({
      
       if(response.status === 200){
         console.log(response.data);
-        const {token} = response.data;
-        Cookies.set("token", token);
+        const {data} = response.data;
+        Cookies.set("token", data);
       }
       
-      console.log(response.data);
     } catch (error) {
       console.error("Error signing message:", error);
       toast.error("Failed to sign the message");
@@ -115,7 +114,7 @@ export function HeaderComponent({
 
   // Effect to handle sign message on connection
   useEffect(() => {
-    console.log({ isConnected, token });
+  
     // added timeout to prevent immediate sign message
     const delayTimeout = setTimeout(() => {
       if (isConnected && !token) {
