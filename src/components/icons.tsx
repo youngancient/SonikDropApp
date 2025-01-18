@@ -197,7 +197,7 @@ export const BorderStyle = styled.div`
 `;
 export const ChainDivStyle = styled.div<IChainDiv>`
   position: absolute;
-  z-index: -1;
+  z-index: 1;
   top: ${({ top }) => (top !== undefined ? `${top}px` : "auto")};
   left: ${({ left }) => (left !== undefined ? `${left}px` : "auto")};
   right: ${({ right }) => (right !== undefined ? `${right}px` : "auto")};
@@ -212,9 +212,9 @@ export const ChainDivStyle = styled.div<IChainDiv>`
   }
   filter: blur(7px);
   cursor: pointer;
-  z-index: 1;
   scale: 0.8;
-  transition: filter 0.3s ease, scale 0.3s ease; /* Add transition for filter and scale */
+  transition: filter 0.3s ease, scale 0.3s ease;
+  
   &:hover {
     filter: blur(0px);
     scale: 0.9;
@@ -246,8 +246,60 @@ export const ChainDivStyle = styled.div<IChainDiv>`
       animation: ${moveBottomRight} 3s infinite;
     `}
 
+  /* Tablet Breakpoint */
+  @media (max-width: 1024px) {
+    width: 70px;
+    height: 70px;
+    
+    /* Adjust positioning for tablet */
+    ${({ top }) => top !== undefined && css`
+      top: ${Math.max(top * 0.8, 10)}px;
+    `}
+    ${({ bottom }) => bottom !== undefined && css`
+      bottom: ${Math.max(bottom * 0.8, 10)}px;
+    `}
+    ${({ left }) => left !== undefined && css`
+      left: ${Math.max(left * 0.8, 10)}px;
+    `}
+    ${({ right }) => right !== undefined && css`
+      right: ${Math.max(right * 0.8, 10)}px;
+    `}
+  }
+
+  
+  /* Mobile Breakpoint */
   @media (max-width: 767px) {
-    display: none;
+    display: block;
+    width: 50px;
+    height: 50px;
+    z-index: -1; /* Place icons behind other elements */
+    
+    ${({ top }) => top !== undefined && css`
+      top: ${Math.max(top * 0.6, 5)}px;
+    `}
+    ${({ bottom }) => bottom !== undefined && css`
+      bottom: ${Math.max(bottom * 1.5, 60)}px;
+    `}
+    ${({ left }) => left !== undefined && css`
+      left: ${Math.max(left * 0.6, 5)}px;
+    `}
+    ${({ right }) => right !== undefined && css`
+      right: ${Math.max(right * 0.6, 5)}px;
+    `}
+
+    /* Increased blur effect and reduced opacity for mobile */
+    filter: blur(12px);
+    opacity: 0.8;
+    scale: 0.7;
+
+    &:hover {
+      filter: blur(12px); /* Maintain blur effect on hover for mobile */
+      scale: 0.7; /* Disable scale effect on hover for mobile */
+      animation-play-state: running; /* Keep animation running on hover for mobile */
+    }
+
+    /* Remove pointer cursor on mobile since we're disabling interactions */
+    cursor: default;
   }
 `;
 
