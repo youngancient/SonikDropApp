@@ -20,7 +20,11 @@ import {
 import { toast } from "react-toastify";
 import { ButtonLoader } from "../icons";
 import { CompletedModal } from "../completedModal";
-import { useTokenBalance } from "../../hooks/specific/useERC20";
+import {
+  useTokenApproval,
+  useTokenBalance,
+} from "../../hooks/specific/useERC20";
+import { ethers } from "ethers";
 
 export function ApproveComponent() {
   const dispatch = useAppDispatch();
@@ -42,7 +46,6 @@ export function ApproveComponent() {
   }, [csvToJSONData]);
 
   useEffect(() => {
-
     calculateTotalOutput();
   }, [calculateTotalOutput]);
 
@@ -72,7 +75,10 @@ export function ApproveComponent() {
   const { clear } = useClearFormInput();
   const [showModal, setShowModal] = useState(false);
 
-  const approve = () => {
+  const { approveTransfer, isLoadingApproval, approvalStatus } =
+    useTokenApproval(tokenAddress);
+
+  const approve = async () => {
     if (!tokenBalance) {
       return;
     }
@@ -80,17 +86,25 @@ export function ApproveComponent() {
       toast.error("Insufficient balance to approve");
       return;
     }
+
+    const totalOutputInWei = ethers.parseUnits(
+      totalOutput.toString(),
+      tokenDetail?.decimals
+    );
+    // call approve
+    approveTransfer(totalOutputInWei.toString());
+
     
-    // call contract
-    setTimeout(() => {
-      dispatch(setTokenDetail(null));
-      setShowModal(true);
-    }, 1200);
-
-    // dispatch(setStep("prepare"));
-
-    clear();
   };
+
+  useEffect(()=>{
+    if (approvalStatus === "success") {
+      console.log("here");
+      setShowModal(true);
+      dispatch(setTokenDetail(null));
+      clear();
+    }
+  },[approvalStatus]);
 
   return (
     <>
@@ -164,7 +178,13 @@ export function ApproveComponent() {
               className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]"
               onClick={approve}
             >
-              Approve
+              {isLoadingApproval ? (
+                <ButtonLoader />
+              ) : approvalStatus !== "success" ? (
+                "Approve"
+              ) : (
+                "Approved"
+              )}
             </button>
           </div>
         </motion.div>

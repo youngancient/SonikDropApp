@@ -24,6 +24,7 @@ import { BrowserProvider, Eip1193Provider } from "ethers";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useClearPoapFormInput } from "../hooks/useClearPoapForm";
+import axios from "axios";
 
 export function HeaderComponent({
   formType,
@@ -60,23 +61,28 @@ export function HeaderComponent({
       `;
 
       const signature = await signer?.signMessage(message);
-      await callBackend(signature, message, address);
+
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+      const response = await axios.post(`${BACKEND_URL}/auth/authenticate`,{
+        signature,
+        message,
+        address
+      });
+     
+      if(response.status === 200){
+        console.log(response.data);
+        const {data} = response.data;
+        Cookies.set("token", data);
+      }
+      
     } catch (error) {
       console.error("Error signing message:", error);
       toast.error("Failed to sign the message");
+      Cookies.set("token", "lmao");
     }
   }, [address, walletProvider]);
 
-  const callBackend = async (
-    signature: string,
-    message: string,
-    signerAddress: string
-  ) => {
-    setTimeout(() => {
-      Cookies.set("token", "Some JWT token here");
-      console.log(signature, signerAddress, message);
-    }, 1200);
-  };
+
 
   const handleButtonClick = () => {
     open();
@@ -108,7 +114,7 @@ export function HeaderComponent({
 
   // Effect to handle sign message on connection
   useEffect(() => {
-    console.log({ isConnected, token });
+  
     // added timeout to prevent immediate sign message
     const delayTimeout = setTimeout(() => {
       if (isConnected && !token) {

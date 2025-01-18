@@ -2,26 +2,23 @@ import { useCallback, useEffect, useState } from "react";
 import { useERC20Contract } from "../useERC20Contract";
 import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   selectTokenDetail,
   setTokenDetail,
 } from "../../store/slices/prepareSlice";
 import { ethers } from "ethers";
-// import { ethers } from "ethers";
-//import { ethers } from "ethers";
 
 export const useTokenApproval = (tokenAddress: string) => {
   const { address } = useAppKitAccount();
   const { chainId } = useAppKitNetwork();
 
-  const [isApprovalLoading, setisLoadingDetails] = useState(false);
-
+  const [approvalStatus, setApprovalStatus] = useState<"default" | "success" | "failed">("default");
   const erc20Contract = useERC20Contract(true, tokenAddress);
-  const navigate = useNavigate();
+  const [isLoadingApproval, setIsLoadingApproval] = useState(false);
+
   // const errorDecoder = ErrorDecoder.create()
-  const approve = useCallback(
+  const approveTransfer = useCallback(
     async (amount: string) => {
       if (!erc20Contract) {
         toast.error("Contract not found");
@@ -31,9 +28,13 @@ export const useTokenApproval = (tokenAddress: string) => {
         toast.error("Connect your wallet!");
         return;
       }
+      if (!chainId) {
+        toast.error("Invalid Chain");
+        return;
+      }
 
       try {
-        setisLoadingDetails(true);
+        setIsLoadingApproval(true);
         // console.log("here", amount);
 
         const _amount = BigInt(amount);
@@ -41,25 +42,16 @@ export const useTokenApproval = (tokenAddress: string) => {
         console.log("approve: ", _amount);
 
         // const estimatedGas = await erc20Contract.approve.estimateGas(
-        //   import.meta.env.VITE_WILL_CONTRACT_ADDRESS,_amount
+        //   import.meta.env.VITE_TOKEN_FACTORY_CONTRACT_ADDRESS,_amount
         // );
         // console.log({ estimatedGas });
-        const allowance = await erc20Contract.allowance(
-          address,
-          import.meta.env.VITE_WILL_CONTRACT_ADDRESS
-        );
-        console.log("allowance: ", allowance);
-
-        // if (BigInt(allowance) >= BigInt(amount)) {
-        //   return;
-        // }
-
+      
         // construct transaction
 
         console.log("approvin in process...");
 
         const tx = await erc20Contract.approve(
-          import.meta.env.VITE_WILL_CONTRACT_ADDRESS,
+          import.meta.env.VITE_TOKEN_FACTORY_CONTRACT_ADDRESS,
           _amount,
           {
             gasLimit: 1000000,
@@ -67,19 +59,21 @@ export const useTokenApproval = (tokenAddress: string) => {
         );
         const reciept = await tx.wait();
         if (reciept.status === 1) {
-          //toast.success("Approval successful");
+          setApprovalStatus("success");
           return;
         }
       } catch (error) {
         console.log(error);
+        setApprovalStatus("failed");
+        toast.error("Approval failed");
       } finally {
-        setisLoadingDetails(false);
+        setIsLoadingApproval(false);
       }
     },
-    [erc20Contract, address, chainId, navigate]
+    [erc20Contract, address, chainId]
   );
 
-  return { approve, isApprovalLoading };
+  return { approveTransfer, isLoadingApproval,approvalStatus };
 };
 
 export interface ITokenDetails {
