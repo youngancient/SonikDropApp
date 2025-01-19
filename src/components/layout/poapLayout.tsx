@@ -1,14 +1,14 @@
 import { FooterComponent } from "../footerComponent";
 import { HeaderComponent } from "../headerComponent";
-import { StepComponent } from "../airdrop/stepComponent";
+import { StepPoapComponent } from "../poap/stepPoapComponent";
 import { useNavigate } from "react-router-dom";
 
-export default function AirdropLayout(props: any) {
+export default function PoapLayout(props: any) {
     const navigate = useNavigate(); 
     return (
         <div style={{backgroundColor: "#0F195B"}} className="h-screen overflow-auto">
-            <HeaderComponent formType="airdrop" />
-            <StepComponent />
+            <HeaderComponent formType="poap" />
+            <StepPoapComponent />
             {props.children}
             <div className="flex items-center mt-[1rem] gap-[0.875rem] justify-center">
                 <p>Already a User?</p>

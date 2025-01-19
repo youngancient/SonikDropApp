@@ -25,7 +25,6 @@ interface CounterState {
 const initialState: CounterState = {
   value: "prepare",
   backStack: [],
-
   csvData: "",
   csvToJSONData: [],
   tokenAddressError: "",
@@ -60,6 +59,9 @@ export const poapStepSlice = createSlice({
         state.value = "prepare";
       }
     },
+    clearBack: (state) => {
+      state.backStack = [];
+    },
     setCsvData: (state, action: PayloadAction<string>) => {
       state.csvData = action.payload;
     },
@@ -87,7 +89,7 @@ export const poapStepSlice = createSlice({
   },
 });
 
-export const { setStep, goBack } = poapStepSlice.actions;
+export const { setStep, goBack, clearBack } = poapStepSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectStep = (state: RootState) => state.poap.value;

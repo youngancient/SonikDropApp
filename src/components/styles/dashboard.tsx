@@ -51,6 +51,20 @@ export const DashboardStyles = styled(FilterStyles)`
     line-height: 2rem; /* 228.571% */
     letter-spacing: -0.02rem;
   }
+  h1 {
+    color: #fff;
+    font-style: normal;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 500;
+    line-height: 3.0625rem; /* 122.5% */
+  }
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.35rem;
+      line-height: 1.5625rem; /* 122.5% */
+    }
+  }
   @media (max-width: 500px) {
     .stat-cards .stat {
       h3 {

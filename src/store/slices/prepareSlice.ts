@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 import { IAirdropList } from "../../interfaces/CSVInterface";
-import {  TokenMetadataResponse } from "alchemy-sdk";
+import { ITokenDetails } from "../../hooks/specific/useERC20";
 
 // Define a type for the slice state
 interface prepareState {
@@ -17,7 +17,7 @@ interface prepareState {
   eligibleParticipantAddress: string;
   eligibleParticipantAmount: string;
   powerValue: string;
-  tokenDetail : TokenMetadataResponse | null;
+  tokenDetail : ITokenDetails | null ;
 }
 
 // Define the initial state using that type
@@ -75,7 +75,7 @@ export const prepareSlice = createSlice({
     setPowerValue: (state, action: PayloadAction<string>) => {
       state.powerValue = action.payload;
     },
-    setTokenDetail: (state, action: PayloadAction<TokenMetadataResponse | null>) => {
+    setTokenDetail: (state, action: PayloadAction<ITokenDetails | null>) => {
       state.tokenDetail = action.payload;
     }
   },
