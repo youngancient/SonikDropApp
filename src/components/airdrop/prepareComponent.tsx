@@ -1,6 +1,6 @@
-import { ethers, Numeric, } from "ethers";
+import { ethers, Numeric } from "ethers";
 import Papa from "papaparse";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 import { IAirdropList, ICSV } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
@@ -40,12 +40,8 @@ import {
 import { moodVariant, parentVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import ClickOutsideWrapper from "../outsideClick";
-import {
-  useAppKit,
-  useAppKitAccount
-} from "@reown/appkit/react";
-import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
-import { ethSettings } from "../../constants/chains";
+import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
+import { useTokenDetail } from "../../hooks/specific/useERC20";
 
 export function PrepareComponent() {
   //   const navigate = useNavigate();
@@ -69,6 +65,9 @@ export function PrepareComponent() {
   const powerValue = useAppSelector(selectPowerValue);
 
   const tokenDetail = useAppSelector(selectTokenDetail);
+
+  const { fetchDetails, isLoadingDetails, errorTxt } =
+    useTokenDetail(tokenAddress);
 
   const addEligibleParticipant = () => {
     const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
@@ -150,25 +149,41 @@ export function PrepareComponent() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
+
+    // if (csvDataError) {
+    //   dispatch(setCsvDataError("Kindly upload a csv"));
+    // } else {
+    //   dispatch(setCsvDataError(""));
+    // }
+
     if (!files) return;
     const file = files[0];
+
     if (file) {
       Papa.parse(file, {
         complete: (results: any) => {
-          const invalidAddresses = results.data.filter(
-            (result: ICSV) => {
-              console.log(result.address, " valid ", ethers.isAddress(result.address));
-              return ethers.isAddress(result.address) == false
-            }
-          );
+          const invalidAddresses = results.data.filter((result: ICSV) => {
+            console.log(
+              result.address,
+              " valid ",
+              ethers.isAddress(result.address)
+            );
+            return ethers.isAddress(result.address) == false;
+          });
 
           dispatch(setInvalidAirdropAddresses(invalidAddresses));
 
           console.log("Invalid", invalidAddresses);
 
-
           if (invalidAddresses.length > 0) {
-            toast.error(invalidAddresses.map((a: ICSV) => a.address.toString()).join(", ") + (invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses"));
+            toast.error(
+              invalidAddresses
+                .map((a: ICSV) => a.address.toString())
+                .join(", ") +
+                (invalidAddresses.length == 1
+                  ? " is an invalid address"
+                  : " are invalid addresses")
+            );
             return;
           }
 
@@ -178,13 +193,21 @@ export function PrepareComponent() {
           }
 
           const invalidAmounts = results.data.filter(
-            (result: ICSV) => !(/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString()))
+            (result: ICSV) =>
+              !/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString())
           );
 
-          if(invalidAmounts.length > 0) {
-            toast.error(invalidAmounts.map((a: ICSV) => a.amount).join(", ") + (invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts"));
+          if (invalidAmounts.length > 0) {
+            toast.error(
+              invalidAmounts.map((a: ICSV) => a.amount).join(", ") +
+                (invalidAmounts.length == 1
+                  ? " is an invalid amount"
+                  : " are invalid amounts")
+            );
             return;
           }
+
+          dispatch(setCsvDataError(""));
 
           const stringResult = results.data
             .map((result: ICSV) => {
@@ -206,35 +229,13 @@ export function PrepareComponent() {
 
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
-  
 
-  const alchemy = new Alchemy(ethSettings);
-  const [isLoadingData, setIsLoadingData] = useState(false);
-  const getTokenMetadata = async (
-    address: string
-  ): Promise<TokenMetadataResponse | null> => {
-    try {
-      setIsLoadingData(true);
-      const metadata = await alchemy.core.getTokenMetadata(address);
-      dispatch(setTokenDetail(metadata));
-      // if (!metadata) {
-      // }
-      return metadata;
-    } catch (error) {
-      console.error("Error fetching token metadata:", error);
-      return null;
-    } finally {
-      setIsLoadingData(false);
-    }
-  };
   const nextPage = async () => {
-  
     const isTokenAddressValid = ethers.isAddress(tokenAddress);
     if (!isConnected) {
       open();
       return;
     }
-
     if (
       !isTokenAddressValid ||
       !csvData ||
@@ -288,41 +289,15 @@ export function PrepareComponent() {
   };
 
   useEffect(() => {
-    const fetchMetadata = async () => {
-      const metadata = await getTokenMetadata(tokenAddress);
-      if (metadata) {
-        console.log("Token Metadata:", metadata);
-        if (metadata.decimals == null) {
-          dispatch(setTokenAddressError("Kindly enter a valid token address"));
-          return;
-        }
+    if (ethers.isAddress(tokenAddress)) {
+      console.log("Valid token address detected, fetching details...");
+      fetchDetails();
 
-        // Process the metadata as needed
-      } else {
-        toast.error("Failed to fetch token metadata.");
-      }
-    };
-    const isTokenAddressValid = ethers.isAddress(tokenAddress);
-
-    if (!isTokenAddressValid) {
-      dispatch(setTokenAddressError("Kindly enter a valid token address"));
+      // getTokenMetadata();
     } else {
-      fetchMetadata();
-      dispatch(setTokenAddressError(""));
+      dispatch(setTokenDetail(null));
     }
-
-    if (!csvData) {
-      dispatch(setCsvDataError("Kindly upload a csv"));
-    } else {
-      dispatch(setCsvDataError(""));
-    }
-
-    if (invalidAirdropAddresses.length > 0) {
-      toast.error(
-        invalidAirdropAddresses.join(", ") + " are invalid addresses"
-      );
-    }
-  }, [csvData, tokenAddress]);
+  }, [tokenAddress, fetchDetails, dispatch]);
 
   return (
     <AnimatePresence>
@@ -345,20 +320,32 @@ export function PrepareComponent() {
                 className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
                 placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8"
                 value={tokenAddress}
+                // onBlur={}
                 onChange={(e) => {
                   dispatch(setTokenAddress(e.target.value));
+                  if (!ethers.isAddress(e.target.value)) {
+                    dispatch(
+                      setTokenAddressError("Kindly enter a valid token address")
+                    );
+                  } else {
+                    dispatch(setTokenAddressError(""));
+                  }
                 }}
               />
               <small
                 className={`${
-                  tokenAddressError ? "block text-red-400" : "text-gray-300"
+                  tokenAddressError ? "block text-red-400" : "hidden"
                 } mt-2`}
               >
-                {isLoadingData
-                  ? "Loading..."
-                  : tokenAddressError
-                  ? tokenAddressError
-                  : `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`}
+                {tokenAddressError}
+              </small>
+              <small className={`${"text-gray-300"} mt-2`}>
+                {!tokenAddressError &&
+                  (isLoadingDetails
+                    ? "Loading..."
+                    : tokenDetail != null
+                    ? `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`
+                    : errorTxt)}
               </small>
             </div>
             <div>
@@ -366,6 +353,20 @@ export function PrepareComponent() {
               <textarea
                 className="w-full p-2 h-[200px] overflow-y-auto border-2 border-[2px] border-[#FFFFFF17] rounded-md bg-transparent"
                 value={csvData}
+                onChange={() => {
+                  if (invalidAirdropAddresses.length > 0) {
+                    toast.error(
+                      invalidAirdropAddresses.join(", ") +
+                        " are invalid addresses"
+                    );
+                  }
+
+                  if (!csvData) {
+                    dispatch(setCsvDataError("Kindly upload a csv"));
+                  } else {
+                    dispatch(setCsvDataError(""));
+                  }
+                }}
               ></textarea>
               <div className="flex justify-between md:items-center flex-col md:flex-row">
                 <div className="text-center md:text-left">
@@ -394,7 +395,6 @@ export function PrepareComponent() {
                         if (!ethers.isAddress(tokenAddress)) {
                           e.preventDefault();
                           toast.error("Enter Token address first!");
-                          return;
                         }
                       }}
                       onChange={handleChange}

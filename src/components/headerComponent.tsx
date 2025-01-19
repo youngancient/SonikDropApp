@@ -2,36 +2,87 @@ import {
   useAppKit,
   useAppKitAccount,
   useAppKitNetwork,
+  useAppKitProvider,
 } from "@reown/appkit/react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { formatAddress } from "../utils/helpers";
 import {
   IoChevronBackOutline,
   IoChevronDown,
   IoCheckmark,
 } from "react-icons/io5";
-import { LogoIcon } from "./icons";
+import { DashboardIcon, LogoIcon } from "./icons";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { goBack } from "../store/slices/stepSlice";
+import { goBack as gobackPoap } from "../store/slices/poapStepSlice";
 import { useClearFormInput } from "../hooks/useClearForm";
 import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
 import ClickOutsideWrapper from "./outsideClick";
 import { IChains, supportedNetworks } from "../constants/chains";
+import { BrowserProvider, Eip1193Provider } from "ethers";
 import { toast } from "react-toastify";
-// import { appkit } from "../connection";
+import Cookies from "js-cookie";
+import { useClearPoapFormInput } from "../hooks/useClearPoapForm";
+import axios from "axios";
 
 export function HeaderComponent({
-  showBackButton,
+  formType,
 }: {
-  showBackButton: boolean;
+  formType?: "poap" | "airdrop" | null;
 }) {
   const navigate = useNavigate();
   const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
 
   const stepToGoBackTo = useAppSelector((state) => state.step.backStack);
+  const poapStepToGoBackTo = useAppSelector((state) => state.poap.backStack);
   const dispatch = useAppDispatch();
+
+  // test sign message
+  const token = Cookies.get("token");
+  const { walletProvider } = useAppKitProvider("eip155");
+
+  const onSignMessage = useCallback(async () => {
+    if (!address) {
+      toast.error("Please connect wallet");
+      return;
+    }
+    try {
+      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
+      const signer = await provider.getSigner();
+
+      const message = `Welcome to SonikDrop! Please sign this message to authenticate.
+      Wallet: ${address}
+      Nonce: ${Math.floor(Math.random() * 1000000)}
+      Timestamp: ${new Date().toISOString()}
+      Domain: sonikdrop.app
+      This signature does not trigger any blockchain transaction or cost gas fees.
+      `;
+
+      const signature = await signer?.signMessage(message);
+
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+      const response = await axios.post(`${BACKEND_URL}/auth/authenticate`,{
+        signature,
+        message,
+        address
+      });
+     
+      if(response.status === 200){
+        console.log(response.data);
+        const {data} = response.data;
+        Cookies.set("token", data);
+      }
+      
+    } catch (error) {
+      console.error("Error signing message:", error);
+      toast.error("Failed to sign the message");
+      Cookies.set("token", "lmao");
+    }
+  }, [address, walletProvider]);
+
+
 
   const handleButtonClick = () => {
     open();
@@ -39,14 +90,49 @@ export function HeaderComponent({
 
   const { clear } = useClearFormInput();
 
+  const { clearPoap } = useClearPoapFormInput();
+
   const backButton = () => {
-    if (stepToGoBackTo.length == 0) {
-      clear();
-      navigate("/");
-    } else {
-      dispatch(goBack());
+    if (formType == "airdrop") {
+      if (stepToGoBackTo.length == 0) {
+        clear();
+        navigate("/");
+      } else {
+        dispatch(goBack());
+      }
+    } else if (formType == "poap") {
+      if (poapStepToGoBackTo.length == 0) {
+        clearPoap();
+        navigate("/");
+      } else {
+        dispatch(gobackPoap());
+      }
     }
   };
+
+  // how do we prevent the sign message from being called after a reload of the browser?
+
+  // Effect to handle sign message on connection
+  useEffect(() => {
+  
+    // added timeout to prevent immediate sign message
+    const delayTimeout = setTimeout(() => {
+      if (isConnected && !token) {
+        onSignMessage();
+      }
+    }, 2000);
+
+    // Cleanup timeout on component unmount or when dependencies change
+    return () => {
+      clearTimeout(delayTimeout);
+    };
+  }, [isConnected, onSignMessage, token]);
+
+  useEffect(() => {
+    if (!isConnected) {
+      Cookies.remove("token");
+    }
+  }, [isConnected]);
 
   return (
     <div className="px-2 px-[20px] md:px-[100px] lg:px-[200px]">
@@ -69,7 +155,14 @@ export function HeaderComponent({
             <p className="text-base font-bold">SonikDrop</p>
           </span>
         </div>
-        <div className="w3m flex gap-2">
+        <div className="w3m flex gap-2 items-center">
+          <button
+            type="button"
+            className="px-4 py-1 h-[1.75rem] md:h-[2rem] rounded-md flex items-center justify-center bg-[rgba(255,255,255,0.08)] shadow-[0px_0px_0px_1px_rgba(225,228,234,0.20)] cursor-pointer"
+            onClick={() => navigate("/dashboard")}
+          >
+            <DashboardIcon />
+          </button>
           <SwitchChainComp />
           <button
             className="px-4 py-1 rounded-md bg-[#0096E6] text-white"
@@ -86,8 +179,8 @@ export function HeaderComponent({
           </button>
         </div>
       </div>
-      {showBackButton && (
-        <div className="mt-1 mb-2 md:mt-4">
+      {formType && (
+        <div className="mt-4 mb-8 md:mb-2 md:mt-2">
           <button className="flex items-center gap-4" onClick={backButton}>
             <IoChevronBackOutline /> Back
           </button>
@@ -98,13 +191,15 @@ export function HeaderComponent({
 }
 
 export const SwitchChainComp = () => {
-  // const handleSwitchChain = () => {};
-  const [showDropdown, setShowdropdown] = useState(false);
-  const [selectedChain, setSelectedChain] = useState<IChains | null>(null);
   const { chainId } = useAppKitNetwork();
   const { address } = useAppKitAccount();
 
   const { open } = useAppKit();
+  const [showDropdown, setShowdropdown] = useState(false);
+  const [selectedChain, setSelectedChain] = useState<IChains | null>(
+    supportedNetworks.find((ele) => ele.id === Number(chainId)) ?? null
+  );
+  const location = useLocation();
 
   const setChain = useCallback(
     async (id: number, calledByUser?: boolean) => {
@@ -112,6 +207,7 @@ export const SwitchChainComp = () => {
       if (!chain) {
         return;
       }
+
       if (!address && calledByUser) {
         toast.error("Please connect wallet first!");
         return;
@@ -124,7 +220,7 @@ export const SwitchChainComp = () => {
         setSelectedChain(chain); // Set the chain if there's no mismatch
       }
     },
-    [address, chainId, open]
+    [address, chainId]
   );
 
   useEffect(() => {
@@ -140,7 +236,7 @@ export const SwitchChainComp = () => {
     <ClickOutsideWrapper onClickOutside={() => setShowdropdown(false)}>
       <SwitchChainCompStyles>
         <button
-          className="border-[2px] px-4 py-1 rounded-md border-[#FFFFFF17] flex items-center gap-1"
+          className="px-4 py-1 rounded-md flex items-center gap-1 bg-[rgba(255,255,255,0.08)] shadow-[0px_0px_0px_1px_rgba(225,228,234,0.20)]"
           onClick={() => setShowdropdown(!showDropdown)}
         >
           {selectedChain !== null ? (
@@ -155,17 +251,31 @@ export const SwitchChainComp = () => {
               {/* Hide text on mobile */}
             </div>
           ) : (
-            <>Not found</>
+            <>None</>
           )}
           <IoChevronDown size={18} />
         </button>
         {showDropdown && (
-          <div className="dropdown absolute flex flex-col">
+          <div
+            role="menu"
+            aria-labelledby="switch-chain-button"
+            className="dropdown absolute flex flex-col"
+          >
             {supportedNetworks.map((ele: IChains) => (
               <div
                 className="dropdown-item cursor-pointer flex gap-1 items-center"
                 key={ele.id}
-                onClick={() => setChain(ele.id, true)}
+                onClick={() => {
+                  if (location.pathname.startsWith("/airdrop")) {
+                    toast.error("Cannot switch network on airdrop page");
+                    return;
+                  }
+                  if (location.pathname.startsWith("/poap")) {
+                    toast.error("Cannot switch network on poap page");
+                    return;
+                  }
+                  setChain(ele.id, true);
+                }}
               >
                 <img
                   src={ele.logo}

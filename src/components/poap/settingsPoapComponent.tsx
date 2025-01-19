@@ -27,8 +27,7 @@ import {
   setInvalidAirdropAddresses,
   setCsvDataError,
   setCsvToJSONData,
-  setShowCSVMaker,
-  // selectTokenDetail,
+  setShowCSVMaker
 } from "../../store/slices/preparePoapSlice";
 import { moodVariant, parentVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -37,17 +36,13 @@ import {
   useAppKit,
   useAppKitAccount
 } from "@reown/appkit/react";
-// import { Alchemy, TokenMetadataResponse } from "alchemy-sdk";
-// import { ethSettings } from "../../constants/chains";
 
 export function SettingsPoapComponent() {
-  //   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
   const airdropMakerList = useAppSelector(selectAirdropMakerList);
   const csvData = useAppSelector(selectCsvData);
-  // const tokenAddress = useAppSelector(selectTokenAddress);
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
   const csvDataError = useAppSelector(selectCsvDataError);
   const invalidAirdropAddresses = useAppSelector(selectInvalidAirdropAddresses);
@@ -58,9 +53,6 @@ export function SettingsPoapComponent() {
   const eligibleParticipantAmount = useAppSelector(
     selectEligibleParticipantAmount
   );
-  // const powerValue = useAppSelector(selectPowerValue);
-
-  // const tokenDetail = useAppSelector(selectTokenDetail);
 
   const addEligibleParticipant = () => {
     const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
@@ -98,7 +90,6 @@ export function SettingsPoapComponent() {
 
     dispatch(setEligibleParticipantAddress(""));
     dispatch(setEligibleParticipantAmount(""));
-    // setPowerValue("");
   };
 
   const deleteEligibleParticipant = (temporaryId: string) => {
@@ -128,7 +119,6 @@ export function SettingsPoapComponent() {
       // Trigger the download
       saveAs(blob, "data.csv");
     } catch (error) {
-      // console.log(error);
       toast.error("An error occurred while trying to create CSV");
     }
   };
@@ -146,25 +136,21 @@ export function SettingsPoapComponent() {
 
           dispatch(setInvalidAirdropAddresses(invalidAddresses));
 
-          // console.log(invalidAddresses);
-
+          console.log("results.data", results.data);
+          console.log("IvAdd", invalidAddresses);
 
           if (invalidAddresses.length > 0) {
-            toast.error(invalidAddresses.join(", ") + invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses");
+            toast.error(`${invalidAddresses.map((record: ICSV) => `"${record?.address}"`).join(", ")}` + (invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses"));
             return;
           }
 
-          // if (tokenDetail?.decimals == null) {
-          //   toast.error("Token metadata is missing");
-          //   return;
-          // }
 
           const invalidAmounts = results.data.filter(
             (result: ICSV) => !(/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString()))
           );
 
           if(invalidAmounts.length > 0) {
-            toast.error(invalidAmounts.map((a: ICSV) => a.amount).join(", ") + (invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts"));
+            toast.error(invalidAmounts.map((record: ICSV) => `"${record?.amount}"`).join(", ") + (invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts"));
             return;
           }
 
@@ -176,7 +162,7 @@ export function SettingsPoapComponent() {
 
           // console.log(stringResult);
           dispatch(setCsvData(stringResult));
-          dispatch(setCsvToJSONData(results.data));
+          dispatch(setCsvToJSONData(results?.data));
         },
         header: true, // Set to true if your CSV has headers
       });
@@ -185,27 +171,7 @@ export function SettingsPoapComponent() {
 
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
-  
 
-  // const alchemy = new Alchemy(ethSettings);
-  // const [_isLoadingData, setIsLoadingData] = useState(false);
-  // const getTokenMetadata = async (
-  //   address: string
-  // ): Promise<TokenMetadataResponse | null> => {
-  //   try {
-  //     setIsLoadingData(true);
-  //     const metadata = await alchemy.core.getTokenMetadata(address);
-  //     dispatch(setTokenDetail(metadata));
-  //     if (!metadata) {
-  //     }
-  //     return metadata;
-  //   } catch (error) {
-  //     console.error("Error fetching token metadata:", error);
-  //     return null;
-  //   } finally {
-  //     setIsLoadingData(false);
-  //   }
-  // };
   const nextPage = async () => {
   
     if (!isConnected) {
@@ -233,11 +199,6 @@ export function SettingsPoapComponent() {
       return;
     }
 
-    // if (tokenDetail == null) {
-    //   toast.error("Token metadata is missing");
-    //   return;
-    // }
-    // sessionStorage.setItem("tokenAddress", tokenAddress);
     sessionStorage.setItem(
       "csvData",
       JSON.stringify(
@@ -251,28 +212,6 @@ export function SettingsPoapComponent() {
   };
 
   useEffect(() => {
-    // const fetchMetadata = async () => {
-    //   const metadata = await getTokenMetadata(tokenAddress);
-    //   if (metadata) {
-    //     console.log("Token Metadata:", metadata);
-    //     if (metadata.decimals == null) {
-    //       dispatch(setTokenAddressError("Kindly enter a valid token address"));
-    //       return;
-    //     }
-
-    //     // Process the metadata as needed
-    //   } else {
-    //     toast.error("Failed to fetch token metadata.");
-    //   }
-    // };
-    // const isTokenAddressValid = ethers.isAddress(tokenAddress);
-
-    // if (!isTokenAddressValid) {
-    //   dispatch(setTokenAddressError("Kindly enter a valid token address"));
-    // } else {
-    //   fetchMetadata();
-    //   dispatch(setTokenAddressError(""));
-    // }
 
     if (!csvData) {
       dispatch(setCsvDataError("Kindly upload a csv"));
@@ -302,28 +241,6 @@ export function SettingsPoapComponent() {
           style={{ background: "#8989890D", backdropFilter: "blur(150px)" }}
         >
           <div className="flex flex-col gap-4">
-            {/* <div>
-              <div className="text-left">Token address</div>
-              <input
-                className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
-                placeholder="0x9E8882E178BD006Ef75F6b7D3C9A9EE129eb2CA8"
-                value={tokenAddress}
-                onChange={(e) => {
-                  dispatch(setTokenAddress(e.target.value));
-                }}
-              />
-              <small
-                className={`${
-                  tokenAddressError ? "block text-red-400" : "text-gray-300"
-                } mt-2`}
-              >
-                {isLoadingData
-                  ? "Loading..."
-                  : tokenAddressError
-                  ? tokenAddressError
-                  : `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`}
-              </small>
-            </div> */}
             <div>
               <div>List of addresses in CSV</div>
               <textarea
@@ -438,18 +355,6 @@ export function SettingsPoapComponent() {
                           );
                         }}
                       />
-                      {/* <div className="flex md:w-[50%]">
-                        <div className="w-[50%] text-nowrap">x 10 ^</div>
-                        <input
-                          type="text"
-                          className="w-[50%] bg-transparent"
-                          placeholder="Power"
-                          value={powerValue}
-                          onChange={(e) => {
-                            dispatch(setPowerValue(e.target.value));
-                          }}
-                        />
-                      </div> */}
                     </div>
                     <button
                       className="bg-[#00A7FF] text-white px-4 py-2 rounded-md"

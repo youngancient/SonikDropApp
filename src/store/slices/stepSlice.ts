@@ -38,10 +38,13 @@ export const stepSlice = createSlice({
         state.value = "prepare";
       }
     },
+    clearBack: (state) => {
+      state.backStack = [];
+    }
   },
 });
 
-export const { setStep, goBack } = stepSlice.actions;
+export const { setStep, goBack, clearBack } = stepSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectStep = (state: RootState) => state.step.value;

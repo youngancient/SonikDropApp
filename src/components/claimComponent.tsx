@@ -11,6 +11,7 @@ import {
   CalendarIcon,
   CheckedIcon,
   CopyIcon,
+  FilledCopyIcon,
   InfoIcon,
 } from "./icons";
 import {
@@ -31,7 +32,7 @@ export interface IDropComp {
   totalParticipants: number;
   totalClaims: number;
   nftAddress?: string;
-  isEditable ?: boolean;
+  isEditable?: boolean;
   // img ?: string; havent figure how best to get this
 }
 
@@ -149,7 +150,8 @@ export const DropComp: React.FC<IDropComp> = ({
               nftAddress,
               totalClaims,
               type: "token",
-              isCreator: (creator.toLowerCase() === address?.toLowerCase()) && isEditable,
+              isCreator:
+                creator.toLowerCase() === address?.toLowerCase() && isEditable,
             }}
             closeModal={() => setShowModal(false)}
           />
@@ -274,7 +276,8 @@ export const POAPDropComp: React.FC<IDropComp> = ({
               totalRewardPool,
               totalClaims,
               type: "poap",
-              isCreator: (creator.toLowerCase() === address?.toLowerCase()) && isEditable,
+              isCreator:
+                creator.toLowerCase() === address?.toLowerCase() && isEditable,
             }}
             closeModal={() => setShowModal(false)}
           />
@@ -479,7 +482,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                       )
                     }
                   >
-                    {isCreatorAddressCopied ? <CopyIcon /> : <CopyIcon />}
+                    {isCreatorAddressCopied ? <FilledCopyIcon /> : <CopyIcon />}
                   </button>
                 </div>
               </div>
@@ -497,15 +500,17 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                         )
                       }
                     >
-                      {isNftAddressCopied ? <CopyIcon /> : <CopyIcon />}
+                      {isNftAddressCopied ? <FilledCopyIcon /> : <CopyIcon />}
                     </button>
                   </div>
                 </div>
               )}
-              <div className="required flex items-center gap-[0.25rem]">
-                <InfoIcon />
-                <p>NFT is required to claim Airdrop</p>
-              </div>
+              {nftAddress && (
+                <div className="required flex items-center gap-[0.25rem]">
+                  <InfoIcon />
+                  <p>NFT is required to claim Airdrop</p>
+                </div>
+              )}
               <div className="flex items-stretch justify-between gap-[1rem]">
                 <div className="flex flex-col addy">
                   <h4>End Date</h4>
@@ -526,19 +531,23 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                 </div>
               </div>
             </div>
-            {!isCreator && <div className="btn flex w-full justify-center items-center gap-[1rem]">
-              <button onClick={() => handleClaim(type)}>
-                {type === "token" ? "Claim Airdrop" : "Mint POAP"}
-              </button>
-            </div>}
-            {isCreator && <div className="btn flex w-full justify-between items-center gap-[1rem]">
-              <button onClick={() => editAirdrop(type)}>
-                {type === "token" ? "Edit Airdrop" : "Edit POAP"}
-              </button>
-              <button onClick={() => endAirdrop(type)} className="second-btn">
-                {type === "token" ? "End Airdrop" : "End POAP"}
-              </button>
-            </div>}
+            {!isCreator && (
+              <div className="btn flex w-full justify-center items-center gap-[1rem]">
+                <button onClick={() => handleClaim(type)}>
+                  {type === "token" ? "Claim Airdrop" : "Mint POAP"}
+                </button>
+              </div>
+            )}
+            {isCreator && (
+              <div className="btn flex w-full justify-between items-center gap-[1rem]">
+                <button onClick={() => editAirdrop(type)}>
+                  {type === "token" ? "Edit Airdrop" : "Edit POAP"}
+                </button>
+                <button onClick={() => endAirdrop(type)} className="second-btn">
+                  {type === "token" ? "End Airdrop" : "End POAP"}
+                </button>
+              </div>
+            )}
           </div>
         </ClickOutsideWrapper>
       </ClaimModalStyles>

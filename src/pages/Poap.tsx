@@ -1,4 +1,4 @@
-import AirdropLayout from "../components/layout/airdropLayout";
+import PoapLayout from "../components/layout/poapLayout";
 import { ApprovePoapComponent } from "../components/poap/approvePoapComponent";
 import { PreparePoapComponent } from "../components/poap/preparePoapComponent";
 import { SettingsPoapComponent } from "../components/poap/settingsPoapComponent";
@@ -10,11 +10,11 @@ const PoapPage = () => {
     const step = useAppSelector(selectStep);
 
     return (
-        <AirdropLayout showBackButton={true}>
+        <PoapLayout showBackButton={true}>
               {step == "prepare" && <PreparePoapComponent />}
               {step == "settings" && <SettingsPoapComponent />}
               {step == "approve" && <ApprovePoapComponent />}
-            </AirdropLayout>
+            </PoapLayout>
      );
 }
  
