@@ -128,7 +128,7 @@ const Dashboard = () => {
         <div className="bottom px-[1rem] bg-[#050C19] px-2 md:px-[200px] h-full">
           <div className="pt-[2rem]">
             <h2>Quick Actions</h2>
-            <div className="quick flex items-center gap-[1rem] justify-between md:justify-start">
+            <div className="quick flex items-center gap-[1rem] justify-start md:justify-start">
               <button
                 className="flex flex-col p-[0.625rem] gap-[0.25rem] items-center justify-center rounded-[1.25rem] create h-[8.75rem] w-[10rem] cursor-pointer"
                 onClick={() => setShowModal(true)}

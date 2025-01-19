@@ -85,7 +85,7 @@ const ClaimPage = () => {
       className="h-screen overflow-auto"
     >
       <HeaderComponent showBackButton={false} />
-      <ClaimPageStyle className="px-[1rem] md:px-[200px] mt-[2.5rem] md:mt-[3rem]">
+      <ClaimPageStyle className="px-[20px] md:px-[100px] lg:px-[200px] mt-[2.5rem] md:mt-[3rem]">
         <div className="banner relative">
           <motion.h1
             initial="initial"
@@ -174,7 +174,9 @@ const ClaimPage = () => {
           </DropListStyle>
         )}
         <AnimatePresence>
-          {!isConnected && <SonikNotConnected classNames="pt-[2rem] md:mt-[0rem] md:pt-[3rem] pb-[4rem]" />}
+          {!isConnected && (
+            <SonikNotConnected classNames="pt-[2rem] md:mt-[0rem] md:pt-[3rem] pb-[4rem]" />
+          )}
         </AnimatePresence>
       </ClaimPageStyle>
       <FooterComponent />
