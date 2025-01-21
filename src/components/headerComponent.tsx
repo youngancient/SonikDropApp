@@ -13,7 +13,7 @@ import {
 } from "react-icons/io5";
 import { DashboardIcon, LogoIcon } from "./icons";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { goBack } from "../store/slices/stepSlice";
+import { goBack, setHasSigned } from "../store/slices/stepSlice";
 import { goBack as gobackPoap } from "../store/slices/poapStepSlice";
 import { useClearFormInput } from "../hooks/useClearForm";
 import styled from "styled-components";
@@ -39,6 +39,8 @@ export function HeaderComponent({
   const poapStepToGoBackTo = useAppSelector((state) => state.poap.backStack);
   const dispatch = useAppDispatch();
 
+  const {hasSigned} = useAppSelector((state) => state.step);
+  
   // test sign message
   const token = Cookies.get("token");
   const { walletProvider } = useAppKitProvider("eip155");
@@ -61,7 +63,9 @@ export function HeaderComponent({
       `;
 
       const signature = await signer?.signMessage(message);
-
+      console.log("has signed!");
+      dispatch(setHasSigned());
+      
       const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
       const response = await axios.post(`${BACKEND_URL}/auth/authenticate`,{
         signature,
@@ -80,7 +84,7 @@ export function HeaderComponent({
       toast.error("Failed to sign the message");
       Cookies.set("token", "lmao");
     }
-  }, [address, walletProvider]);
+  }, [address, dispatch, walletProvider]);
 
 
 
@@ -114,7 +118,9 @@ export function HeaderComponent({
 
   // Effect to handle sign message on connection
   useEffect(() => {
-  
+    if(hasSigned){
+      return;
+    }
     // added timeout to prevent immediate sign message
     const delayTimeout = setTimeout(() => {
       if (isConnected && !token) {
@@ -126,7 +132,7 @@ export function HeaderComponent({
     return () => {
       clearTimeout(delayTimeout);
     };
-  }, [isConnected, onSignMessage, token]);
+  }, [hasSigned, isConnected, onSignMessage, token]);
 
   useEffect(() => {
     if (!isConnected) {
