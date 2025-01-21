@@ -90,7 +90,7 @@ const ClaimPage = () => {
       className="h-screen overflow-auto"
     >
       <HeaderComponent />
-      <ClaimPageStyle className="px-[1rem] md:px-[200px] mt-[2.5rem] md:mt-[3rem]">
+      <ClaimPageStyle className="px-[20px] md:px-[100px] lg:px-[200px] mt-[2.5rem] md:mt-[3rem]">
         <div className="banner relative">
           <motion.h1
             initial="initial"
