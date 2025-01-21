@@ -42,6 +42,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ClickOutsideWrapper from "../outsideClick";
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { useTokenDetail } from "../../hooks/specific/useERC20";
+import { generateMerkleTree } from "../../utils/merkleGen";
 
 export function PrepareComponent() {
   //   const navigate = useNavigate();
@@ -273,7 +274,7 @@ export function PrepareComponent() {
       "csvData",
       JSON.stringify(
         JSON.parse(JSON.stringify(csvToJSONData)).map((data: ICSV) => {
-          console.log("Data", data.amount);
+          // console.log("Data", data.amount);
           if (tokenDetail?.decimals !== null) {
             data.amount = ethers.formatUnits(
               data.amount.toString(),
@@ -284,7 +285,10 @@ export function PrepareComponent() {
         })
       )
     );
-
+    // generate merkle tree root and merkle proofs
+    const { rootHash, output } = generateMerkleTree(csvToJSONData);
+    console.log("roothash: ", rootHash);
+    console.log("output: ", output);
     dispatch(setStep("settings"));
   };
 
