@@ -39,8 +39,8 @@ export function HeaderComponent({
   const poapStepToGoBackTo = useAppSelector((state) => state.poap.backStack);
   const dispatch = useAppDispatch();
 
-  const {hasSigned} = useAppSelector((state) => state.step);
-  
+  const { hasSigned } = useAppSelector((state) => state.step);
+
   // test sign message
   const token = Cookies.get("token");
   const { walletProvider } = useAppKitProvider("eip155");
@@ -65,28 +65,25 @@ export function HeaderComponent({
       const signature = await signer?.signMessage(message);
       console.log("has signed!");
       dispatch(setHasSigned());
-      
+
       const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-      const response = await axios.post(`${BACKEND_URL}/auth/authenticate`,{
+      const response = await axios.post(`${BACKEND_URL}/auth/authenticate`, {
         signature,
         message,
-        address
+        address,
       });
-     
-      if(response.status === 200){
+
+      if (response.status === 200) {
         console.log(response.data);
-        const {data} = response.data;
+        const { data } = response.data;
         Cookies.set("token", data);
       }
-      
     } catch (error) {
       console.error("Error signing message:", error);
       toast.error("Failed to sign the message");
       Cookies.set("token", "lmao");
     }
   }, [address, dispatch, walletProvider]);
-
-
 
   const handleButtonClick = () => {
     open();
@@ -118,7 +115,7 @@ export function HeaderComponent({
 
   // Effect to handle sign message on connection
   useEffect(() => {
-    if(hasSigned){
+    if (hasSigned) {
       return;
     }
     // added timeout to prevent immediate sign message

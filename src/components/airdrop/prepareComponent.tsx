@@ -36,6 +36,8 @@ import {
   setTokenAddressError,
   setTokenDetail,
   selectTokenDetail,
+  setMerkleHash,
+  setMerkleOutput,
 } from "../../store/slices/prepareSlice";
 import { moodVariant, parentVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -287,8 +289,9 @@ export function PrepareComponent() {
     );
     // generate merkle tree root and merkle proofs
     const { rootHash, output } = generateMerkleTree(csvToJSONData);
-    console.log("roothash: ", rootHash);
-    console.log("output: ", output);
+    dispatch(setMerkleHash(rootHash));
+    dispatch(setMerkleOutput(output));
+    
     dispatch(setStep("settings"));
   };
 
