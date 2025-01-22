@@ -12,6 +12,8 @@ import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useClearFormInput } from "../../hooks/useClearForm";
 import {
+  selectMerkleHash,
+  selectMerkleOutput,
   selectTokenAddress,
   selectTokenDetail,
   setTokenDetail,
@@ -33,6 +35,9 @@ export function ApproveComponent() {
 
   const tokenDetail = useAppSelector(selectTokenDetail);
   const tokenAddress = useAppSelector(selectTokenAddress);
+
+  const merkleRoot = useAppSelector(selectMerkleHash);
+  const merkleOutput = useAppSelector(selectMerkleOutput);
 
   const { tokenBalance, isLoadingBalance } = useTokenBalance(tokenAddress);
 
@@ -79,6 +84,9 @@ export function ApproveComponent() {
     useTokenApproval(tokenAddress);
 
   const approve = async () => {
+    console.log("Merkle root: ", merkleRoot);
+    console.log("Merkle output: ", merkleOutput);
+    
     if (!tokenBalance) {
       return;
     }

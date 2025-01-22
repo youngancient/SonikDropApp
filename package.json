@@ -24,6 +24,8 @@
     "framer-motion": "^11.11.10",
     "joi": "^17.13.3",
     "js-cookie": "^3.0.5",
+    "keccak256": "^1.0.6",
+    "merkletreejs": "^0.4.1",
     "nanoid": "^5.0.7",
     "papaparse": "^5.4.1",
     "pinata-web3": "^0.5.3",

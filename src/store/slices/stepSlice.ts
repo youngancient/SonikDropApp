@@ -8,12 +8,14 @@ export type stepTypes = "prepare" | "settings" | "approve";
 interface CounterState {
   value: stepTypes;
   backStack: Array<stepTypes>;
+  hasSigned: boolean;
 }
 
 // Define the initial state using that type
 const initialState: CounterState = {
   value: "prepare",
   backStack: [],
+  hasSigned: false,
 };
 
 export const stepSlice = createSlice({
@@ -40,14 +42,18 @@ export const stepSlice = createSlice({
     },
     clearBack: (state) => {
       state.backStack = [];
+    },
+    setHasSigned:(state) =>{
+      state.hasSigned = true;
     }
   },
 });
 
-export const { setStep, goBack, clearBack } = stepSlice.actions;
+export const { setStep, goBack, clearBack, setHasSigned } = stepSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectStep = (state: RootState) => state.step.value;
 export const selectBackStack = (state: RootState) => state.step.backStack;
+export const selectHasSigned = (state: RootState) => state.step.hasSigned;
 
 export default stepSlice.reducer;
