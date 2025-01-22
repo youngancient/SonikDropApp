@@ -1,6 +1,14 @@
 [
-  { "inputs": [], "name": "ZeroAddressDetected", "type": "error" },
-  { "inputs": [], "name": "ZeroValueDetected", "type": "error" },
+  {
+    "inputs": [],
+    "name": "ZeroAddressDetected",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ZeroValueDetected",
+    "type": "error"
+  },
   {
     "anonymous": false,
     "inputs": [
@@ -28,11 +36,31 @@
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "_name", "type": "string" },
-      { "internalType": "string", "name": "_symbol", "type": "string" },
-      { "internalType": "string", "name": "_baseURI", "type": "string" },
-      { "internalType": "bytes32", "name": "_merkleRoot", "type": "bytes32" },
-      { "internalType": "uint256", "name": "_noOfClaimers", "type": "uint256" }
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_symbol",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_baseURI",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_merkleRoot",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_noOfClaimers",
+        "type": "uint256"
+      }
     ],
     "name": "createSonikPoap",
     "outputs": [],
@@ -41,12 +69,36 @@
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "_name", "type": "string" },
-      { "internalType": "string", "name": "_symbol", "type": "string" },
-      { "internalType": "string", "name": "_baseURI", "type": "string" },
-      { "internalType": "bytes32", "name": "_merkleRoot", "type": "bytes32" },
-      { "internalType": "address", "name": "_nftAddress", "type": "address" },
-      { "internalType": "uint256", "name": "_noOfClaimers", "type": "uint256" }
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_symbol",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_baseURI",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_merkleRoot",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_nftAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_noOfClaimers",
+        "type": "uint256"
+      }
     ],
     "name": "createSonikPoap",
     "outputs": [],
@@ -55,13 +107,41 @@
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "_name", "type": "string" },
-      { "internalType": "string", "name": "_symbol", "type": "string" },
-      { "internalType": "string", "name": "_baseURI", "type": "string" },
-      { "internalType": "bytes32", "name": "_merkleRoot", "type": "bytes32" },
-      { "internalType": "address", "name": "_nftAddress", "type": "address" },
-      { "internalType": "uint256", "name": "_claimTime", "type": "uint256" },
-      { "internalType": "uint256", "name": "_noOfClaimers", "type": "uint256" }
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_symbol",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_baseURI",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_merkleRoot",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_nftAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_claimTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_noOfClaimers",
+        "type": "uint256"
+      }
     ],
     "name": "createSonikPoap",
     "outputs": [],
@@ -72,18 +152,30 @@
     "inputs": [],
     "name": "getAllSonikPoapClones",
     "outputs": [
-      { "internalType": "address[]", "name": "", "type": "address[]" }
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_owner", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_owner",
+        "type": "address"
+      }
     ],
     "name": "getOwnerSonikPoapClones",
     "outputs": [
-      { "internalType": "address[]", "name": "", "type": "address[]" }
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
