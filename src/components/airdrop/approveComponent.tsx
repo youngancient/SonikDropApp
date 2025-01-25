@@ -27,6 +27,8 @@ import {
   useTokenBalance,
 } from "../../hooks/specific/useERC20";
 import { ethers } from "ethers";
+import { useTokenFactoryFunctions } from "../../hooks/specific/useAirdropFactory";
+import { selectNftAddress } from "../../store/slices/settingsSlice";
 
 export function ApproveComponent() {
   const dispatch = useAppDispatch();
@@ -35,12 +37,13 @@ export function ApproveComponent() {
 
   const tokenDetail = useAppSelector(selectTokenDetail);
   const tokenAddress = useAppSelector(selectTokenAddress);
+  const nftAddress = useAppSelector(selectNftAddress);
 
   const merkleRoot = useAppSelector(selectMerkleHash);
   const merkleOutput = useAppSelector(selectMerkleOutput);
 
   const { tokenBalance, isLoadingBalance } = useTokenBalance(tokenAddress);
-
+  const { createTokenDrop } = useTokenFactoryFunctions();
   const [totalOutput, setTotalOutput] = useState(0);
 
   const calculateTotalOutput = useCallback(() => {
@@ -86,7 +89,7 @@ export function ApproveComponent() {
   const approve = async () => {
     console.log("Merkle root: ", merkleRoot);
     console.log("Merkle output: ", merkleOutput);
-    
+
     if (!tokenBalance) {
       return;
     }
@@ -99,20 +102,28 @@ export function ApproveComponent() {
       totalOutput.toString(),
       tokenDetail?.decimals
     );
+    const name = "Jinx test";
     // call approve
     approveTransfer(totalOutputInWei.toString());
-
-    
+    const body = {
+      tokenAddress,
+      merkleRoot,
+      name,
+      nftAddress,
+      totalOutputTokens: totalOutput,
+      noOfClaimers: 4
+    };
+    createTokenDrop(body.tokenAddress, body.merkleRoot,body.name,body.nftAddress,body.noOfClaimers,body.totalOutputTokens);
   };
 
-  useEffect(()=>{
-    if (approvalStatus === "success") {
-      console.log("here");
-      setShowModal(true);
-      dispatch(setTokenDetail(null));
-      clear();
-    }
-  },[approvalStatus]);
+  // useEffect(()=>{
+  //   if (approvalStatus === "success") {
+  //     console.log("here");
+  //     setShowModal(true);
+  //     dispatch(setTokenDetail(null));
+  //     clear();
+  //   }
+  // },[approvalStatus]);
 
   return (
     <>
