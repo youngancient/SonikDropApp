@@ -57,7 +57,8 @@ export function SettingsComponent() {
   }, [nftAddress]);
 
   useEffect(() => {
-    const isAirDropNameValid = airDropName.length < 31;
+    const isAirDropNameValid =
+      airDropName.length < 31 || airDropName.length == 0;
     if (isAirDropNameValid) {
       dispatch(setAirdropNameError(""));
     } else {
@@ -81,6 +82,10 @@ export function SettingsComponent() {
   const airdropEnd = useAppSelector(selectAirdropEnd);
 
   const nextPage = () => {
+    if(airDropName == ""){
+      toast.error("Name cannot be empty");
+      return;
+    }
     sessionStorage.setItem(
       "settings",
       JSON.stringify({
@@ -126,6 +131,7 @@ export function SettingsComponent() {
                 onChange={(e) => {
                   dispatch(setAirdropName(e.target.value));
                 }}
+                placeholder="E.g ChillGuy"
               />
               <small
                 className={`${

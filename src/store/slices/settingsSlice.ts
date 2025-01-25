@@ -94,5 +94,7 @@ export const selectAirdropEndMin = (state: RootState) =>
 export const selectAirdropEnd = (state: RootState) => state.settings.airdropEnd;
 export const selectOnlyNFTOwnersCanClaim = (state: RootState) =>
   state.settings.onlyNFTOwnersCanClaim;
+export const selectAirdropName = (state: RootState) =>
+  state.settings.airDropName;
 
 export default settingsSlice.reducer;

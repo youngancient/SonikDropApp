@@ -21,6 +21,7 @@ interface prepareState {
   tokenDetail : ITokenDetails | null ;
   merkleHash : string;
   merkleOutput : AirdropEntity[] | null;
+  noOfClaimers : number;
 }
 
 // Define the initial state using that type
@@ -38,7 +39,8 @@ const initialState: prepareState = {
   powerValue: "",
   tokenDetail: null,
   merkleHash: "",
-  merkleOutput: null
+  merkleOutput: null,
+  noOfClaimers : 0
 };
 
 export const prepareSlice = createSlice({
@@ -88,6 +90,9 @@ export const prepareSlice = createSlice({
     },
     setMerkleOutput: (state, action: PayloadAction<AirdropEntity[] | null>) => {
       state.merkleOutput = action.payload;
+    },
+    setNoOfClaimers:(state, action: PayloadAction<number>)=>{
+      state.noOfClaimers = action.payload;
     }
   },
 });
@@ -106,7 +111,8 @@ export const {
     setTokenAddressError,
     setTokenDetail,
     setMerkleHash,
-    setMerkleOutput
+    setMerkleOutput,
+    setNoOfClaimers
 } = prepareSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
@@ -124,5 +130,6 @@ export const selectPowerValue = (state: RootState) => state.prepare.powerValue;
 export const selectTokenDetail = (state: RootState) => state.prepare.tokenDetail;
 export const selectMerkleHash = (state: RootState) => state.prepare.merkleHash;
 export const selectMerkleOutput = (state: RootState) => state.prepare.merkleOutput;
+export const selectNoOfClaimers = (state: RootState) => state.prepare.noOfClaimers;
 
 export default prepareSlice.reducer;
