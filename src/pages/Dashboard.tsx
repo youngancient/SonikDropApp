@@ -15,7 +15,11 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import { POAPDrops, tabs, TokenDrops } from "../constants/data";
 import { ethers } from "ethers";
 import { DropListStyle } from "../components/styles/claimpage";
-import { DropComp, IDropComp, POAPDropComp } from "../components/claimComponent";
+import {
+  DropComp,
+  IDropComp,
+  POAPDropComp,
+} from "../components/claimComponent";
 import { SonikNotConnected } from "../components/notConnected";
 import { textVariant } from "../animations/animation";
 
@@ -32,7 +36,6 @@ const Dashboard = () => {
 
   const [query, setQuery] = useState<string>("");
 
-  
   const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(null);
   const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(null);
 
@@ -45,7 +48,7 @@ const Dashboard = () => {
     setStateTabs(newTabs);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const userCreatedTokenDrops = TokenDrops.filter(
       (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
     );
@@ -54,7 +57,7 @@ const Dashboard = () => {
     );
     setTokenDrops(userCreatedTokenDrops);
     setPOAPDrops(userCreatedPOAPDrops);
-  },[address])
+  }, [address]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -117,7 +120,7 @@ const Dashboard = () => {
     >
       <HeaderComponent />
       <DashboardStyles className="mt-[1.5rem] md:mt-[2rem] h-fit">
-        <div className="top px-[1rem] md:px-[200px]">
+        <div className="top px-[20px] md:px-[100px] lg:px-[200px]">
           <h2>Dashboard Overview</h2>
           <div className="stat-cards grid grid-cols-2 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4  gap-[0.25rem] md:gap-[1.5rem] flex-wrap mt-[1rem] pb-[3.4rem] md:pb-[4.4rem] rounded-[1.25rem] md:rounded-[0rem]">
             <div className="flex flex-col justify-start p-[1.35rem] gap-[1.7rem] stat">
