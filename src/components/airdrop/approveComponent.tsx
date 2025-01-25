@@ -14,6 +14,7 @@ import { useClearFormInput } from "../../hooks/useClearForm";
 import {
   selectMerkleHash,
   selectMerkleOutput,
+  selectNoOfClaimers,
   selectTokenAddress,
   selectTokenDetail,
   setTokenDetail,
@@ -28,7 +29,10 @@ import {
 } from "../../hooks/specific/useERC20";
 import { ethers } from "ethers";
 import { useTokenFactoryFunctions } from "../../hooks/specific/useAirdropFactory";
-import { selectNftAddress } from "../../store/slices/settingsSlice";
+import {
+  selectAirDropName,
+  selectNftAddress,
+} from "../../store/slices/settingsSlice";
 
 export function ApproveComponent() {
   const dispatch = useAppDispatch();
@@ -38,12 +42,12 @@ export function ApproveComponent() {
   const tokenDetail = useAppSelector(selectTokenDetail);
   const tokenAddress = useAppSelector(selectTokenAddress);
   const nftAddress = useAppSelector(selectNftAddress);
-
   const merkleRoot = useAppSelector(selectMerkleHash);
   const merkleOutput = useAppSelector(selectMerkleOutput);
+  const noOfClaimers = useAppSelector(selectNoOfClaimers);
+  const name = useAppSelector(selectAirDropName);
 
   const { tokenBalance, isLoadingBalance } = useTokenBalance(tokenAddress);
-  const { createTokenDrop } = useTokenFactoryFunctions();
   const [totalOutput, setTotalOutput] = useState(0);
 
   const calculateTotalOutput = useCallback(() => {
@@ -82,6 +86,8 @@ export function ApproveComponent() {
 
   const { clear } = useClearFormInput();
   const [showModal, setShowModal] = useState(false);
+  const { createTokenDrop, creationStatus, isCreating } =
+    useTokenFactoryFunctions();
 
   const { approveTransfer, isLoadingApproval, approvalStatus } =
     useTokenApproval(tokenAddress);
@@ -102,28 +108,43 @@ export function ApproveComponent() {
       totalOutput.toString(),
       tokenDetail?.decimals
     );
-    const name = "Jinx test";
     // call approve
     approveTransfer(totalOutputInWei.toString());
+  };
+
+  useEffect(() => {
     const body = {
       tokenAddress,
       merkleRoot,
       name,
       nftAddress,
-      totalOutputTokens: totalOutput,
-      noOfClaimers: 4
+      totalOutputTokens: ethers.parseUnits(
+        totalOutput.toString(),
+        tokenDetail?.decimals
+      ),
+      noOfClaimers,
     };
-    createTokenDrop(body.tokenAddress, body.merkleRoot,body.name,body.nftAddress,body.noOfClaimers,body.totalOutputTokens);
-  };
+    if (approvalStatus === "success") {
+      console.log("got here 1");
+      createTokenDrop(
+        body.tokenAddress,
+        body.merkleRoot,
+        body.name,
+        body.nftAddress,
+        body.noOfClaimers,
+        body.totalOutputTokens
+      );
+    }
+  }, [approvalStatus]);
 
-  // useEffect(()=>{
-  //   if (approvalStatus === "success") {
-  //     console.log("here");
-  //     setShowModal(true);
-  //     dispatch(setTokenDetail(null));
-  //     clear();
-  //   }
-  // },[approvalStatus]);
+  useEffect(() => {
+    if (creationStatus === "success") {
+      console.log("here");
+      setShowModal(true);
+      dispatch(setTokenDetail(null));
+      clear();
+    }
+  }, [creationStatus]);
 
   return (
     <>
@@ -156,7 +177,7 @@ export function ApproveComponent() {
                 </div>
                 <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                   <div className="font-bold text-white text-[20px]">
-                    {csvToJSONData?.length}
+                    {noOfClaimers}
                   </div>
                   <div className="text-sm text-white/[0.8]">Recipients</div>
                 </div>
@@ -170,6 +191,12 @@ export function ApproveComponent() {
                     )}
                   </div>
                   <div className="text-sm text-white/[0.8]">Token balance</div>
+                </div>
+                <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4 col-span-2">
+                  <div className="font-bold text-white text-[20px] text-center">
+                    {name}
+                  </div>
+                  <div className="text-sm text-white/[0.8]">Drop Name</div>
                 </div>
               </div>
               <div>
@@ -196,13 +223,16 @@ export function ApproveComponent() {
             <button
               className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]"
               onClick={approve}
+              disabled={
+                isLoadingApproval || isCreating || creationStatus === "success"
+              }
             >
-              {isLoadingApproval ? (
+              {isLoadingApproval || isCreating ? (
                 <ButtonLoader />
-              ) : approvalStatus !== "success" ? (
-                "Approve"
+              ) : creationStatus === "success" ? (
+                "Completed"
               ) : (
-                "Approved"
+                "Approve"
               )}
             </button>
           </div>

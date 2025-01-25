@@ -1,29 +1,64 @@
 import { useCallback, useState } from "react";
 import { useTokenFactoryContract } from "../useContracts";
+import { toast } from "react-toastify";
+import { ethers } from "ethers";
 
 export const useTokenFactoryFunctions = () => {
   const tokenFactoryContract = useTokenFactoryContract(true);
-    const [creationStatus, setCreationStatus] = useState<"default" | "success" | "failed">("default");
-    const [isCreating, setIsCreating] = useState(false);
+  const [creationStatus, setCreationStatus] = useState<
+    "default" | "success" | "failed"
+  >("default");
+  const [isCreating, setIsCreating] = useState(false);
   const createTokenDrop = useCallback(
-    (
+    async (
       tokenAddress: string,
       merkleRoot: string,
       name: string,
       nftAddress: string,
       noOfClaimers: number,
-      totalOutputTokens: number
+      totalOutputTokens: bigint
     ) => {
-      console.log({
-        tokenAddress,
-        merkleRoot,
-        name,
-        nftAddress,
-        noOfClaimers,
-        totalOutputTokens,
-      });
+      if (!tokenFactoryContract) {
+        toast.error("Contract not found");
+        return;
+      }
+      try {
+        // construct transaction
+        console.log("creating drop...");
+        let nftAddressClone = nftAddress;
+        if (nftAddress == "") {
+          nftAddressClone = ethers.ZeroAddress;
+        }
+        const tx = await tokenFactoryContract[
+          "createSonikDrop(address,bytes32,string,address,uint256,uint256)"
+        ](
+          tokenAddress,
+          merkleRoot,
+          name,
+          nftAddressClone,
+          noOfClaimers,
+          totalOutputTokens,
+          {
+            gasLimit: 1000000,
+          }
+        );
+
+        const reciept = await tx.wait();
+        if (reciept.status === 1) {
+          toast.success("Creation Successful!");
+          console.log(reciept);
+          setCreationStatus("success");
+          return;
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("failed to create drop");
+        setCreationStatus("failed");
+      } finally {
+        setIsCreating(false);
+      }
     },
-    []
+    [tokenFactoryContract]
   );
 
   return { createTokenDrop, creationStatus, isCreating };
