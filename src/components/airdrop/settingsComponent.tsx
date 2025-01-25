@@ -19,6 +19,10 @@ import {
   setAirdropStart,
   setNftAddressError,
   setOnlyNFTOwnersCanClaim,
+  selectAirDropName,
+  setAirdropName,
+  setAirdropNameError,
+  selectAirDropNameError,
 } from "../../store/slices/settingsSlice";
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,7 +34,8 @@ export function SettingsComponent() {
   // const [nftAddressError, setNftAddressError] = useState("");
   // const [claimButtonDeactivated, setClaimButtonDeactivated] =
   //   useState<boolean>(false);
-
+  const airDropName = useAppSelector(selectAirDropName);
+  const airDropNameError = useAppSelector(selectAirDropNameError);
   const nftAddress = useAppSelector(selectNftAddress);
   const nftAddressError = useAppSelector(selectNftAddressError);
   const claimButtonDeactivated = useAppSelector(selectClaimButtonDeactivated);
@@ -50,6 +55,17 @@ export function SettingsComponent() {
       dispatch(setOnlyNFTOwnersCanClaim(false));
     }
   }, [nftAddress]);
+
+  useEffect(() => {
+    const isAirDropNameValid = airDropName.length < 31;
+    if (isAirDropNameValid) {
+      dispatch(setAirdropNameError(""));
+    } else {
+      dispatch(
+        setAirdropNameError("Name should not be more than 31 characters")
+      );
+    }
+  }, [airDropName]);
 
   const formatDateToLocalString = (date: Date) => {
     const year = date.getFullYear();
@@ -78,8 +94,7 @@ export function SettingsComponent() {
   };
 
   useEffect(() => {
-    if(airdropStart) {
-
+    if (airdropStart) {
       const formattedToday = formatDateToLocalString(new Date(airdropStart));
       dispatch(setAirdropEndMin(formattedToday));
     } else {
@@ -104,6 +119,23 @@ export function SettingsComponent() {
         >
           <div className="flex flex-col gap-4 my-8">
             <div>
+              <div className="text-left">Airdrop Name</div>
+              <input
+                className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
+                value={airDropName}
+                onChange={(e) => {
+                  dispatch(setAirdropName(e.target.value));
+                }}
+              />
+              <small
+                className={`${
+                  airDropNameError ? "block text-red-400" : "hidden"
+                } mt-2`}
+              >
+                {airDropNameError}
+              </small>
+            </div>{" "}
+            <div>
               <div className="text-left">NFT address</div>
               <input
                 className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
@@ -121,7 +153,6 @@ export function SettingsComponent() {
                 {nftAddressError}
               </small>
             </div>
-
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -140,7 +171,6 @@ export function SettingsComponent() {
               />
               <div>Only users with NFT can claim</div>
             </div>
-
             <div>
               <div>Airdrop duration</div>
               <div className="flex gap-4 flex-col lg:flex-row">
@@ -175,7 +205,6 @@ export function SettingsComponent() {
                 </div>
               </div>
             </div>
-
             {/* <div>
             <div className="mt-4">List of recipients</div>
             <div className="mb-8 h-[200px] overflow-y-auto p-2">
