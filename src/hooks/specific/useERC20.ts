@@ -166,7 +166,7 @@ export const useTokenBalance = (tokenAddress: string) => {
       setTokenBalance(ethers.formatUnits(bal, tokenDetail?.decimals));
     } catch (error) {
       setTokenBalance(null);
-      console.log(error);
+      return;
     } finally {
       setisLoadingBalance(false);
     }

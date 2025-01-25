@@ -187,9 +187,10 @@ export function ApproveComponent() {
                   <div className="font-bold text-white text-[20px]">
                     {isLoadingBalance ? (
                       <ButtonLoader />
-                    ) : (
-                      tokenBalance !== null &&
+                    ) : tokenBalance !== null ? (
                       parseFloat(tokenBalance).toLocaleString()
+                    ) : (
+                      "Invalid"
                     )}
                   </div>
                   <div className="text-sm text-white/[0.8]">Token balance</div>
