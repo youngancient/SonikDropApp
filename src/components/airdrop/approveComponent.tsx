@@ -141,8 +141,10 @@ export function ApproveComponent() {
     if (creationStatus === "success") {
       console.log("here");
       setShowModal(true);
-      dispatch(setTokenDetail(null));
-      clear();
+      setTimeout(() => {
+        dispatch(setTokenDetail(null));
+        clear();
+      }, 500);
     }
   }, [creationStatus]);
 
@@ -223,9 +225,7 @@ export function ApproveComponent() {
             <button
               className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]"
               onClick={approve}
-              disabled={
-                isLoadingApproval || isCreating || creationStatus === "success"
-              }
+              disabled={isLoadingApproval || isCreating}
             >
               {isLoadingApproval || isCreating ? (
                 <ButtonLoader />

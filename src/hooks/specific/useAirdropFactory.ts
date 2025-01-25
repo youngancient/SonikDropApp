@@ -23,6 +23,7 @@ export const useTokenFactoryFunctions = () => {
         return;
       }
       try {
+        setIsCreating(true);
         // construct transaction
         console.log("creating drop...");
         let nftAddressClone = nftAddress;
