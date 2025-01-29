@@ -26,5 +26,5 @@ export const generateTxExplorerLink = (
   if (chainId === baseSepolia.id) {
     explorerUrl += baseSepolia.blockExplorers?.default.url;
   }
-  return `${explorerUrl}tx/${txHash}`;
+  return `${explorerUrl}/tx/${txHash}`;
 };

@@ -41,9 +41,32 @@ export const electroneumTestNetwork:CaipNetwork = {
   id: 5201420,
   chainNamespace: "eip155",
   caipNetworkId: "eip155:5201420",
+  rpcUrls : {
+    default: { http: [import.meta.env.VITE_ELECTRONEUM_TESTNET_RPC_URL] },
+  }
 }
 
 // add for Sonic chain
+// export const electroneumTestNetwork: CaipNetwork = {
+//   id: 5201420,
+//   chainNamespace: "eip155",
+//   caipNetworkId: "eip155:5201420",
+//   name: "Electroneum Testnet",
+//   nativeCurrency: {
+//     name: "Etn",
+//     symbol: "ETN",
+//     decimals: 18,
+//   },
+//   rpcUrls: {
+//     default: { http: [import.meta.env.VITE_ELECTRONEUM_TESTNET_RPC_URL] },
+//   },
+//   blockExplorers: {
+//     default: {
+//       name: "Block Explorer",
+//       url: import.meta.env.VITE_ELECTRONEUM_TESTNET_EXPLORER_URL,
+//     },
+//   },
+// };
 
 // 1. Get projectId
 const projectId = import.meta.env.VITE_APPKIT_PROJECT_ID;
