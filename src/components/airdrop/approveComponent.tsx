@@ -86,7 +86,7 @@ export function ApproveComponent() {
 
   const { clear } = useClearFormInput();
   const [showModal, setShowModal] = useState(false);
-  const { createTokenDrop, creationStatus, isCreating } =
+  const { createTokenDrop, creationStatus, isCreating, transactionHash } =
     useTokenFactoryFunctions();
 
   const { approveTransfer, isLoadingApproval, approvalStatus } =
@@ -239,7 +239,9 @@ export function ApproveComponent() {
           </div>
         </motion.div>
       </AnimatePresence>
-      {showModal && <CompletedModal dropType="airdrop" />}
+      {showModal && (
+        <CompletedModal dropType="airdrop" txHash={transactionHash} />
+      )}
     </>
   );
 }

@@ -5,16 +5,16 @@ import TOKEN_FACTORY_ABI from "../ABI/tokenFactory.json";
 import TOKEN_AIRDROP_ABI from "../ABI/tokenAirdrop.json";
 
 import { useAppKitNetwork } from "@reown/appkit/react";
-import { kaiaTestNetwork } from "../connection";
+import { getFactoryAddressByChain, getFactoryPOAPAddressByChain } from "../utils/getContractAddressByChain";
 
 export const useTokenFactoryContract = (withSigner = false) => {
   const { provider, signer } = useRunners();
   const { chainId } = useAppKitNetwork();
   return useMemo(() => {
-    const factoryAddress =
-      chainId === kaiaTestNetwork.id
-        ? import.meta.env.VITE_KAIA_TOKEN_FACTORY_CONTRACT_ADDRESS
-        : import.meta.env.VITE_TOKEN_FACTORY_CONTRACT_ADDRESS;
+    if (!chainId) {
+      return;
+    }
+    const factoryAddress = getFactoryAddressByChain(chainId);
 
     if (withSigner) {
       if (!signer) return null;
@@ -41,7 +41,11 @@ export const useTokenAirdropContract = (
         if (!signer) return null;
         return new Contract(airdropContractAddress, TOKEN_AIRDROP_ABI, signer);
       } else {
-        return new Contract(airdropContractAddress, TOKEN_AIRDROP_ABI, provider);
+        return new Contract(
+          airdropContractAddress,
+          TOKEN_AIRDROP_ABI,
+          provider
+        );
       }
     } catch (error) {
       console.error("Error creating Airdrop contract:", error);
@@ -54,10 +58,10 @@ export const usePOAPFactoryContract = (withSigner = false) => {
   const { provider, signer } = useRunners();
   const { chainId } = useAppKitNetwork();
   return useMemo(() => {
-    const factoryAddress =
-      chainId === kaiaTestNetwork.id
-        ? import.meta.env.VITE_KAIA_POAP_FACTORY_CONTRACT_ADDRESS
-        : import.meta.env.VITE_POAP_FACTORY_CONTRACT_ADDRESS;
+    if(!chainId){
+      return;
+    }
+    const factoryAddress = getFactoryPOAPAddressByChain(chainId);
 
     if (withSigner) {
       if (!signer) return null;

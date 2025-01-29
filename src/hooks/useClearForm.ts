@@ -20,6 +20,8 @@ import {
   setNftAddress,
   setNftAddressError,
   setOnlyNFTOwnersCanClaim,
+  setAirdropName,
+  setAirdropNameError,
 } from "../store/slices/settingsSlice";
 
 import {
@@ -53,6 +55,8 @@ export function useClearFormInput() {
     dispatch(setNftAddress(""));
     dispatch(setNftAddressError(""));
     dispatch(setOnlyNFTOwnersCanClaim(false));
+    dispatch(setAirdropName(""));
+    dispatch(setAirdropNameError(""));
 
     dispatch(approveEnd(""));
     dispatch(approveStart(""));
