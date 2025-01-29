@@ -126,7 +126,7 @@ export function ApprovePoapComponent() {
           </div>
         </motion.div>
       </AnimatePresence>
-      {showModal && <CompletedModal dropType="poap" />}
+      {showModal && <CompletedModal dropType="poap" txHash="" />}
     </>
   );
 }
