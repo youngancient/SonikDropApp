@@ -8,6 +8,7 @@ import {
   setTokenDetail,
 } from "../../store/slices/prepareSlice";
 import { ethers } from "ethers";
+import { getFactoryAddressByChain } from "../../utils/getContractAddressByChain";
 
 export const useTokenApproval = (tokenAddress: string) => {
   const { address } = useAppKitAccount();
@@ -41,17 +42,12 @@ export const useTokenApproval = (tokenAddress: string) => {
 
         console.log("approve: ", _amount);
 
-        // const estimatedGas = await erc20Contract.approve.estimateGas(
-        //   import.meta.env.VITE_TOKEN_FACTORY_CONTRACT_ADDRESS,_amount
-        // );
-        // console.log({ estimatedGas });
-      
-        // construct transaction
-
         console.log("approvin in process...");
 
+        const factoryAddress = getFactoryAddressByChain(chainId);
+
         const tx = await erc20Contract.approve(
-          import.meta.env.VITE_TOKEN_FACTORY_CONTRACT_ADDRESS,
+          factoryAddress,
           _amount,
           {
             gasLimit: 1000000,
@@ -166,6 +162,7 @@ export const useTokenBalance = (tokenAddress: string) => {
       setTokenBalance(ethers.formatUnits(bal, tokenDetail?.decimals));
     } catch (error) {
       setTokenBalance(null);
+      console.log("An error occurred: ", error);
       return;
     } finally {
       setisLoadingBalance(false);

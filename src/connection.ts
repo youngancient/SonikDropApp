@@ -3,6 +3,9 @@ import { EthersAdapter } from "@reown/appkit-adapter-ethers";
 import {
   sepolia as rawSepolia,
   baseSepolia as rawBaseSepolia,
+  liskSepolia as rawLiskSepolia,
+  kairos as rawKairos,
+  electroneumTestnet as rawElectroneumTestnet
 } from "@reown/appkit/networks";
 
 export const sepolia: CaipNetwork = {
@@ -19,68 +22,26 @@ export const baseSepolia: CaipNetwork = {
   caipNetworkId: "eip155:84532",
 };
 
-export const liskSepoliaNetwork: CaipNetwork = {
+export const liskSepoliaNetwork:CaipNetwork = {
+  ...rawLiskSepolia,
   id: 4202,
   chainNamespace: "eip155",
   caipNetworkId: "eip155:4202",
-  name: "Lisk Sepolia",
-  nativeCurrency: {
-    name: "Ether",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: { http: [import.meta.env.VITE_LISK_SEPOLIA_EXPLORER_URL] },
-  },
-  blockExplorers: {
-    default: {
-      name: "Lisk Explorer",
-      url: import.meta.env.VITE_LISK_SEPOLIA_EXPLORER_URL,
-    },
-  },
-};
+}
 
-export const kaiaTestNetwork: CaipNetwork = {
+export const kairos:CaipNetwork = {
+  ...rawKairos,
   id: 1001,
   chainNamespace: "eip155",
   caipNetworkId: "eip155:1001",
-  name: "Kaia Testnet",
-  nativeCurrency: {
-    name: "Kaia",
-    symbol: "KAIA",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: { http: [import.meta.env.VITE_KAIA_TESTNET_RPC_URL] },
-  },
-  blockExplorers: {
-    default: {
-      name: "Kaia Explorer",
-      url: import.meta.env.VITE_KAIA_TESTNET_EXPLORER_URL,
-    },
-  },
-};
+}
 
-export const electroneumTestNetwork: CaipNetwork = {
+export const electroneumTestNetwork:CaipNetwork = {
+  ...rawElectroneumTestnet,
   id: 5201420,
   chainNamespace: "eip155",
   caipNetworkId: "eip155:5201420",
-  name: "Electroneum Testnet",
-  nativeCurrency: {
-    name: "Etn",
-    symbol: "ETN",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: { http: [import.meta.env.VITE_ELECTRONEUM_TESTNET_RPC_URL] },
-  },
-  blockExplorers: {
-    default: {
-      name: "Block Explorer",
-      url: import.meta.env.VITE_ELECTRONEUM_TESTNET_EXPLORER_URL,
-    },
-  },
-};
+}
 
 // add for Sonic chain
 
@@ -91,8 +52,9 @@ const projectId = import.meta.env.VITE_APPKIT_PROJECT_ID;
 const networks: [CaipNetwork, ...CaipNetwork[]] = [
   sepolia,
   baseSepolia,
+  electroneumTestNetwork,
   liskSepoliaNetwork,
-  kaiaTestNetwork,
+  kairos,
 ];
 
 // 3. Create a metadata object - optional
@@ -111,7 +73,7 @@ export const appkit = createAppKit({
   projectId,
   allowUnsupportedChain: false,
   allWallets: "SHOW",
-  defaultNetwork: kaiaTestNetwork,
+  defaultNetwork: kairos,
   enableEIP6963: true,
   features: {
     analytics: true,
@@ -120,4 +82,4 @@ export const appkit = createAppKit({
     socials: [],
   },
 });
-appkit.switchNetwork(kaiaTestNetwork);
+appkit.switchNetwork(kairos);

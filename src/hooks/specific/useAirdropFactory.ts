@@ -9,6 +9,8 @@ export const useTokenFactoryFunctions = () => {
     "default" | "success" | "failed"
   >("default");
   const [isCreating, setIsCreating] = useState(false);
+  const [transactionHash, setTransactionHash] = useState<string>("");
+
   const createTokenDrop = useCallback(
     async (
       tokenAddress: string,
@@ -43,9 +45,10 @@ export const useTokenFactoryFunctions = () => {
             gasLimit: 1000000,
           }
         );
+        setTransactionHash(tx.hash);
 
         const reciept = await tx.wait();
-        if (reciept.status === 1) {
+        if (reciept.status === 1) {    
           toast.success("Creation Successful!");
           console.log(reciept);
           setCreationStatus("success");
@@ -62,5 +65,5 @@ export const useTokenFactoryFunctions = () => {
     [tokenFactoryContract]
   );
 
-  return { createTokenDrop, creationStatus, isCreating };
+  return { createTokenDrop, creationStatus, isCreating,transactionHash };
 };
