@@ -1,26 +1,11 @@
 import { ethers, Numeric } from "ethers";
 import Papa from "papaparse";
 import { useEffect, useState, useCallback } from "react";
-// import { useNavigate } from "react-router-dom";
 import { ICSV } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
-// import { CgClose } from "react-icons/cg";
-// import { BiTrash } from "react-icons/bi";
-// import { nanoid } from "nanoid";
-// import { Parser } from "@json2csv/plainjs";
-// import { saveAs } from "file-saver";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setStep } from "../../store/slices/stepSlice";
 import {
-  // selectAirdropMakerList,
-  // selectEligibleParticipantAddress,
-  // selectEligibleParticipantAmount,
-  // selectPowerValue,
-  // selectShowCSVMaker,
-  // setAirdropMakerList,
-  // setEligibleParticipantAddress,
-  // setEligibleParticipantAmount,
-  // setPowerValue,
   selectCsvData,
   selectCsvDataError,
   selectCsvToJSONData,
@@ -41,17 +26,12 @@ import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { ITokenDetails, useTokenDetail } from "../../hooks/specific/useERC20";
-// import { tabs } from "../../constants/data";
 import CsvMakerComponent from "../csvMakerComponent";
 
 export function PrepareComponent() {
-  //   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
-  
-
-  // const airdropMakerList = useAppSelector(selectAirdropMakerList);
   const csvData = useAppSelector(selectCsvData);
   const tokenAddress = useAppSelector(selectTokenAddress);
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
@@ -64,17 +44,9 @@ export function PrepareComponent() {
 
   const { fetchDetails } = useTokenDetail(tokenAddress);
 
-  
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
     const files = event.target.files;
-
-    // if (csvDataError) {
-    //   dispatch(setCsvDataError("Kindly upload a csv"));
-    // } else {
-    //   dispatch(setCsvDataError(""));
-    // }
 
     if (!files) return;
     const file = files[0];
@@ -141,7 +113,6 @@ export function PrepareComponent() {
             })
             .join(`\n`);
 
-          // console.log(stringResult);
           dispatch(setCsvData(stringResult));
           dispatch(setCsvToJSONData(results.data));
         },
@@ -228,43 +199,6 @@ export function PrepareComponent() {
 
     dispatch(setStep("settings"));
   };
-
-  // useEffect(() => {
-  //   const fetchMetadata = async () => {
-  //     const metadata = await getTokenMetadata(tokenAddress);
-  //     if (metadata) {
-  //       console.log("Token Metadata:", metadata);
-  //       if (metadata.decimals == null) {
-  //         dispatch(setTokenAddressError("Kindly enter a valid token address"));
-  //         return;
-  //       }
-
-  //       // Process the metadata as needed
-  //     } else {
-  //       toast.error("Failed to fetch token metadata.");
-  //     }
-  //   };
-  //   // const isTokenAddressValid = ethers.isAddress(tokenAddress);
-
-  //   fetchMetadata();
-  //   // if (!isTokenAddressValid) {
-  //   //   dispatch(setTokenAddressError("Kindly enter a valid token address"));
-  //   // } else {
-  //   //   dispatch(setTokenAddressError(""));
-  //   // }
-
-  //   // if (!csvData) {
-  //   //   dispatch(setCsvDataError("Kindly upload a csv"));
-  //   // } else {
-  //   //   dispatch(setCsvDataError(""));
-  //   // }
-
-  //   // if (invalidAirdropAddresses.length > 0) {
-  //   //   toast.error(
-  //   //     invalidAirdropAddresses.join(", ") + " are invalid addresses"
-  //   //   );
-  //   // }
-  // }, [csvData, tokenAddress]);
 
   useEffect(() => {
     if (ethers.isAddress(tokenAddress)) {
@@ -402,7 +336,6 @@ export function PrepareComponent() {
           </button>
         </div>
 
-              {/* CSVMakerComponentHere */}
               <CsvMakerComponent landingTab="Tokens" />
 
       </motion.div>

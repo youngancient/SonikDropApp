@@ -6,7 +6,6 @@ import { nanoid } from "nanoid";
 import { Parser } from "@json2csv/plainjs";
 import { saveAs } from "file-saver";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-// import { setStep } from "../store/slices/stepSlice";
 import {
   selectAirdropMakerList,
   selectEligibleParticipantAddress,
@@ -20,20 +19,6 @@ import {
   setEligibleParticipantAmount,
   setPowerValue,
   setShowCSVMaker,
-//   selectCsvData,
-//   selectCsvDataError,
-//   selectCsvToJSONData,
-//   selectInvalidAirdropAddresses,
-//   selectTokenAddress,
-//   selectTokenAddressError,
-//   setCsvData,
-//   setInvalidAirdropAddresses,
-//   setCsvDataError,
-//   setCsvToJSONData,
-//   setTokenAddress,
-//   setTokenAddressError,
-//   setTokenDetail,
-//   selectTokenDetail,
 } from "../store/slices/prepareSlice";
 import {
   setCsvData as setPoapCSVData,
@@ -80,12 +65,6 @@ export default function CsvMakerComponent({landingTab}: {landingTab: LandingTab}
 
     const airdropMakerList = useAppSelector(selectAirdropMakerList);
     const [poapMakerList, setPoapMakerList] = useState<PoapInterface[]>([]);
-    //   const csvData = useAppSelector(selectCsvData);
-    //   const tokenAddress = useAppSelector(selectTokenAddress);
-    //   const csvToJSONData = useAppSelector(selectCsvToJSONData);
-    //   const tokenAddressError = useAppSelector(selectTokenAddressError);
-    //   const csvDataError = useAppSelector(selectCsvDataError);
-    //   const invalidAirdropAddresses = useAppSelector(selectInvalidAirdropAddresses);
 
     const showCSVMaker = useAppSelector(selectShowCSVMaker);
       const eligibleParticipantAddress = useAppSelector(
