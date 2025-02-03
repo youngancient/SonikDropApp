@@ -2,36 +2,36 @@ import { ethers } from "ethers";
 import Papa from "papaparse";
 import { useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
-import { IAirdropList, ICSV } from "../../interfaces/CSVInterface";
+import { ICSV } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
-import { CgClose } from "react-icons/cg";
-import { BiTrash } from "react-icons/bi";
-import { nanoid } from "nanoid";
-import { Parser } from "@json2csv/plainjs";
-import { saveAs } from "file-saver";
+// import { CgClose } from "react-icons/cg";
+// import { BiTrash } from "react-icons/bi";
+// import { nanoid } from "nanoid";
+// import { Parser } from "@json2csv/plainjs";
+// import { saveAs } from "file-saver";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setStep } from "../../store/slices/poapStepSlice";
 import {
-  selectAirdropMakerList,
+  // selectEligibleParticipantAmount,
+  // setAirdropMakerList,
+  // setEligibleParticipantAddress,
+  // setEligibleParticipantAmount,
+  // selectAirdropMakerList,
+  // selectEligibleParticipantAddress,
+  // selectShowCSVMaker,
   selectCsvData,
   selectCsvDataError,
   selectCsvToJSONData,
-  selectEligibleParticipantAddress,
-  selectEligibleParticipantAmount,
   selectInvalidAirdropAddresses,
-  selectShowCSVMaker,
-  setAirdropMakerList,
   setCsvData,
-  setEligibleParticipantAddress,
-  setEligibleParticipantAmount,
   setInvalidAirdropAddresses,
   setCsvDataError,
   setCsvToJSONData,
   setShowCSVMaker
 } from "../../store/slices/preparePoapSlice";
-import { moodVariant, parentVariant } from "../../animations/animation";
+import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
-import ClickOutsideWrapper from "../outsideClick";
+// import ClickOutsideWrapper from "../outsideClick";
 import {
   useAppKit,
   useAppKitAccount
@@ -42,15 +42,30 @@ export function SettingsPoapComponent() {
 
   const dispatch = useAppDispatch();
 
-  const airdropMakerList = useAppSelector(selectAirdropMakerList);
+  // const airdropMakerList = useAppSelector(selectAirdropMakerList);
   const csvData = useAppSelector(selectCsvData);
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
   const csvDataError = useAppSelector(selectCsvDataError);
   const invalidAirdropAddresses = useAppSelector(selectInvalidAirdropAddresses);
-  const showCSVMaker = useAppSelector(selectShowCSVMaker);
-  const eligibleParticipantAddress = useAppSelector(
-    selectEligibleParticipantAddress
-  );
+  // const showCSVMaker = useAppSelector(selectShowCSVMaker);
+  // const eligibleParticipantAddress = useAppSelector(
+  //   selectEligibleParticipantAddress
+  // );
+
+
+  // useEffect(() => {
+  //   const poapCSV = JSON.parse(sessionStorage.getItem("csv-from-poap") as string);
+  //   console.log(poapCSV);
+  //   if(poapCSV) {
+  //     dispatch(setCsvData(poapCSV));
+  //   }
+  // }, []);
+
+
+
+
+  
+
   // const eligibleParticipantAmount = useAppSelector(
   //   selectEligibleParticipantAmount
   // );

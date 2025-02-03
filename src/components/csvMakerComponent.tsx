@@ -15,6 +15,7 @@ import {
   selectShowCSVMaker,
   setAirdropMakerList,
   setCsvData,
+  setCsvToJSONData,
   setEligibleParticipantAddress,
   setEligibleParticipantAmount,
   setPowerValue,
@@ -35,13 +36,14 @@ import {
 //   selectTokenDetail,
 } from "../store/slices/prepareSlice";
 import {
-  setCsvData as setPoapCSVData
+  setCsvData as setPoapCSVData,
+  setCsvToJSONData as setPoapCsvToJSONData
 } from "../store/slices/preparePoapSlice";
 import { moodVariant, parentVariant } from "../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { tabs } from "../constants/data";
 import { useState } from "react";
-import { ethers, Numeric } from "ethers";
+import { ethers } from "ethers";
 import ClickOutsideWrapper from "./outsideClick";
 import { errorHandler } from "../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
@@ -218,23 +220,33 @@ export default function CsvMakerComponent({landingTab = "Tokens"}: {landingTab?:
         if(csvType == "airdrop") {
 
           const stringResult = (airdropMakerList.map(v => ({address: v.address, amount: v.amount})) as ICSV[]).map((result: ICSV) => {
-                        return `${result.address},${ethers.formatUnits(
-                          result.amount.toString(),
-                          powerValue // Type assertion to ensure it's not null
-                        )}`;
+                        return `${result.address},${result.amount}`;
                       })
                       .join(`\n`);
 
+                      const jsonData = airdropMakerList.map((result) => ({
+                        address: result.address,
+                        amount: result.amount
+                      }));
+
           dispatch(setCsvData(stringResult));
+          dispatch(setCsvToJSONData(jsonData));
           dispatch(setShowCSVMaker(false));
           toast.success("CSV Saved Successfully");
         } else if (csvType == "poap") {
-          const stringResult = (airdropMakerList.map(v => ({address: v.address, amount: v.amount})) as ICSV[]).map((result: ICSV) => {
+          const stringResult = poapMakerList.map((result) => {
             return `${result.address},1`;
           })
           .join(`\n`);
 
+          const jsonData = poapMakerList.map((result) => ({
+            address: result.address,
+            amount: 1
+          }));
+
+          // sessionStorage.setItem("csv-from-poap", JSON.stringify(stringResult));
           dispatch(setPoapCSVData(stringResult));
+          dispatch(setPoapCsvToJSONData(jsonData));
           toast.success("POAP CSV Saved Successfully! Redirecting to create POAP, please wait...");
           setTimeout(() => {
             dispatch(setShowCSVMaker(false));
