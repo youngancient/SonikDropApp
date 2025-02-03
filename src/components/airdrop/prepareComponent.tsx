@@ -2,149 +2,69 @@ import { ethers, Numeric } from "ethers";
 import Papa from "papaparse";
 import { useEffect, useState, useCallback } from "react";
 // import { useNavigate } from "react-router-dom";
-import { IAirdropList, ICSV } from "../../interfaces/CSVInterface";
+import { ICSV } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
-import { CgClose } from "react-icons/cg";
-import { BiTrash } from "react-icons/bi";
-import { nanoid } from "nanoid";
-import { Parser } from "@json2csv/plainjs";
-import { saveAs } from "file-saver";
+// import { CgClose } from "react-icons/cg";
+// import { BiTrash } from "react-icons/bi";
+// import { nanoid } from "nanoid";
+// import { Parser } from "@json2csv/plainjs";
+// import { saveAs } from "file-saver";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setStep } from "../../store/slices/stepSlice";
 import {
-  selectAirdropMakerList,
+  // selectAirdropMakerList,
+  // selectEligibleParticipantAddress,
+  // selectEligibleParticipantAmount,
+  // selectPowerValue,
+  // selectShowCSVMaker,
+  // setAirdropMakerList,
+  // setEligibleParticipantAddress,
+  // setEligibleParticipantAmount,
+  // setPowerValue,
   selectCsvData,
   selectCsvDataError,
   selectCsvToJSONData,
-  selectEligibleParticipantAddress,
-  selectEligibleParticipantAmount,
   selectInvalidAirdropAddresses,
-  selectPowerValue,
-  selectShowCSVMaker,
   selectTokenAddress,
   selectTokenAddressError,
-  setAirdropMakerList,
   setCsvData,
-  setEligibleParticipantAddress,
-  setEligibleParticipantAmount,
   setInvalidAirdropAddresses,
   setCsvDataError,
   setCsvToJSONData,
-  setPowerValue,
   setShowCSVMaker,
   setTokenAddress,
   setTokenAddressError,
   setTokenDetail,
   selectTokenDetail,
 } from "../../store/slices/prepareSlice";
-import { moodVariant, parentVariant } from "../../animations/animation";
+import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
-import ClickOutsideWrapper from "../outsideClick";
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { ITokenDetails, useTokenDetail } from "../../hooks/specific/useERC20";
+// import { tabs } from "../../constants/data";
+import CsvMakerComponent from "../csvMakerComponent";
 
 export function PrepareComponent() {
   //   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
-  const airdropMakerList = useAppSelector(selectAirdropMakerList);
+  
+
+  // const airdropMakerList = useAppSelector(selectAirdropMakerList);
   const csvData = useAppSelector(selectCsvData);
   const tokenAddress = useAppSelector(selectTokenAddress);
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
   const tokenAddressError = useAppSelector(selectTokenAddressError);
   const csvDataError = useAppSelector(selectCsvDataError);
   const invalidAirdropAddresses = useAppSelector(selectInvalidAirdropAddresses);
-  const showCSVMaker = useAppSelector(selectShowCSVMaker);
-  const eligibleParticipantAddress = useAppSelector(
-    selectEligibleParticipantAddress
-  );
-  const eligibleParticipantAmount = useAppSelector(
-    selectEligibleParticipantAmount
-  );
-  const powerValue = useAppSelector(selectPowerValue);
+  
 
   const tokenDetail = useAppSelector(selectTokenDetail);
 
   const { fetchDetails } = useTokenDetail(tokenAddress);
 
-  const addEligibleParticipant = () => {
-    const isAValidAddress = ethers.isAddress(eligibleParticipantAddress);
-
-    if (!isAValidAddress) {
-      toast.error("Not a valid address");
-      return;
-    }
-
-    const anyDuplicate = airdropMakerList.filter(
-      (eligibleParticipant) =>
-        eligibleParticipant.address == eligibleParticipantAddress
-    );
-
-    if (anyDuplicate.length > 0) {
-      toast.error("You have added this address already!");
-      return;
-    }
-
-    if (parseFloat(eligibleParticipantAmount) == 0) {
-      toast.error("Invalid amount");
-      return;
-    }
-
-    if (parseInt(powerValue) == 0) {
-      toast.error("Invalid power value");
-      return;
-    }
-
-    dispatch(
-      setAirdropMakerList(
-        airdropMakerList.concat({
-          address: eligibleParticipantAddress,
-          amount: BigInt(
-            parseFloat(eligibleParticipantAmount) *
-              10 ** parseInt(powerValue ? powerValue : "18")
-          ).toString(),
-          id: nanoid(),
-        })
-      )
-    );
-
-    dispatch(setEligibleParticipantAddress(""));
-    dispatch(setEligibleParticipantAmount(""));
-    // setPowerValue("");
-  };
-
-  const deleteEligibleParticipant = (temporaryId: string) => {
-    dispatch(
-      setAirdropMakerList(
-        airdropMakerList.filter(
-          (eligibleParticipant: IAirdropList) =>
-            eligibleParticipant.id != temporaryId
-        )
-      )
-    );
-  };
-
-  const downloadCSV = () => {
-    const value = airdropMakerList.map((eligibleParticipant: IAirdropList) => {
-      return {
-        address: eligibleParticipant.address,
-        amount: eligibleParticipant.amount,
-      };
-    });
-
-    try {
-      const parser = new Parser();
-      let csv = parser.parse(JSON.parse(JSON.stringify(value)));
-      csv = csv.replace(/"/g, "");
-      const blob = new Blob([csv], { type: "text/plain" });
-      // Trigger the download
-      saveAs(blob, "data.csv");
-    } catch (error) {
-      // console.log(error);
-      toast.error("An error occurred while trying to create CSV");
-    }
-  };
+  
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -158,7 +78,7 @@ export function PrepareComponent() {
 
     if (!files) return;
     const file = files[0];
-    
+
 
     if (file) {
       Papa.parse(file, {
@@ -172,7 +92,7 @@ export function PrepareComponent() {
             return ethers.isAddress(result.address) == false;
           });
 
-          
+
 
           dispatch(setInvalidAirdropAddresses(invalidAddresses));
 
@@ -183,9 +103,9 @@ export function PrepareComponent() {
               invalidAddresses
                 .map((a: ICSV) => a.address.toString())
                 .join(", ") +
-                (invalidAddresses.length == 1
-                  ? " is an invalid address"
-                  : " are invalid addresses")
+              (invalidAddresses.length == 1
+                ? " is an invalid address"
+                : " are invalid addresses")
             );
             return;
           }
@@ -203,14 +123,14 @@ export function PrepareComponent() {
           if (invalidAmounts.length > 0) {
             toast.error(
               invalidAmounts.map((a: ICSV) => a.amount).join(", ") +
-                (invalidAmounts.length == 1
-                  ? " is an invalid amount"
-                  : " are invalid amounts")
+              (invalidAmounts.length == 1
+                ? " is an invalid amount"
+                : " are invalid amounts")
             );
             return;
           }
 
-            dispatch(setCsvDataError(""));
+          dispatch(setCsvDataError(""));
 
           const stringResult = results.data
             .map((result: ICSV) => {
@@ -390,9 +310,8 @@ export function PrepareComponent() {
                 }}
               />
               <small
-                className={`${
-                  tokenAddressError ? "block text-red-400" : "hidden"
-                } mt-2`}
+                className={`${tokenAddressError ? "block text-red-400" : "hidden"
+                  } mt-2`}
               >
                 {tokenAddressError}
               </small>
@@ -400,8 +319,8 @@ export function PrepareComponent() {
                 {isLoadingData
                   ? "Loading..."
                   : tokenDetail != null
-                  ? `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`
-                  : ""}
+                    ? `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`
+                    : ""}
               </small>
             </div>
             <div>
@@ -413,7 +332,7 @@ export function PrepareComponent() {
                   if (invalidAirdropAddresses.length > 0) {
                     toast.error(
                       invalidAirdropAddresses.join(", ") +
-                        " are invalid addresses"
+                      " are invalid addresses"
                     );
                   }
 
@@ -463,9 +382,8 @@ export function PrepareComponent() {
                     </label>
                   </div>
                   <small
-                    className={`${
-                      csvDataError ? "block text-red-400" : "hidden"
-                    } mt-2 text-center`}
+                    className={`${csvDataError ? "block text-red-400" : "hidden"
+                      } mt-2 text-center`}
                   >
                     {csvDataError}
                   </small>
@@ -474,134 +392,19 @@ export function PrepareComponent() {
             </div>
           </div>
           <button
-            className={`w-full py-2 rounded-md ${
-              isConnected
-                ? "bg-[#00A7FF] text-white"
-                : "border border-[#00A7FF] text-white"
-            }`}
+            className={`w-full py-2 rounded-md ${isConnected
+              ? "bg-[#00A7FF] text-white"
+              : "border border-[#00A7FF] text-white"
+              }`}
             onClick={nextPage}
           >
             {!isConnected ? "Connect Wallet" : "Continue"}
           </button>
         </div>
 
-        {/* CSV Maker starts here */}
-        <AnimatePresence>
-          {showCSVMaker && (
-            <motion.div
-              className="h-screen w-full flex justify-center items-center bg-[transparent] absolute top-[0] left-[0] backdrop-blur-lg p-4"
-              variants={parentVariant}
-              initial="initial"
-              animate="final"
-            >
-              <ClickOutsideWrapper
-                onClickOutside={() => dispatch(setShowCSVMaker(false))}
-              >
-                <motion.div
-                  className="w-full md:w-[600px] border-[3px] border-[#FFFFFF17] p-4 rounded-[2rem] flex flex-col gap-4 bg-[#050C19]"
-                  variants={moodVariant}
-                  initial="initial"
-                  animate="final"
-                  exit="exit"
-                  key="csvmaker"
-                >
-                  <div>
-                    <CgClose
-                      className="ml-auto cursor-pointer"
-                      onClick={() => {
-                        dispatch(setShowCSVMaker(false));
-                      }}
-                    />
-                  </div>
-                  <div className="flex gap-4 flex-col md:flex-row">
-                    <div className="w-full">
-                      <input
-                        className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
-                        placeholder="Wallet address"
-                        value={eligibleParticipantAddress}
-                        onChange={(e) => {
-                          dispatch(
-                            setEligibleParticipantAddress(e.target.value)
-                          );
-                        }}
-                      />
-                    </div>
+              {/* CSVMakerComponentHere */}
+              <CsvMakerComponent />
 
-                    <div className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1 flex">
-                      <input
-                        className="bg-transparent md:w-[50%]"
-                        placeholder="Amount"
-                        value={eligibleParticipantAmount}
-                        onChange={(e) => {
-                          dispatch(
-                            setEligibleParticipantAmount(e.target.value)
-                          );
-                        }}
-                      />
-                      <div className="flex md:w-[50%]">
-                        <div className="w-[50%] text-nowrap">x 10 ^</div>
-                        <input
-                          type="text"
-                          className="w-[50%] bg-transparent"
-                          placeholder="Power"
-                          value={powerValue}
-                          onChange={(e) => {
-                            dispatch(setPowerValue(e.target.value));
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <button
-                      className="bg-[#00A7FF] text-white px-4 py-2 rounded-md"
-                      onClick={addEligibleParticipant}
-                    >
-                      Add
-                    </button>
-                  </div>
-                  <div>
-                    <div className="w-full p-2 h-[200px] overflow-y-auto border-2 border-[2px] border-[#FFFFFF17] rounded-md bg-transparent">
-                      {airdropMakerList.length > 0 &&
-                        airdropMakerList.map(
-                          (
-                            eligibleParticipant: IAirdropList,
-                            index: number
-                          ) => {
-                            return (
-                              <div className="flex justify-between items-center">
-                                <div className="flex items-center">
-                                  <div className="pr-4">{index + 1}.</div>
-                                  <div>
-                                    <div>{eligibleParticipant.address}</div>
-                                    <div>{eligibleParticipant.amount}</div>
-                                  </div>
-                                </div>
-                                <button
-                                  onClick={() => {
-                                    deleteEligibleParticipant(
-                                      eligibleParticipant.id
-                                    );
-                                  }}
-                                >
-                                  <BiTrash />
-                                </button>
-                              </div>
-                            );
-                          }
-                        )}
-                    </div>
-                  </div>
-                  <button
-                    className="w-full bg-[#00A7FF] text-white py-2 rounded-md"
-                    onClick={downloadCSV}
-                  >
-                    Download
-                  </button>
-                </motion.div>
-              </ClickOutsideWrapper>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        {/* CSV Maker ends here */}
       </motion.div>
     </AnimatePresence>
   );
