@@ -42,7 +42,7 @@ import {
 import { moodVariant, parentVariant } from "../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { tabs } from "../constants/data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import ClickOutsideWrapper from "./outsideClick";
 import { errorHandler } from "../utils/errorHandler";
@@ -56,7 +56,7 @@ interface PoapInterface {
     address: string;
 }
 
-export default function CsvMakerComponent({landingTab = "Tokens"}: {landingTab?: LandingTab}) {
+export default function CsvMakerComponent({landingTab}: {landingTab: LandingTab}) {
 
     const [stateTabs, setStateTabs] = useState(tabs);
     
@@ -73,6 +73,10 @@ export default function CsvMakerComponent({landingTab = "Tokens"}: {landingTab?:
         });
         setStateTabs(newTabs);
       };
+
+      useEffect(() => {
+        handleTabSwitch(landingTab);
+      }, []);
 
     const airdropMakerList = useAppSelector(selectAirdropMakerList);
     const [poapMakerList, setPoapMakerList] = useState<PoapInterface[]>([]);
@@ -187,9 +191,10 @@ export default function CsvMakerComponent({landingTab = "Tokens"}: {landingTab?:
       const downloadCSV = (csvType: "airdrop" | "poap") => {
           
           try {
+              
               let value: unknown[]= [];
                 if(csvType == "airdrop") {
-        
+                  
                 value = airdropMakerList.map((eligibleParticipant: IAirdropList) => {
                   return {
                     address: eligibleParticipant.address,
@@ -209,7 +214,7 @@ export default function CsvMakerComponent({landingTab = "Tokens"}: {landingTab?:
             csv = csv.replace(/"/g, "");
             const blob = new Blob([csv], { type: "text/plain" });
             // Trigger the download
-            saveAs(blob, "data.csv");
+            saveAs(blob, csvType == "airdrop" ? "airdropcsv.csv" : "poapcsv.csv");
         } catch (error: unknown) {
           errorHandler(error);
           toast.error("An error occurred while trying to create CSV");

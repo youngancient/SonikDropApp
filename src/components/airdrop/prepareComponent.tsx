@@ -403,7 +403,7 @@ export function PrepareComponent() {
         </div>
 
               {/* CSVMakerComponentHere */}
-              <CsvMakerComponent />
+              <CsvMakerComponent landingTab="Tokens" />
 
       </motion.div>
     </AnimatePresence>
