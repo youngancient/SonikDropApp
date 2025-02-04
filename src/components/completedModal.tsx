@@ -2,17 +2,33 @@ import { useNavigate } from "react-router-dom";
 import { parentVariant } from "../animations/animation";
 import { NavModalStyles } from "./styles/approve";
 import { FlexAbsoluteModalStyles } from "./styles/claimpage";
-import { setStep as poapStep, clearBack as poapClearBack } from "../store/slices/poapStepSlice";
+import {
+  setStep as poapStep,
+  clearBack as poapClearBack,
+} from "../store/slices/poapStepSlice";
 import { setStep, clearBack } from "../store/slices/stepSlice";
 import { useAppDispatch } from "../store/hooks";
+import { useEffect, useState } from "react";
+import { useAppKitNetwork } from "@reown/appkit/react";
+import { generateTxExplorerLink } from "../utils/generateTxLink";
 
-
-
-
-export const CompletedModal = ({dropType}: {dropType: "airdrop" | "poap"}) => {
+export const CompletedModal = ({
+  dropType,
+  txHash,
+}: {
+  dropType: "airdrop" | "poap";
+  txHash: string;
+}) => {
   const navigate = useNavigate();
-
+  const { chainId } = useAppKitNetwork();
+  const [txLink, setTxLink] = useState("");
   const dispatch = useAppDispatch();
+  useEffect(() => {
+    if (!chainId) {
+      return;
+    }
+    setTxLink(generateTxExplorerLink(chainId, txHash));
+  }, [chainId, txHash]);
 
   return (
     <FlexAbsoluteModalStyles
@@ -32,28 +48,35 @@ export const CompletedModal = ({dropType}: {dropType: "airdrop" | "poap"}) => {
             </div>
           </div>
           <div className="text flex flex-col gap-[0.75rem]">
-            <h1 className="w-full">
-              Welcome to real-time monitoring
-            </h1>
+            <h1 className="w-full">Drop was created Successfully!</h1>
             <p>
-              Effortless claiming ready in seconds, SonikDrop keeps it fast
-              simple and secure across chains, empowering creators and users
-              with smooth drops every time
+              Congratulations! You have just created a drop on SonikDrop.
+              <a href={txLink} target="_blank" rel="noopener noreferrer">
+                <p className="underline hover:no-underline">
+                  Confirm Transaction on Block Explorer
+                </p>
+              </a>
             </p>
           </div>
         </div>
 
         <div className="btn w-full">
-          <button type="button" className="w-full" onClick={() => {
-            if (dropType == "airdrop") {
-              dispatch(setStep("prepare"));
-              dispatch(clearBack());
-            } else if(dropType == "poap") {
-              dispatch(poapStep("prepare"));
-              dispatch(poapClearBack());
-            }
-            navigate("/dashboard");
-          }}>Go to Dashboard</button>
+          <button
+            type="button"
+            className="w-full"
+            onClick={() => {
+              if (dropType == "airdrop") {
+                dispatch(setStep("prepare"));
+                dispatch(clearBack());
+              } else if (dropType == "poap") {
+                dispatch(poapStep("prepare"));
+                dispatch(poapClearBack());
+              }
+              navigate("/dashboard");
+            }}
+          >
+            Go to Dashboard
+          </button>
         </div>
       </NavModalStyles>
     </FlexAbsoluteModalStyles>

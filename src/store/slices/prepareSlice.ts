@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 import { IAirdropList } from "../../interfaces/CSVInterface";
 import { ITokenDetails } from "../../hooks/specific/useERC20";
+import { AirdropEntity } from "../../utils/merkleGen";
 
 // Define a type for the slice state
 interface prepareState {
@@ -17,7 +18,10 @@ interface prepareState {
   eligibleParticipantAddress: string;
   eligibleParticipantAmount: string;
   powerValue: string;
-  tokenDetail : ITokenDetails | null;
+  tokenDetail : ITokenDetails | null ;
+  merkleHash : string;
+  merkleOutput : AirdropEntity[] | null;
+  noOfClaimers : number;
 }
 
 // Define the initial state using that type
@@ -34,6 +38,9 @@ const initialState: prepareState = {
   eligibleParticipantAmount: "",
   powerValue: "",
   tokenDetail: null,
+  merkleHash: "",
+  merkleOutput: null,
+  noOfClaimers : 0
 };
 
 export const prepareSlice = createSlice({
@@ -77,6 +84,15 @@ export const prepareSlice = createSlice({
     },
     setTokenDetail: (state, action: PayloadAction<ITokenDetails | null>) => {
       state.tokenDetail = action.payload;
+    },
+    setMerkleHash: (state, action: PayloadAction<string>) => {
+      state.merkleHash = action.payload;
+    },
+    setMerkleOutput: (state, action: PayloadAction<AirdropEntity[] | null>) => {
+      state.merkleOutput = action.payload;
+    },
+    setNoOfClaimers:(state, action: PayloadAction<number>)=>{
+      state.noOfClaimers = action.payload;
     }
   },
 });
@@ -93,7 +109,10 @@ export const {
     setShowCSVMaker,
     setTokenAddress,
     setTokenAddressError,
-    setTokenDetail
+    setTokenDetail,
+    setMerkleHash,
+    setMerkleOutput,
+    setNoOfClaimers
 } = prepareSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
@@ -109,5 +128,8 @@ export const selectEligibleParticipantAddress = (state: RootState) => state.prep
 export const selectEligibleParticipantAmount = (state: RootState) => state.prepare.eligibleParticipantAmount;
 export const selectPowerValue = (state: RootState) => state.prepare.powerValue;
 export const selectTokenDetail = (state: RootState) => state.prepare.tokenDetail;
+export const selectMerkleHash = (state: RootState) => state.prepare.merkleHash;
+export const selectMerkleOutput = (state: RootState) => state.prepare.merkleOutput;
+export const selectNoOfClaimers = (state: RootState) => state.prepare.noOfClaimers;
 
 export default prepareSlice.reducer;

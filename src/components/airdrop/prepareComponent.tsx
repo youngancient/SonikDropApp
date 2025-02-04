@@ -21,12 +21,17 @@ import {
   setTokenAddressError,
   setTokenDetail,
   selectTokenDetail,
+  setMerkleHash,
+  setMerkleOutput,
+  setNoOfClaimers,
 } from "../../store/slices/prepareSlice";
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { ITokenDetails, useTokenDetail } from "../../hooks/specific/useERC20";
+import { generateMerkleTree } from "../../utils/merkleGen";
 import CsvMakerComponent from "../csvMakerComponent";
+
 
 export function PrepareComponent() {
 
@@ -42,15 +47,14 @@ export function PrepareComponent() {
 
   const tokenDetail = useAppSelector(selectTokenDetail);
 
-  const { fetchDetails } = useTokenDetail(tokenAddress);
+  const { fetchDetails, isLoadingDetails, errorTxt } =
+    useTokenDetail(tokenAddress);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-
     const files = event.target.files;
 
     if (!files) return;
     const file = files[0];
-
 
     if (file) {
       Papa.parse(file, {
@@ -63,8 +67,6 @@ export function PrepareComponent() {
             );
             return ethers.isAddress(result.address) == false;
           });
-
-
 
           dispatch(setInvalidAirdropAddresses(invalidAddresses));
 
@@ -124,24 +126,6 @@ export function PrepareComponent() {
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
 
-  const [isLoadingData, setIsLoadingData] = useState(false);
-
-  const getTokenMetadata = useCallback(() => {
-    setIsLoadingData(true);
-    console.log("Here");
-    setTimeout(() => {
-      const metadata: ITokenDetails = {
-        name: "TEST Token",
-        symbol: "TST",
-        decimals: 18,
-      };
-      console.log("Here2");
-      dispatch(setTokenDetail(metadata));
-
-      setIsLoadingData(false);
-    }, 1200);
-  }, [dispatch]);
-
   const nextPage = async () => {
     const isTokenAddressValid = ethers.isAddress(tokenAddress);
     if (!isConnected) {
@@ -185,7 +169,7 @@ export function PrepareComponent() {
       "csvData",
       JSON.stringify(
         JSON.parse(JSON.stringify(csvToJSONData)).map((data: ICSV) => {
-          console.log("Data", data.amount);
+          // console.log("Data", data.amount);
           if (tokenDetail?.decimals !== null) {
             data.amount = ethers.formatUnits(
               data.amount.toString(),
@@ -196,7 +180,12 @@ export function PrepareComponent() {
         })
       )
     );
+    // generate merkle tree root and merkle proofs
+    const { rootHash, output } = generateMerkleTree(csvToJSONData);
 
+    dispatch(setMerkleHash(rootHash));
+    dispatch(setMerkleOutput(output));
+    dispatch(setNoOfClaimers(csvToJSONData.length));
     dispatch(setStep("settings"));
   };
 
@@ -204,11 +193,12 @@ export function PrepareComponent() {
     if (ethers.isAddress(tokenAddress)) {
       console.log("Valid token address detected, fetching details...");
       fetchDetails();
-      getTokenMetadata();
+
+      // getTokenMetadata();
     } else {
       dispatch(setTokenDetail(null));
     }
-  }, [tokenAddress, fetchDetails, getTokenMetadata, dispatch]);
+  }, [tokenAddress, fetchDetails, dispatch]);
 
   return (
     <AnimatePresence>
@@ -250,11 +240,13 @@ export function PrepareComponent() {
                 {tokenAddressError}
               </small>
               <small className={`${"text-gray-300"} mt-2`}>
-                {isLoadingData
-                  ? "Loading..."
-                  : tokenDetail != null
+
+                {!tokenAddressError &&
+                  (isLoadingDetails
+                    ? "Loading..."
+                    : tokenDetail != null
                     ? `symbol: ${tokenDetail?.symbol} , decimal: ${tokenDetail?.decimals}`
-                    : ""}
+                    : errorTxt)}
               </small>
             </div>
             <div>

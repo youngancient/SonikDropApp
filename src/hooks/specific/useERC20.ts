@@ -2,20 +2,24 @@ import { useCallback, useEffect, useState } from "react";
 import { useERC20Contract } from "../useERC20Contract";
 import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-// import { ethers } from "ethers";
-//import { ethers } from "ethers";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  selectTokenDetail,
+  setTokenDetail,
+} from "../../store/slices/prepareSlice";
+import { ethers } from "ethers";
+import { getFactoryAddressByChain } from "../../utils/getContractAddressByChain";
 
 export const useTokenApproval = (tokenAddress: string) => {
   const { address } = useAppKitAccount();
   const { chainId } = useAppKitNetwork();
 
-  const [isApprovalLoading, setisLoadingDetails] = useState(false);
-
+  const [approvalStatus, setApprovalStatus] = useState<"default" | "success" | "failed">("default");
   const erc20Contract = useERC20Contract(true, tokenAddress);
-  const navigate = useNavigate();
+  const [isLoadingApproval, setIsLoadingApproval] = useState(false);
+
   // const errorDecoder = ErrorDecoder.create()
-  const approve = useCallback(
+  const approveTransfer = useCallback(
     async (amount: string) => {
       if (!erc20Contract) {
         toast.error("Contract not found");
@@ -25,35 +29,25 @@ export const useTokenApproval = (tokenAddress: string) => {
         toast.error("Connect your wallet!");
         return;
       }
+      if (!chainId) {
+        toast.error("Invalid Chain");
+        return;
+      }
 
       try {
-        setisLoadingDetails(true);
+        setIsLoadingApproval(true);
         // console.log("here", amount);
 
         const _amount = BigInt(amount);
 
         console.log("approve: ", _amount);
 
-        // const estimatedGas = await erc20Contract.approve.estimateGas(
-        //   import.meta.env.VITE_WILL_CONTRACT_ADDRESS,_amount
-        // );
-        // console.log({ estimatedGas });
-        const allowance = await erc20Contract.allowance(
-          address,
-          import.meta.env.VITE_WILL_CONTRACT_ADDRESS
-        );
-        console.log("allowance: ", allowance);
-
-        // if (BigInt(allowance) >= BigInt(amount)) {
-        //   return;
-        // }
-
-        // construct transaction
-
         console.log("approvin in process...");
 
+        const factoryAddress = getFactoryAddressByChain(chainId);
+
         const tx = await erc20Contract.approve(
-          import.meta.env.VITE_WILL_CONTRACT_ADDRESS,
+          factoryAddress,
           _amount,
           {
             gasLimit: 1000000,
@@ -61,19 +55,21 @@ export const useTokenApproval = (tokenAddress: string) => {
         );
         const reciept = await tx.wait();
         if (reciept.status === 1) {
-          //toast.success("Approval successful");
+          setApprovalStatus("success");
           return;
         }
       } catch (error) {
         console.log(error);
+        setApprovalStatus("failed");
+        toast.error("Approval failed");
       } finally {
-        setisLoadingDetails(false);
+        setIsLoadingApproval(false);
       }
     },
-    [erc20Contract, address, chainId, navigate]
+    [erc20Contract, address, chainId]
   );
 
-  return { approve, isApprovalLoading };
+  return { approveTransfer, isLoadingApproval,approvalStatus };
 };
 
 export interface ITokenDetails {
@@ -88,19 +84,27 @@ export interface ITokenDetails {
 
 export const useTokenDetail = (tokenAddress: string) => {
   const [isLoadingDetails, setisLoadingDetails] = useState(false);
-  const [tokenDetails, setTokenDetails] = useState<ITokenDetails | null>(null);
+  // const [tokenDetails, setTokenDetails] = useState<ITokenDetails | null>(null);
   const readOnlyERC20Contract = useERC20Contract(false, tokenAddress);
-
+  const [errorTxt, setErrorTxt] = useState("");
   const { chainId } = useAppKitNetwork();
+
+  const dispatch = useAppDispatch();
 
   const fetchDetails = useCallback(async () => {
     if (!readOnlyERC20Contract) {
       console.log("no contract found");
-      setTokenDetails(null);
+      dispatch(setTokenDetail(null));
       return;
     }
-    if(!chainId){
+    if (!chainId) {
       console.log("Invalid chain");
+      dispatch(setTokenDetail(null));
+      return;
+    }
+    if (!tokenAddress) {
+      console.log("Invalid Token Address");
+      dispatch(setTokenDetail(null));
       return;
     }
     try {
@@ -112,29 +116,30 @@ export const useTokenDetail = (tokenAddress: string) => {
 
       console.log({ name, decimals, symbol });
       console.log("Done fetching details2...");
-      
-      setTokenDetails({ name, decimals, symbol });
+      const metadata = { name, decimals: Number(decimals), symbol };
+      dispatch(setTokenDetail(metadata));
     } catch (error) {
-      setTokenDetails(null);
+      dispatch(setTokenDetail(null));
+      setErrorTxt("Invalid Token");
       console.log("Invalid Token");
       console.log(error);
     } finally {
       setisLoadingDetails(false);
     }
-  }, [readOnlyERC20Contract, tokenAddress,chainId]);
+  }, [readOnlyERC20Contract, tokenAddress, chainId, dispatch]);
 
-
-  return { isLoadingDetails, tokenDetails, fetchDetails };
+  return { isLoadingDetails, fetchDetails, errorTxt };
 };
 
-
 // Work on this nextUp
-export const useTokenBalance = (tokenAddress : string) => {
+export const useTokenBalance = (tokenAddress: string) => {
   const [tokenBalance, setTokenBalance] = useState<string | null>(null);
   const [isLoadingBalance, setisLoadingBalance] = useState(false);
 
   const { address } = useAppKitAccount();
-  const readOnlyERC20Contract = useERC20Contract(false,tokenAddress);
+  const readOnlyERC20Contract = useERC20Contract(false, tokenAddress);
+
+  const tokenDetail = useAppSelector(selectTokenDetail);
 
   const fetchBalance = useCallback(async () => {
     if (!readOnlyERC20Contract) {
@@ -145,21 +150,27 @@ export const useTokenBalance = (tokenAddress : string) => {
       setTokenBalance(null);
       return;
     }
+    if (!tokenAddress) {
+      console.log("Invalid Token Address");
+      return;
+    }
     try {
       setisLoadingBalance(true);
       const bal = await readOnlyERC20Contract.balanceOf(address);
       console.log(bal);
-      setTokenBalance(bal);
+
+      setTokenBalance(ethers.formatUnits(bal, tokenDetail?.decimals));
     } catch (error) {
       setTokenBalance(null);
-      console.log(error);
-    }finally{
+      console.log("An error occurred: ", error);
+      return;
+    } finally {
       setisLoadingBalance(false);
     }
-  }, [readOnlyERC20Contract, address, tokenAddress]);
+  }, [readOnlyERC20Contract, address, tokenAddress, tokenDetail?.decimals]);
 
   useEffect(() => {
-      fetchBalance();
+    fetchBalance();
   }, [fetchBalance, tokenAddress]);
 
   return { tokenBalance, isLoadingBalance };

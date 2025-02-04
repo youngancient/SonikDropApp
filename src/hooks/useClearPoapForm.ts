@@ -8,10 +8,7 @@ import {
   setEligibleParticipantAddress,
   setEligibleParticipantAmount,
   setPowerValue,
-  setShowCSVMaker,
-  setTokenAddress,
-  setTokenAddressError,
-  setTokenDetail
+  setShowCSVMaker
 } from "../store/slices/preparePoapSlice";
 
 export function useClearPoapFormInput() {
@@ -27,9 +24,6 @@ export function useClearPoapFormInput() {
     dispatch(setEligibleParticipantAddress(""));
     dispatch(setEligibleParticipantAmount(""));
     dispatch(setPowerValue(""));
-    dispatch(setTokenAddress(""));
-    dispatch(setTokenAddressError(""));
-    dispatch(setTokenDetail(null));
 
     sessionStorage.removeItem("csvData");
     sessionStorage.removeItem("poapEventDetails");

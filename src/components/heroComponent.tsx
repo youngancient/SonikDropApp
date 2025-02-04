@@ -27,7 +27,12 @@ export const Hero = () => {
             <img src="/rocket.svg" alt="sonic" />
           </div>
         </motion.h1>
-        <motion.p initial="initial" whileInView="final2" variants={textVariant} viewport={{ once: true }}>
+        <motion.p
+          initial="initial"
+          whileInView="final2"
+          variants={textVariant}
+          viewport={{ once: true }}
+        >
           We streamline the entire airdrop experience by letting you
           effortlessly create, manage, and claim token airdrops and POAPs, all
           in one place.

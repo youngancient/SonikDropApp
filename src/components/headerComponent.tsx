@@ -4,7 +4,7 @@ import {
   useAppKitNetwork,
   useAppKitProvider,
 } from "@reown/appkit/react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { formatAddress } from "../utils/helpers";
 import {
   IoChevronBackOutline,
@@ -13,7 +13,7 @@ import {
 } from "react-icons/io5";
 import { DashboardIcon, LogoIcon } from "./icons";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { goBack } from "../store/slices/stepSlice";
+import { goBack, setHasSigned } from "../store/slices/stepSlice";
 import { goBack as gobackPoap } from "../store/slices/poapStepSlice";
 import { useClearFormInput } from "../hooks/useClearForm";
 import styled from "styled-components";
@@ -24,9 +24,10 @@ import { BrowserProvider, Eip1193Provider } from "ethers";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useClearPoapFormInput } from "../hooks/useClearPoapForm";
+import axios from "axios";
 
 export function HeaderComponent({
-  formType
+  formType,
 }: {
   formType?: "poap" | "airdrop" | null;
 }) {
@@ -37,6 +38,8 @@ export function HeaderComponent({
   const stepToGoBackTo = useAppSelector((state) => state.step.backStack);
   const poapStepToGoBackTo = useAppSelector((state) => state.poap.backStack);
   const dispatch = useAppDispatch();
+
+  const { hasSigned } = useAppSelector((state) => state.step);
 
   // test sign message
   const token = Cookies.get("token");
@@ -60,23 +63,27 @@ export function HeaderComponent({
       `;
 
       const signature = await signer?.signMessage(message);
-      await callBackend(signature, message, address);
+      console.log("has signed!");
+      dispatch(setHasSigned());
+
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+      const response = await axios.post(`${BACKEND_URL}/auth/authenticate`, {
+        signature,
+        message,
+        address,
+      });
+
+      if (response.status === 200) {
+        console.log(response.data);
+        const { data } = response.data;
+        Cookies.set("token", data);
+      }
     } catch (error) {
       console.error("Error signing message:", error);
       toast.error("Failed to sign the message");
+      Cookies.set("token", "lmao");
     }
-  }, [address, walletProvider]);
-
-  const callBackend = async (
-    signature: string,
-    message: string,
-    signerAddress: string
-  ) => {
-    setTimeout(() => {
-      Cookies.set("token", "Some JWT token here");
-      console.log(signature, signerAddress, message);
-    }, 1200);
-  };
+  }, [address, dispatch, walletProvider]);
 
   const handleButtonClick = () => {
     open();
@@ -87,16 +94,15 @@ export function HeaderComponent({
   const { clearPoap } = useClearPoapFormInput();
 
   const backButton = () => {
-
-    if(formType == "airdrop") {
-      if(stepToGoBackTo.length == 0) {
+    if (formType == "airdrop") {
+      if (stepToGoBackTo.length == 0) {
         clear();
-      navigate("/");
+        navigate("/");
       } else {
         dispatch(goBack());
       }
     } else if (formType == "poap") {
-      if(poapStepToGoBackTo.length == 0) {
+      if (poapStepToGoBackTo.length == 0) {
         clearPoap();
         navigate("/");
       } else {
@@ -109,7 +115,9 @@ export function HeaderComponent({
 
   // Effect to handle sign message on connection
   useEffect(() => {
-    console.log({isConnected, token});
+    if (hasSigned) {
+      return;
+    }
     // added timeout to prevent immediate sign message
     const delayTimeout = setTimeout(() => {
       if (isConnected && !token) {
@@ -121,7 +129,7 @@ export function HeaderComponent({
     return () => {
       clearTimeout(delayTimeout);
     };
-  }, [isConnected, onSignMessage, token]);
+  }, [hasSigned, isConnected, onSignMessage, token]);
 
   useEffect(() => {
     if (!isConnected) {
@@ -194,6 +202,7 @@ export const SwitchChainComp = () => {
   const [selectedChain, setSelectedChain] = useState<IChains | null>(
     supportedNetworks.find((ele) => ele.id === Number(chainId)) ?? null
   );
+  const location = useLocation();
 
   const setChain = useCallback(
     async (id: number, calledByUser?: boolean) => {
@@ -201,6 +210,7 @@ export const SwitchChainComp = () => {
       if (!chain) {
         return;
       }
+
       if (!address && calledByUser) {
         toast.error("Please connect wallet first!");
         return;
@@ -213,7 +223,7 @@ export const SwitchChainComp = () => {
         setSelectedChain(chain); // Set the chain if there's no mismatch
       }
     },
-    [address, chainId, open]
+    [address, chainId]
   );
 
   useEffect(() => {
@@ -244,7 +254,7 @@ export const SwitchChainComp = () => {
               {/* Hide text on mobile */}
             </div>
           ) : (
-            <>Not found</>
+            <>None</>
           )}
           <IoChevronDown size={18} />
         </button>
@@ -258,7 +268,17 @@ export const SwitchChainComp = () => {
               <div
                 className="dropdown-item cursor-pointer flex gap-1 items-center"
                 key={ele.id}
-                onClick={() => setChain(ele.id, true)}
+                onClick={() => {
+                  if (location.pathname.startsWith("/airdrop")) {
+                    toast.error("Cannot switch network on airdrop page");
+                    return;
+                  }
+                  if (location.pathname.startsWith("/poap")) {
+                    toast.error("Cannot switch network on poap page");
+                    return;
+                  }
+                  setChain(ele.id, true);
+                }}
               >
                 <img
                   src={ele.logo}

@@ -197,7 +197,7 @@ export const BorderStyle = styled.div`
 `;
 export const ChainDivStyle = styled.div<IChainDiv>`
   position: absolute;
-  z-index: -1;
+  z-index: 1;
   top: ${({ top }) => (top !== undefined ? `${top}px` : "auto")};
   left: ${({ left }) => (left !== undefined ? `${left}px` : "auto")};
   right: ${({ right }) => (right !== undefined ? `${right}px` : "auto")};
@@ -212,9 +212,9 @@ export const ChainDivStyle = styled.div<IChainDiv>`
   }
   filter: blur(7px);
   cursor: pointer;
-  z-index: 1;
   scale: 0.8;
-  transition: filter 0.3s ease, scale 0.3s ease; /* Add transition for filter and scale */
+  transition: filter 0.3s ease, scale 0.3s ease;
+  
   &:hover {
     filter: blur(0px);
     scale: 0.9;
@@ -246,8 +246,60 @@ export const ChainDivStyle = styled.div<IChainDiv>`
       animation: ${moveBottomRight} 3s infinite;
     `}
 
+  /* Tablet Breakpoint */
+  @media (max-width: 1024px) {
+    width: 70px;
+    height: 70px;
+    
+    /* Adjust positioning for tablet */
+    ${({ top }) => top !== undefined && css`
+      top: ${Math.max(top * 0.8, 10)}px;
+    `}
+    ${({ bottom }) => bottom !== undefined && css`
+      bottom: ${Math.max(bottom * 0.8, 10)}px;
+    `}
+    ${({ left }) => left !== undefined && css`
+      left: ${Math.max(left * 0.8, 10)}px;
+    `}
+    ${({ right }) => right !== undefined && css`
+      right: ${Math.max(right * 0.8, 10)}px;
+    `}
+  }
+
+  
+  /* Mobile Breakpoint */
   @media (max-width: 767px) {
-    display: none;
+    display: block;
+    width: 50px;
+    height: 50px;
+    z-index: -1; /* Place icons behind other elements */
+    
+    ${({ top }) => top !== undefined && css`
+      top: ${Math.max(top * 0.6, 5)}px;
+    `}
+    ${({ bottom }) => bottom !== undefined && css`
+      bottom: ${Math.max(bottom * 1.5, 60)}px;
+    `}
+    ${({ left }) => left !== undefined && css`
+      left: ${Math.max(left * 0.6, 5)}px;
+    `}
+    ${({ right }) => right !== undefined && css`
+      right: ${Math.max(right * 0.6, 5)}px;
+    `}
+
+    /* Increased blur effect and reduced opacity for mobile */
+    filter: blur(12px);
+    opacity: 0.8;
+    scale: 0.7;
+
+    &:hover {
+      filter: blur(12px); /* Maintain blur effect on hover for mobile */
+      scale: 0.7; /* Disable scale effect on hover for mobile */
+      animation-play-state: running; /* Keep animation running on hover for mobile */
+    }
+
+    /* Remove pointer cursor on mobile since we're disabling interactions */
+    cursor: default;
   }
 `;
 
@@ -685,7 +737,7 @@ export const DashboardIcon = () => {
         clipRule="evenodd"
         d="M0.876953 7.99978C0.876953 4.3421 3.8421 1.37695 7.49978 1.37695C11.1574 1.37695 14.1226 4.3421 14.1226 7.99978C14.1226 11.6574 11.1574 14.6226 7.49978 14.6226C3.8421 14.6226 0.876953 11.6574 0.876953 7.99978ZM7.49978 2.32695C4.36677 2.32695 1.82695 4.86677 1.82695 7.99978C1.82695 9.47187 2.38768 10.813 3.30721 11.8213C4.19067 10.4411 5.73812 9.5249 7.50017 9.5249C9.262 9.5249 10.8093 10.4409 11.6928 11.8208C12.6121 10.8126 13.1726 9.47163 13.1726 7.99978C13.1726 4.86677 10.6328 2.32695 7.49978 2.32695ZM10.9817 12.4786C10.2839 11.2794 8.98564 10.4749 7.50017 10.4749C6.01452 10.4749 4.71618 11.2796 4.01839 12.479C4.97946 13.2271 6.18759 13.6726 7.49978 13.6726C8.81221 13.6726 10.0205 13.2269 10.9817 12.4786ZM5.14993 7.00478C5.14993 5.70691 6.20206 4.65478 7.49993 4.65478C8.7978 4.65478 9.84993 5.70691 9.84993 7.00478C9.84993 8.30265 8.7978 9.35478 7.49993 9.35478C6.20206 9.35478 5.14993 8.30265 5.14993 7.00478ZM7.49993 5.60478C6.72673 5.60478 6.09993 6.23158 6.09993 7.00478C6.09993 7.77798 6.72673 8.40478 7.49993 8.40478C8.27313 8.40478 8.89993 7.77798 8.89993 7.00478C8.89993 6.23158 8.27313 5.60478 7.49993 5.60478Z"
         fill="#CCD7F6"
-        fill-opacity="0.68"
+        fillOpacity="0.68"
       />
     </svg>
   );
