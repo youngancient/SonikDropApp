@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -30,10 +29,6 @@ import { motion, AnimatePresence } from "framer-motion";
 export function SettingsComponent() {
   const dispatch = useAppDispatch();
 
-  // const [nftAddress, setNftAddress] = useState<string>("");
-  // const [nftAddressError, setNftAddressError] = useState("");
-  // const [claimButtonDeactivated, setClaimButtonDeactivated] =
-  //   useState<boolean>(false);
   const airDropName = useAppSelector(selectAirDropName);
   const airDropNameError = useAppSelector(selectAirDropNameError);
   const nftAddress = useAppSelector(selectNftAddress);
@@ -43,8 +38,6 @@ export function SettingsComponent() {
 
   useEffect(() => {
     const isNftAddressValid = ethers.isAddress(nftAddress);
-
-    // const nftOwnersCanClaim = JSON.parse(sessionStorage.getItem("settings") as string);
 
     if (isNftAddressValid) {
       dispatch(setNftAddressError(""));
@@ -164,11 +157,6 @@ export function SettingsComponent() {
                 type="checkbox"
                 style={{ transform: "scale(1.5)" }}
                 checked={onlyNFTOwnersCanClaim}
-                // onChange={() => {
-                //   if (claimButtonDeactivated == false) {
-                //     dispatch(setOnlyNFTOwnersCanClaim(!onlyNFTOwnersCanClaim));
-                //   }
-                // }}
                 onClick={() => {
                   if (claimButtonDeactivated == true) {
                     toast.error("Kindly input a valid NFT address");
@@ -211,21 +199,6 @@ export function SettingsComponent() {
                 </div>
               </div>
             </div>
-            {/* <div>
-            <div className="mt-4">List of recipients</div>
-            <div className="mb-8 h-[200px] overflow-y-auto p-2">
-              {csvToJSONData.map((recepients: any, index: number) => {
-                return (
-                  <div className="flex flex-col md:flex-row justify-between border-b-2 border-b-[#D0D5DD] py-4">
-                    <div>
-                      {index + 1}. {recepients.address}
-                    </div>
-                    <div>{recepients.amount}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </div> */}
           </div>
           <button
             className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]"
