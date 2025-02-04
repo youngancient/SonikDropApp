@@ -1,6 +1,6 @@
 import { ethers, Numeric } from "ethers";
 import Papa from "papaparse";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect } from "react";
 import { ICSV } from "../../interfaces/CSVInterface";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -28,7 +28,7 @@ import {
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
-import { ITokenDetails, useTokenDetail } from "../../hooks/specific/useERC20";
+import { useTokenDetail } from "../../hooks/specific/useERC20";
 import { generateMerkleTree } from "../../utils/merkleGen";
 import CsvMakerComponent from "../csvMakerComponent";
 
