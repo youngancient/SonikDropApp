@@ -74,7 +74,7 @@ export function HeaderComponent({
       });
 
       if (response.status === 200) {
-        console.log(response.data);
+        // console.log(response.data);
         const { data } = response.data;
         Cookies.set("token", data);
       }

@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useTokenFactoryContract } from "../useContracts";
 import { toast } from "react-toastify";
 import { ethers } from "ethers";
+import { stripLeadingZeros } from "../../utils/helpers";
 
 export const useTokenFactoryFunctions = () => {
   const tokenFactoryContract = useTokenFactoryContract(true);
@@ -10,6 +11,7 @@ export const useTokenFactoryFunctions = () => {
   >("default");
   const [isCreating, setIsCreating] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string>("");
+  const [deployedAirdropContractAddress, setDeployedTokenContractAddress] = useState("0x");
 
   const createTokenDrop = useCallback(
     async (
@@ -48,9 +50,18 @@ export const useTokenFactoryFunctions = () => {
         setTransactionHash(tx.hash);
 
         const reciept = await tx.wait();
-        if (reciept.status === 1) {    
+        if (reciept.status === 1) {
           toast.success("Creation Successful!");
           console.log(reciept);
+          // Find the emitted event with the new contract's address
+          const eventLogs = reciept.logs;
+
+          if (eventLogs) {
+            const deployedContractAddress = eventLogs[0].topics[2];
+            setDeployedTokenContractAddress(stripLeadingZeros(deployedContractAddress))
+          } else {
+            console.log("Deployment event not found.");
+          }
           setCreationStatus("success");
           return;
         }
@@ -65,5 +76,5 @@ export const useTokenFactoryFunctions = () => {
     [tokenFactoryContract]
   );
 
-  return { createTokenDrop, creationStatus, isCreating,transactionHash };
+  return { createTokenDrop, creationStatus, isCreating, transactionHash,deployedAirdropContractAddress };
 };

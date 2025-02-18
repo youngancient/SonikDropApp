@@ -33,6 +33,8 @@ import {
   selectAirDropName,
   selectNftAddress,
 } from "../../store/slices/settingsSlice";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export function ApproveComponent() {
   const dispatch = useAppDispatch();
@@ -86,8 +88,13 @@ export function ApproveComponent() {
 
   const { clear } = useClearFormInput();
   const [showModal, setShowModal] = useState(false);
-  const { createTokenDrop, creationStatus, isCreating, transactionHash } =
-    useTokenFactoryFunctions();
+  const {
+    createTokenDrop,
+    creationStatus,
+    isCreating,
+    transactionHash,
+    deployedAirdropContractAddress,
+  } = useTokenFactoryFunctions();
 
   const { approveTransfer, isLoadingApproval, approvalStatus } =
     useTokenApproval(tokenAddress);
@@ -125,7 +132,7 @@ export function ApproveComponent() {
       noOfClaimers,
     };
     if (approvalStatus === "success") {
-      console.log("got here 1");
+      // console.log("got here 1");
       createTokenDrop(
         body.tokenAddress,
         body.merkleRoot,
@@ -139,8 +146,28 @@ export function ApproveComponent() {
 
   useEffect(() => {
     if (creationStatus === "success") {
-      console.log("here");
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+      const token = Cookies.get("token");
+      const body = {
+        proofs: merkleOutput,
+        contractAddress: deployedAirdropContractAddress,
+      };
       setShowModal(true);
+
+      axios
+        .post(`${BACKEND_URL}/users/add-bulk-user`, body, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log("API call successful:", response);
+        })
+        .catch((error) => {
+          console.error("API call failed:", error);
+        });
+      // call API here
       setTimeout(() => {
         dispatch(setTokenDetail(null));
         clear();

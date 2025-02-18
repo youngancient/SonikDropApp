@@ -60,11 +60,11 @@ export function PrepareComponent() {
       Papa.parse(file, {
         complete: (results: any) => {
           const invalidAddresses = results.data.filter((result: ICSV) => {
-            console.log(
-              result.address,
-              " valid ",
-              ethers.isAddress(result.address)
-            );
+            // console.log(
+            //   result.address,
+            //   " valid ",
+            //   ethers.isAddress(result.address)
+            // );
             return ethers.isAddress(result.address) == false;
           });
 
