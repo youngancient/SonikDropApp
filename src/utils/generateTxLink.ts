@@ -1,5 +1,4 @@
 import {
-  electroneumTestnet,
   kairos,
   liskSepolia,
 } from "@reown/appkit/networks";
@@ -14,9 +13,6 @@ export const generateTxExplorerLink = (
     explorerUrl += kairos.blockExplorers?.default.url;
   }
 
-  if (chainId === electroneumTestnet.id) {
-    explorerUrl += electroneumTestnet.blockExplorers?.default.url;
-  }
   if (chainId === liskSepolia.id) {
     explorerUrl += liskSepolia.blockExplorers?.default.url;
   }

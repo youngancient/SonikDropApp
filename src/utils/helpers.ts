@@ -19,3 +19,7 @@ export const copyToClipboard = (text: string, onSuccess: () => void): void => {
       console.error("Failed to copy text: ", err);
     });
 };
+
+export const stripLeadingZeros = (address: string): string => {
+  return "0x" + address.slice(-40);
+};

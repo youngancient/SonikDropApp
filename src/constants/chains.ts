@@ -36,11 +36,6 @@ export const supportedNetworks: IChains[] = [
     logo: "Base.png",
   },
   {
-    name: "Electroneum",
-    id: 5201420,
-    logo: "Electroneum.png",
-  },
-  {
     name: "Kaia Testnet",
     id: 1001,
     logo: "kaia.png",
