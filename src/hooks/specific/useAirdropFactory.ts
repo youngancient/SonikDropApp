@@ -44,7 +44,7 @@ export const useTokenFactoryFunctions = () => {
           noOfClaimers,
           totalOutputTokens,
           {
-            gasLimit: 1000000,
+            gasLimit: 2000000,
           }
         );
         setTransactionHash(tx.hash);
