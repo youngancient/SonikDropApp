@@ -9,6 +9,7 @@
 We plan to support 8 chains, becoming a multichain dapp focused on improving community reward systems.
 
 Currently, we are in our **building and testing phase**.
+Launching Soon!
 
 ## Contribution
 
