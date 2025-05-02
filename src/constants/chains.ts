@@ -40,37 +40,42 @@ export const supportedNetworks: IChains[] = [
     id: 1001,
     logo: "kaia.png",
   },
-
   {
     name: "Lisk Sepolia",
     id: 4202,
     logo: "Lisk.png",
   },
-
   {
     name: "Sepolia",
     id: 11155111,
     logo: "Ethereum.avif",
   },
 
-  // {
-  //   name: "BNB",
-  //   id: 56,
-  //   logo: "BNB.avif",
-  // },
-  // {
-  //   name: "Optimism",
-  //   id: 10,
-  //   logo: "Optimism.avif",
-  // },
-  // {
-  //   name: "Arbitrum",
-  //   id: 42161,
-  //   logo: "Arbitrum.svg",
-  // },
-  // {
-  //   name: "Polygon",
-  //   id: 137,
-  //   logo: "Polygon.avif",
-  // },
+  {
+    name: "Sonic Testnet",
+    id: 57054,
+    logo: "sonic_chain.webp",
+  }
+
 ];
+
+// {
+//   name: "BNB",
+//   id: 56,
+//   logo: "BNB.avif",
+// },
+// {
+//   name: "Optimism",
+//   id: 10,
+//   logo: "Optimism.avif",
+// },
+// {
+//   name: "Arbitrum",
+//   id: 42161,
+//   logo: "Arbitrum.svg",
+// },
+// {
+//   name: "Polygon",
+//   id: 137,
+//   logo: "Polygon.avif",
+// },

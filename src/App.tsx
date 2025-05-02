@@ -2,7 +2,7 @@ import "./App.css";
 import "./connection.ts";
 import { HeaderComponent } from "./components/headerComponent.tsx";
 import { Hero } from "./components/heroComponent.tsx";
-import { BNB, ETH , Optimism, Kaia, Arbitrum, Polygon, Base, Lisk} from "./components/icons.tsx";
+import { BNB, ETH , Optimism, Kaia, Arbitrum, Polygon, Base, Sonic} from "./components/icons.tsx";
 import { ChainHrefs } from "./constants/chainHrefs.ts";
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
       <Arbitrum href={ChainHrefs.Arbitrum} />
       <Polygon href={ChainHrefs.Polygon} />
       <Base href={ChainHrefs.Base} />
-      <Lisk href={ChainHrefs.Lisk} />
+      <Sonic href={ChainHrefs.Sonic} />
     </>
   );
 }

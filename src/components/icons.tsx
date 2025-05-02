@@ -169,19 +169,19 @@ export const Kaia: React.FC<ILink> = ({ href }) => {
       right={50}
       onClick={() => href && window.open(href, "_blank")}
     >
-      <img src="/kaia.png" alt="sol" />
+      <img src="/kaia.png" alt="kaia" />
     </ChainDivStyle>
   );
 };
 
-export const Lisk: React.FC<ILink> = ({ href }) => {
+export const Sonic: React.FC<ILink> = ({ href }) => {
   return (
     <ChainDivStyle
       bottom={300}
       right={110}
       onClick={() => href && window.open(href, "_blank")}
     >
-      <img src="/Lisk.png" alt="sol" />
+      <img src="/sonic_chain.webp" alt="sonic" />
     </ChainDivStyle>
   );
 };

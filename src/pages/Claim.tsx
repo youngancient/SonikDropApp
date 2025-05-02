@@ -44,6 +44,7 @@ const ClaimPage = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (query === "" || query.trim() === "") {
       clearForm();
       return;
