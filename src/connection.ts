@@ -3,8 +3,10 @@ import { EthersAdapter } from "@reown/appkit-adapter-ethers";
 import {
   sepolia as rawSepolia,
   baseSepolia as rawBaseSepolia,
+  // sonic as rawSonic,
   liskSepolia as rawLiskSepolia,
   kairos as rawKairos,
+  sonicTestnet as rawSonicTest
 } from "@reown/appkit/networks";
 
 export const sepolia: CaipNetwork = {
@@ -21,18 +23,34 @@ export const baseSepolia: CaipNetwork = {
   caipNetworkId: "eip155:84532",
 };
 
-export const liskSepoliaNetwork:CaipNetwork = {
-  ...rawLiskSepolia,
-  id: 4202,
-  chainNamespace: "eip155",
-  caipNetworkId: "eip155:4202",
-}
 
 export const kairos:CaipNetwork = {
   ...rawKairos,
   id: 1001,
   chainNamespace: "eip155",
   caipNetworkId: "eip155:1001",
+}
+
+export const liskSepolia:CaipNetwork = {
+  ...rawLiskSepolia,
+  id: 4202,
+  chainNamespace: "eip155",
+  caipNetworkId: "eip155:4202",
+}
+
+// uncomment
+// export const sonic:CaipNetwork = {
+//   ...rawSonic,
+//   id: 146,
+//   chainNamespace: "eip155",
+//   caipNetworkId: "eip155:146",
+// }
+
+export const sonic:CaipNetwork = {
+  ...rawSonicTest,
+  id: 57054,
+  chainNamespace: "eip155",
+  caipNetworkId: "eip155:57054",
 }
 
 // export const electroneumTestNetwork:CaipNetwork = {
@@ -74,15 +92,16 @@ const projectId = import.meta.env.VITE_APPKIT_PROJECT_ID;
 const networks: [CaipNetwork, ...CaipNetwork[]] = [
   sepolia,
   baseSepolia,
-  liskSepoliaNetwork,
+  liskSepolia,
   kairos,
+  sonic
 ];
 
 // 3. Create a metadata object - optional
 const metadata = {
   name: "SonikDrop",
   description: "Swift & Cheap Airdrop as a service tool",
-  url: "https://mywebsite.com",
+  url: "https://sonikdrop.vercel.app/",
   icons: ["https://avatars.mywebsite.com/"],
 };
 
@@ -94,7 +113,7 @@ export const appkit = createAppKit({
   projectId,
   allowUnsupportedChain: false,
   allWallets: "SHOW",
-  defaultNetwork: kairos,
+  defaultNetwork: sonic,
   enableEIP6963: true,
   features: {
     analytics: true,
@@ -103,4 +122,4 @@ export const appkit = createAppKit({
     socials: [],
   },
 });
-appkit.switchNetwork(kairos);
+appkit.switchNetwork(sonic);

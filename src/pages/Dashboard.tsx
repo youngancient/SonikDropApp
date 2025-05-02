@@ -22,6 +22,7 @@ import {
 } from "../components/claimComponent";
 import { SonikNotConnected } from "../components/notConnected";
 import { textVariant } from "../animations/animation";
+import { useReadFactory } from "../hooks/specific/useReadFactory";
 
 const Dashboard = () => {
   // Note: Here only the airdrops created by the user are displayed
@@ -47,8 +48,10 @@ const Dashboard = () => {
     clearForm();
     setStateTabs(newTabs);
   };
+  const {getOwnerDrops} = useReadFactory();
 
   useEffect(() => {
+    getOwnerDrops();
     const userCreatedTokenDrops = TokenDrops.filter(
       (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
     );

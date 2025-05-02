@@ -42,3 +42,27 @@ export function generateMerkleTree(entities: AirdropEntity[]) {
 
   return { rootHash, output };
 }
+
+export function generateMerkleTreeFromAddresses(addresses: string[]) {
+  // Generate leaf nodes (hash only the address)
+  const leaves = addresses.map((address) =>
+    keccak256(ethers.solidityPacked(["address"], [address]))
+  );
+
+  // Create the Merkle Tree
+  const tree = new MerkleTree(leaves, keccak256, { sortPairs: true });
+
+  // Get the Merkle Root
+  const rootHash = tree.getHexRoot();
+
+  // Generate output which includes address and proof
+  const output = addresses.map((address, index) => {
+    const leaf = leaves[index];
+    return {
+      address,
+      proofs: tree.getHexProof(leaf),
+    };
+  });
+
+  return { rootHash, output, tree };
+}

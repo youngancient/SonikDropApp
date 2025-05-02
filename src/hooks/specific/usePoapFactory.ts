@@ -1,30 +1,30 @@
 import { useCallback, useState } from "react";
-import { useTokenFactoryContract } from "../useContracts";
+import { usePOAPFactoryContract } from "../useContracts";
 import { toast } from "react-toastify";
 import { ethers } from "ethers";
 import { stripLeadingZeros } from "../../utils/helpers";
 
 export const useTokenFactoryFunctions = () => {
-  const tokenFactoryContract = useTokenFactoryContract(true);
+  const poapFactoryContract = usePOAPFactoryContract(true);
   const [creationStatus, setCreationStatus] = useState<
     "default" | "success" | "failed"
   >("default");
   const [isCreating, setIsCreating] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string>("");
-  const [deployedAirdropContractAddress, setDeployedTokenContractAddress] =
+  const [deployedAirdropContractAddress, setDeployedPoapContractAddress] =
     useState("0x");
   
 
   const createTokenDrop = useCallback(
     async (
-      tokenAddress: string,
       merkleRoot: string,
       name: string,
+      symbol : string,
+      baseURI : string,
       nftAddress: string,
       noOfClaimers: number,
-      totalOutputTokens: bigint
     ) => {
-      if (!tokenFactoryContract) {
+      if (!poapFactoryContract) {
         toast.error("Contract not found");
         return;
       }
@@ -36,15 +36,16 @@ export const useTokenFactoryFunctions = () => {
         if (nftAddress == "") {
           nftAddressClone = ethers.ZeroAddress;
         }
-        const tx = await tokenFactoryContract[
-          "createSonikDrop(address,bytes32,string,address,uint256,uint256)"
+        // console.log({name});
+        const tx = await poapFactoryContract[
+          "createSonikPoap(string,string,string,bytes32,address,uint256)"
         ](
-          tokenAddress,
-          merkleRoot,
           name,
+          symbol,
+          baseURI,
+          merkleRoot,
           nftAddressClone,
           noOfClaimers,
-          totalOutputTokens,
           {
             gasLimit: 2000000,
           }
@@ -60,7 +61,7 @@ export const useTokenFactoryFunctions = () => {
 
           if (eventLogs) {
             const deployedContractAddress = eventLogs[0].topics[2];
-            setDeployedTokenContractAddress(
+            setDeployedPoapContractAddress(
               stripLeadingZeros(deployedContractAddress)
             );
           } else {
@@ -77,7 +78,7 @@ export const useTokenFactoryFunctions = () => {
         setIsCreating(false);
       }
     },
-    [tokenFactoryContract]
+    [poapFactoryContract]
   );
   
   return {
@@ -86,6 +87,5 @@ export const useTokenFactoryFunctions = () => {
     isCreating,
     transactionHash,
     deployedAirdropContractAddress,
-  
   };
 };

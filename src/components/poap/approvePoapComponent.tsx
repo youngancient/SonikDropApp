@@ -43,6 +43,7 @@ export function ApprovePoapComponent() {
 
   const approve = () => {
     // call contract
+    console.log(csvToJSONData);
     setTimeout(() => {
       setShowModal(true);
     }, 1200);
