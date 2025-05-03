@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import { useTokenFactoryContract } from "../useContracts";
+import { useTokenFactoryContract } from "../../useContracts";
 import { toast } from "react-toastify";
 import { ethers } from "ethers";
-import { stripLeadingZeros } from "../../utils/helpers";
+import { stripLeadingZeros } from "../../../utils/helpers";
 
 export const useTokenFactoryFunctions = () => {
   const tokenFactoryContract = useTokenFactoryContract(true);

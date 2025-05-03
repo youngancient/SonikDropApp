@@ -28,7 +28,7 @@ import {
   useTokenBalance,
 } from "../../hooks/specific/useERC20";
 import { ethers } from "ethers";
-import { useTokenFactoryFunctions } from "../../hooks/specific/useAirdropFactory";
+import { useTokenFactoryFunctions } from "../../hooks/specific/token/useTokenAirdropFactory";
 import {
   selectAirDropName,
   selectNftAddress,

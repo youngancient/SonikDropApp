@@ -1,7 +1,4 @@
-import MerkleTree from "merkletreejs";
-import keccak256 from "keccak256";
-import { ethers } from "ethers";
-
+import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
 // make this function modularized
 // so that it can be imported in other scripts
 // it should take in as argument, an array of Objects which represent each airdrop entity
@@ -14,53 +11,60 @@ export interface AirdropEntity {
 }
 
 export function generateMerkleTree(entities: AirdropEntity[]) {
-  // Generate leaf nodes
-  const leaves = entities.map((entity) =>
-    keccak256(
-      ethers.solidityPacked(
-        ["address", "uint256"],
-        [entity.address, entity.amount]
-      )
-    )
+  // Create the tree using OpenZeppelin's format
+  const tree = StandardMerkleTree.of(
+    entities.map((entity) => [entity.address, entity.amount]),
+    ["address", "uint256"]
   );
 
-  // Create the Merkle Tree
-  const tree = new MerkleTree(leaves, keccak256, { sortPairs: true });
+  // Get the root
+  const rootHash = tree.root;
 
-  // Get the Merkle Root
-  const rootHash = tree.getHexRoot();
+  // Generate proofs and final output
+  const output = entities.map((entity) => {
+    // Find the index of the current entity in the tree
+    const index = [...tree.entries()].findIndex(
+      ([, value]) =>
+        value[0].toLowerCase() === entity.address.toLowerCase() &&
+        value[1] === entity.amount
+    );
 
-  // Generate output which combines proof, amount and merkle proof for each entity
-  const output = entities.map((entity, index) => {
-    const leaf = leaves[index];
+    const proofs = tree.getProof(index);
+
     return {
       address: entity.address,
       amount: entity.amount,
-      proofs: tree.getHexProof(leaf),
+      proofs,
     };
   });
 
-  return { rootHash, output };
+  // Optional: All proofs in one array if needed (similar to original)
+  const proofs = output.map((entry) => entry.proofs);
+
+  return { rootHash, proofs, output };
 }
 
 export function generateMerkleTreeFromAddresses(addresses: string[]) {
-  // Generate leaf nodes (hash only the address)
-  const leaves = addresses.map((address) =>
-    keccak256(ethers.solidityPacked(["address"], [address]))
-  );
+  // Convert addresses to OpenZeppelin-compatible entries: [ [address], [address], ... ]
+  const values = addresses.map((addr) => [addr]);
 
-  // Create the Merkle Tree
-  const tree = new MerkleTree(leaves, keccak256, { sortPairs: true });
+  // Define value types for each field
+  const tree = StandardMerkleTree.of(values, ["address"]);
 
-  // Get the Merkle Root
-  const rootHash = tree.getHexRoot();
+  const rootHash = tree.root;
 
-  // Generate output which includes address and proof
-  const output = addresses.map((address, index) => {
-    const leaf = leaves[index];
+  // Map each address to its corresponding proof
+  const output = addresses.map((address) => {
+    // Find the index of this address in the tree
+    const index = [...tree.entries()].findIndex(
+      ([, value]) => value[0].toLowerCase() === address.toLowerCase()
+    );
+
+    const proofs = tree.getProof(index);
+
     return {
       address,
-      proofs: tree.getHexProof(leaf),
+      proofs
     };
   });
 
