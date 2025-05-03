@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import useRunners from "./useRunners";
 import { Contract } from "ethers";
-import TOKEN_FACTORY_ABI from "../ABI/tokenFactory.json";
-import TOKEN_AIRDROP_ABI from "../ABI/tokenAirdrop.json";
+// import TOKEN_FACTORY_ABI from "../ABI/tokenFactory.json";
+// import TOKEN_AIRDROP_ABI from "../ABI/tokenAirdrop.json";
 
 import { useAppKitNetwork } from "@reown/appkit/react";
 import { getFactoryAddressByChain, getFactoryPOAPAddressByChain } from "../utils/getContractAddressByChain";
+import { TOKEN_FACTORY_ABI } from "../ABI/tokenFactory";
+import { TOKEN_AIRDROP_ABI } from "../ABI/tokenAirdrop";
 
 export const useTokenFactoryContract = (withSigner = false) => {
   const { provider, signer } = useRunners();

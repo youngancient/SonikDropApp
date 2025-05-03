@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import useRunners from "./useRunners";
 import { Contract } from "ethers";
-import ERC20_ABI from "../ABI/erc20.json";
+import { ERC20_ABI } from "../ABI/erc20";
+
 
 export const useERC20Contract = (
   withSigner = false,
