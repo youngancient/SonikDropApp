@@ -84,6 +84,7 @@ export const sonic:CaipNetwork = {
 //     },
 //   },
 // };
+console.log("sonic shii ->>>>>>>>>>", sonic);
 
 // 1. Get projectId
 const projectId = import.meta.env.VITE_APPKIT_PROJECT_ID;

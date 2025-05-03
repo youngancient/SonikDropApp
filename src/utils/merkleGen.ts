@@ -64,5 +64,5 @@ export function generateMerkleTreeFromAddresses(addresses: string[]) {
     };
   });
 
-  return { rootHash, output, tree };
+  return { rootHash, output };
 }
