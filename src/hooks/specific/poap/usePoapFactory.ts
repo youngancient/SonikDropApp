@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
-import { usePOAPFactoryContract } from "../useContracts";
+import { usePOAPFactoryContract } from "../../useContracts";
 import { toast } from "react-toastify";
 import { ethers } from "ethers";
-import { stripLeadingZeros } from "../../utils/helpers";
+import { stripLeadingZeros } from "../../../utils/helpers";
 
-export const useTokenFactoryFunctions = () => {
+export const usePoapFactoryFunctions = () => {
   const poapFactoryContract = usePOAPFactoryContract(true);
   const [creationStatus, setCreationStatus] = useState<
     "default" | "success" | "failed"

@@ -1,13 +1,13 @@
 import { useCallback } from "react";
-import { useTokenFactoryContract } from "../useContracts";
+import { useTokenFactoryContract } from "../../useContracts";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "react-toastify";
 
-export const useReadFactory = () => {
+export const useReadTokenFactoryFunctions = () => {
   const tokenFactoryContract = useTokenFactoryContract();
   const { address } = useAppKitAccount();
 
-  const getOwnerDrops = useCallback(async () => {
+  const getOwnerTokenDrops = useCallback(async () => {
     console.log("token factory -> ", tokenFactoryContract);
 
     if (!tokenFactoryContract) {
@@ -18,5 +18,5 @@ export const useReadFactory = () => {
     console.log(drops);
   }, [tokenFactoryContract]);
 
-  return { getOwnerDrops };
+  return { getOwnerTokenDrops };
 };

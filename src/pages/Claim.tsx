@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FooterComponent } from "../components/footerComponent";
 import { HeaderComponent } from "../components/headerComponent";
 import { ClaimPageStyle, DropListStyle } from "../components/styles/claimpage";
@@ -14,6 +14,7 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
 import { SonikNotConnected } from "../components/notConnected.tsx";
 import { ethers } from "ethers";
+import { useReadPoapFactoryFunctions } from "../hooks/specific/poap/useReadPoapFactory.ts";
 
 export interface TabSwitch {
   name: "Tokens" | "POAPs";
@@ -85,6 +86,12 @@ const ClaimPage = () => {
     setPOAPDrops(POAPDrops);
     setQuery("");
   };
+  const { getAllPoapDrops, getOwnerPoapDrops } = useReadPoapFactoryFunctions();
+  useEffect(() => {
+    getAllPoapDrops();
+    getOwnerPoapDrops();
+  }, []);
+  
   return (
     <div
       style={{ backgroundColor: "#050C19" }}
