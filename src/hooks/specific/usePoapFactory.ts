@@ -60,7 +60,7 @@ export const useTokenFactoryFunctions = () => {
           const eventLogs = reciept.logs;
 
           if (eventLogs) {
-            const deployedContractAddress = eventLogs[0].topics[2];
+            const deployedContractAddress = eventLogs[0].topics[3];
             setDeployedPoapContractAddress(
               stripLeadingZeros(deployedContractAddress)
             );
