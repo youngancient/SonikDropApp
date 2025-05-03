@@ -1,13 +1,12 @@
 import { useMemo } from "react";
 import useRunners from "./useRunners";
 import { Contract } from "ethers";
-// import TOKEN_FACTORY_ABI from "../ABI/tokenFactory.json";
-// import TOKEN_AIRDROP_ABI from "../ABI/tokenAirdrop.json";
-
 import { useAppKitNetwork } from "@reown/appkit/react";
 import { getFactoryAddressByChain, getFactoryPOAPAddressByChain } from "../utils/getContractAddressByChain";
 import { TOKEN_FACTORY_ABI } from "../ABI/tokenFactory";
 import { TOKEN_AIRDROP_ABI } from "../ABI/tokenAirdrop";
+import { POAP_FACTORY_ABI } from "../ABI/poapFactory";
+import { POAP_AIRDROP_ABI } from "../ABI/poapAirdrop";
 
 export const useTokenFactoryContract = (withSigner = false) => {
   const { provider, signer } = useRunners();
@@ -67,9 +66,9 @@ export const usePOAPFactoryContract = (withSigner = false) => {
 
     if (withSigner) {
       if (!signer) return null;
-      return new Contract(factoryAddress, TOKEN_FACTORY_ABI, signer);
+      return new Contract(factoryAddress, POAP_FACTORY_ABI, signer);
     }
-    return new Contract(factoryAddress, TOKEN_FACTORY_ABI, provider);
+    return new Contract(factoryAddress, POAP_FACTORY_ABI, provider);
   }, [chainId, provider, signer, withSigner]);
 };
 
@@ -88,9 +87,9 @@ export const usePOAPDropContract = (
     try {
       if (withSigner) {
         if (!signer) return null;
-        return new Contract(poapContractAddress, TOKEN_AIRDROP_ABI, signer);
+        return new Contract(poapContractAddress, POAP_AIRDROP_ABI, signer);
       } else {
-        return new Contract(poapContractAddress, TOKEN_AIRDROP_ABI, provider);
+        return new Contract(poapContractAddress, POAP_AIRDROP_ABI, provider);
       }
     } catch (error) {
       console.error("Error creating Airdrop contract:", error);
