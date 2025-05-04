@@ -80,7 +80,6 @@ export interface ITokenDetails {
 
 // works on #Sepolia and #Kaia, but not #base n #lisk, why?
 // when I switch to base, i keep getting "Chain switch error"
-// when I switch to lisk, i keep getting jsonrpcprovider is disconnected
 
 export const useTokenDetail = (tokenAddress: string) => {
   const [isLoadingDetails, setisLoadingDetails] = useState(false);

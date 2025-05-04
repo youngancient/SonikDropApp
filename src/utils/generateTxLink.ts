@@ -2,7 +2,7 @@ import {
   kairos,
   liskSepolia,
 } from "@reown/appkit/networks";
-import { baseSepolia, sepolia } from "../connection";
+import { baseSepolia, sepolia, sonic } from "../connection";
 
 export const generateTxExplorerLink = (
   chainId: string | number,
@@ -13,8 +13,8 @@ export const generateTxExplorerLink = (
     explorerUrl += kairos.blockExplorers?.default.url;
   }
 
-  if (chainId === liskSepolia.id) {
-    explorerUrl += liskSepolia.blockExplorers?.default.url;
+  if (chainId === sonic.id) {
+    explorerUrl += sonic.blockExplorers?.default.url;
   }
   if (chainId === sepolia.id) {
     explorerUrl += sepolia.blockExplorers?.default.url;

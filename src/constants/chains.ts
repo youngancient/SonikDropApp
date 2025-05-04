@@ -14,7 +14,6 @@ export const supportedNetworksDetails: INetworkDetail = {
 
 // for incorporating mainnet
 // 1 : "Ethereum Mainnet",
-// 1135 : "Lisk Mainnet",
 // 8453 : "Base Mainnet",
 // 42161 : "Arbitrum One Mainnet",
 // 534352 : "Scroll Mainnet",
@@ -39,11 +38,6 @@ export const supportedNetworks: IChains[] = [
     name: "Kaia Testnet",
     id: 1001,
     logo: "kaia.png",
-  },
-  {
-    name: "Lisk Sepolia",
-    id: 4202,
-    logo: "Lisk.png",
   },
   {
     name: "Sepolia",

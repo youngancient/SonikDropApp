@@ -4,7 +4,6 @@ import {
   sepolia as rawSepolia,
   baseSepolia as rawBaseSepolia,
   // sonic as rawSonic,
-  liskSepolia as rawLiskSepolia,
   kairos as rawKairos,
   sonicTestnet as rawSonicTest
 } from "@reown/appkit/networks";
@@ -31,12 +30,6 @@ export const kairos:CaipNetwork = {
   caipNetworkId: "eip155:1001",
 }
 
-export const liskSepolia:CaipNetwork = {
-  ...rawLiskSepolia,
-  id: 4202,
-  chainNamespace: "eip155",
-  caipNetworkId: "eip155:4202",
-}
 
 // uncomment
 // export const sonic:CaipNetwork = {
@@ -93,7 +86,6 @@ const projectId = import.meta.env.VITE_APPKIT_PROJECT_ID;
 const networks: [CaipNetwork, ...CaipNetwork[]] = [
   sepolia,
   baseSepolia,
-  liskSepolia,
   kairos,
   sonic
 ];
