@@ -86,12 +86,15 @@ const ClaimPage = () => {
     setPOAPDrops(POAPDrops);
     setQuery("");
   };
-  const { getAllPoapDrops, getOwnerPoapDrops } = useReadPoapFactoryFunctions();
+  const { getAllPoapDrops, getOwnerPoapDrops, getAllPoapDropsDetails } =
+    useReadPoapFactoryFunctions();
+    
   useEffect(() => {
     getAllPoapDrops();
     getOwnerPoapDrops();
+    getAllPoapDropsDetails();
   }, []);
-  
+
   return (
     <div
       style={{ backgroundColor: "#050C19" }}

@@ -2,11 +2,16 @@ import { useMemo } from "react";
 import useRunners from "./useRunners";
 import { Contract } from "ethers";
 import { useAppKitNetwork } from "@reown/appkit/react";
-import { getFactoryAddressByChain, getFactoryPOAPAddressByChain } from "../utils/getContractAddressByChain";
+import {
+  getFactoryAddressByChain,
+  getFactoryPOAPAddressByChain,
+  getMulticallAddressByChain,
+} from "../utils/getContractAddressByChain";
 import { TOKEN_FACTORY_ABI } from "../ABI/tokenFactory";
 import { TOKEN_AIRDROP_ABI } from "../ABI/tokenAirdrop";
 import { POAP_FACTORY_ABI } from "../ABI/poapFactory";
 import { POAP_AIRDROP_ABI } from "../ABI/poapAirdrop";
+import { MULTICALL3_ABI } from "../ABI/multicall3";
 
 export const useTokenFactoryContract = (withSigner = false) => {
   const { provider, signer } = useRunners();
@@ -59,7 +64,7 @@ export const usePOAPFactoryContract = (withSigner = false) => {
   const { provider, signer } = useRunners();
   const { chainId } = useAppKitNetwork();
   return useMemo(() => {
-    if(!chainId){
+    if (!chainId) {
       return;
     }
     const factoryAddress = getFactoryPOAPAddressByChain(chainId);
@@ -96,4 +101,21 @@ export const usePOAPDropContract = (
       return null;
     }
   }, [poapContractAddress, provider, signer, withSigner]);
+};
+
+export const useMulticall3Contract = (withSigner = false) => {
+  const { provider, signer } = useRunners();
+  const { chainId } = useAppKitNetwork();
+  return useMemo(() => {
+    if (!chainId) {
+      return;
+    }
+    const factoryAddress = getMulticallAddressByChain(chainId);
+
+    if (withSigner) {
+      if (!signer) return null;
+      return new Contract(factoryAddress, MULTICALL3_ABI, signer);
+    }
+    return new Contract(factoryAddress, MULTICALL3_ABI, provider);
+  }, [chainId, provider, signer, withSigner]);
 };
