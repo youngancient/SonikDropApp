@@ -15,7 +15,7 @@ export const usePoapFactoryFunctions = () => {
     useState("0x");
   
 
-  const createTokenDrop = useCallback(
+  const createPoapDrop = useCallback(
     async (
       merkleRoot: string,
       name: string,
@@ -82,7 +82,7 @@ export const usePoapFactoryFunctions = () => {
   );
   
   return {
-    createTokenDrop,
+    createPoapDrop,
     creationStatus,
     isCreating,
     transactionHash,
