@@ -25,7 +25,7 @@ export const usePoapFactoryFunctions = () => {
       noOfClaimers: number,
     ) => {
       if (!poapFactoryContract) {
-        toast.error("Contract not found");
+        toast.error("Poap Factory Contract not found");
         return;
       }
       try {

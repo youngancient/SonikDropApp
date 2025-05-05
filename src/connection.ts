@@ -39,7 +39,7 @@ export const kairos:CaipNetwork = {
 //   caipNetworkId: "eip155:146",
 // }
 
-export const sonic:CaipNetwork = {
+export const sonicBlazeTestnet:CaipNetwork = {
   ...rawSonicTest,
   id: 57054,
   chainNamespace: "eip155",
@@ -77,7 +77,6 @@ export const sonic:CaipNetwork = {
 //     },
 //   },
 // };
-console.log("sonic shii ->>>>>>>>>>", sonic);
 
 // 1. Get projectId
 const projectId = import.meta.env.VITE_APPKIT_PROJECT_ID;
@@ -87,7 +86,7 @@ const networks: [CaipNetwork, ...CaipNetwork[]] = [
   sepolia,
   baseSepolia,
   kairos,
-  sonic
+  sonicBlazeTestnet
 ];
 
 // 3. Create a metadata object - optional
@@ -106,7 +105,7 @@ export const appkit = createAppKit({
   projectId,
   allowUnsupportedChain: false,
   allWallets: "SHOW",
-  defaultNetwork: sonic,
+  defaultNetwork: sonicBlazeTestnet,
   enableEIP6963: true,
   features: {
     analytics: true,
@@ -115,4 +114,4 @@ export const appkit = createAppKit({
     socials: [],
   },
 });
-appkit.switchNetwork(sonic);
+appkit.switchNetwork(sonicBlazeTestnet);

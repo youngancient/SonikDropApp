@@ -25,7 +25,7 @@ export const useTokenFactoryFunctions = () => {
       totalOutputTokens: bigint
     ) => {
       if (!tokenFactoryContract) {
-        toast.error("Contract not found");
+        toast.error("Token Factory Contract not found");
         return;
       }
       try {

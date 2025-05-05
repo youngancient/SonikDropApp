@@ -11,7 +11,7 @@ export const useReadTokenFactoryFunctions = () => {
     console.log("token factory -> ", tokenFactoryContract);
 
     if (!tokenFactoryContract) {
-      toast.error("Contract not found");
+      toast.error("Token Factory Contract not found");
       return;
     }
     const drops = await tokenFactoryContract.getOwnerSonikDropClones(address);

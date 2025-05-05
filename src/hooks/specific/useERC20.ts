@@ -22,7 +22,7 @@ export const useTokenApproval = (tokenAddress: string) => {
   const approveTransfer = useCallback(
     async (amount: string) => {
       if (!erc20Contract) {
-        toast.error("Contract not found");
+        toast.error("ERC20 Contract not found");
         return;
       }
       if (!address) {
@@ -92,7 +92,7 @@ export const useTokenDetail = (tokenAddress: string) => {
 
   const fetchDetails = useCallback(async () => {
     if (!readOnlyERC20Contract) {
-      console.log("no contract found");
+      console.log("ERC20 contract found");
       dispatch(setTokenDetail(null));
       return;
     }
