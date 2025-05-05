@@ -2,7 +2,9 @@ import { kairos } from "@reown/appkit/networks";
 import { sonicBlazeTestnet } from "../connection";
 
 export const getFactoryAddressByChain = (chainId: string | number) => {
-  if (chainId) {
+  if (chainId === kairos.id) {
+    return import.meta.env.VITE_KAIA_TOKEN_FACTORY_CONTRACT_ADDRESS;
+  }else{
     return import.meta.env.VITE_TOKEN_FACTORY_CONTRACT_ADDRESS;
   }
 };

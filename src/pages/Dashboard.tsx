@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { FooterComponent } from "../components/footerComponent";
 import { HeaderComponent } from "../components/headerComponent";
 import {
+  ButtonLoader,
   CircleCancel,
   CoinIcon,
   ConnectBtnIcon,
@@ -12,7 +13,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { OptionComponent } from "../components/optionComponent";
 import { useEffect, useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { POAPDrops, tabs, TokenDrops } from "../constants/data";
+import { tabs, TokenDrops } from "../constants/data";
 import { ethers } from "ethers";
 import { DropListStyle } from "../components/styles/claimpage";
 import {
@@ -23,6 +24,7 @@ import {
 import { SonikNotConnected } from "../components/notConnected";
 import { textVariant } from "../animations/animation";
 import { useReadTokenFactoryFunctions } from "../hooks/specific/token/useReadTokenFactory";
+import { useReadPoapFactoryFunctions } from "../hooks/specific/poap/useReadPoapFactory";
 
 const Dashboard = () => {
   // Note: Here only the airdrops created by the user are displayed
@@ -40,6 +42,16 @@ const Dashboard = () => {
   const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(null);
   const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(null);
 
+  const [duplicatePoapdrops, setDuplicatePOAPDrops] = useState<
+    IDropComp[] | null
+  >(null);
+
+  const {
+    getOwnerPoapDropsDetails,
+    allOwnerPoapDropsDetails,
+    isLoadingOwnerPoapDrops,
+  } = useReadPoapFactoryFunctions();
+
   const handleTabSwitch = (tabName: string) => {
     setSelectedTabName(tabName);
     const newTabs = stateTabs.map((ele) => {
@@ -47,19 +59,43 @@ const Dashboard = () => {
     });
     clearForm();
     setStateTabs(newTabs);
+    if (tabName == "POAPs") {
+      if (allOwnerPoapDropsDetails == null) {
+        setPOAPDrops(null);
+        return;
+      }
+      const drops: IDropComp[] = allOwnerPoapDropsDetails.map((drop) => ({
+        name: drop.name,
+        creator: drop.creatorAddress,
+        creationDate: new Date(drop.creationTime * 1000).toLocaleDateString(), // optional: format timestamp
+        totalRewardPool: drop.totalClaimable,
+        totalRewardClaimed: drop.totalClaimed,
+        totalParticipants: drop.totalClaimable,
+        totalClaims: drop.totalClaimed,
+        contractAddress: drop.address,
+        hasUserClaimed: drop.hasUserClaimed,
+        baseURI: drop.baseURI,
+      }));
+
+      setPOAPDrops(drops);
+      setDuplicatePOAPDrops(drops);
+    }
   };
-  const {getOwnerTokenDrops} = useReadTokenFactoryFunctions();
+  const { getOwnerTokenDrops } = useReadTokenFactoryFunctions();
 
   useEffect(() => {
-    getOwnerTokenDrops();
+    if (!address) {
+      return;
+    }
+
+    getOwnerTokenDrops(); // for token airdrop
+
     const userCreatedTokenDrops = TokenDrops.filter(
       (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
     );
-    const userCreatedPOAPDrops = POAPDrops.filter(
-      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
-    );
+    getOwnerPoapDropsDetails();
+
     setTokenDrops(userCreatedTokenDrops);
-    setPOAPDrops(userCreatedPOAPDrops);
   }, [address]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -76,7 +112,10 @@ const Dashboard = () => {
         );
         setTokenDrops(filteredTokenDrops);
       } else if (selectedTabName === "POAPs") {
-        const filteredPOAPDrops = POAPDrops.filter(
+        if (!duplicatePoapdrops) {
+          return;
+        }
+        const filteredPOAPDrops = duplicatePoapdrops.filter(
           (drop) => drop.creator.toLowerCase() === query.toLowerCase()
         );
         setPOAPDrops(filteredPOAPDrops);
@@ -90,7 +129,10 @@ const Dashboard = () => {
         // console.log(filteredTokenDrops.length === 0);
         setTokenDrops(filteredTokenDrops);
       } else if (selectedTabName === "POAPs") {
-        const filteredPOAPDrops = POAPDrops.filter((drop) =>
+        if (!duplicatePoapdrops) {
+          return;
+        }
+        const filteredPOAPDrops = duplicatePoapdrops.filter((drop) =>
           drop.name.toLowerCase().includes((query as string).toLowerCase())
         );
         setPOAPDrops(filteredPOAPDrops);
@@ -103,12 +145,9 @@ const Dashboard = () => {
     const userCreatedTokenDrops = TokenDrops.filter(
       (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
     );
-    const userCreatedPOAPDrops = POAPDrops.filter(
-      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
-    );
 
     setTokenDrops(userCreatedTokenDrops);
-    setPOAPDrops(userCreatedPOAPDrops);
+    setPOAPDrops(duplicatePoapdrops);
     setQuery("");
   };
 
@@ -231,9 +270,13 @@ const Dashboard = () => {
                 (tokendrops ?? []).map((drop, index) => (
                   <DropComp key={index} {...drop} isEditable={true} />
                 ))}
-              {selectedTabName == "POAPs" &&
-                (poapdrops ?? []).map((drop, index) => (
-                  <POAPDropComp key={index} {...drop} isEditable={true} />
+              {selectedTabName === "POAPs" &&
+                (isLoadingOwnerPoapDrops ? (
+                  <ButtonLoader />
+                ) : (
+                  (poapdrops ?? []).map((drop, index) => (
+                    <POAPDropComp key={index} {...drop} isEditable={true} />
+                  ))
                 ))}
             </DropListStyle>
           )}

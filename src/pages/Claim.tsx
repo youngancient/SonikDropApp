@@ -3,13 +3,17 @@ import { FooterComponent } from "../components/footerComponent";
 import { HeaderComponent } from "../components/headerComponent";
 import { ClaimPageStyle, DropListStyle } from "../components/styles/claimpage";
 import { AnimatePresence, motion } from "framer-motion";
-import { CircleCancel, MagnifyingGlass } from "../components/icons";
+import {
+  ButtonLoader,
+  CircleCancel,
+  MagnifyingGlass,
+} from "../components/icons";
 import {
   DropComp,
   IDropComp,
   POAPDropComp,
 } from "../components/claimComponent";
-import { POAPDrops, tabs, TokenDrops } from "../constants/data.ts";
+import { tabs, TokenDrops } from "../constants/data.ts";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
 import { SonikNotConnected } from "../components/notConnected.tsx";
@@ -27,7 +31,16 @@ const ClaimPage = () => {
 
   const [selectedTabName, setSelectedTabName] = useState("Tokens");
 
-  const { isConnected } = useAppKitAccount();
+  const { isConnected, address } = useAppKitAccount();
+
+  const [query, setQuery] = useState<string>("");
+
+  const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(TokenDrops);
+  const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(null);
+
+  const [duplicatePoapdrops, setDuplicatePOAPDrops] = useState<
+    IDropComp[] | null
+  >(null);
 
   const handleTabSwitch = (tabName: string) => {
     setSelectedTabName(tabName);
@@ -36,12 +49,28 @@ const ClaimPage = () => {
     });
     clearForm();
     setStateTabs(newTabs);
+    if (tabName == "POAPs") {
+      if (allPoapDropsDetails == null) {
+        setPOAPDrops(null);
+        return;
+      }
+      const drops: IDropComp[] = allPoapDropsDetails.map((drop) => ({
+        name: drop.name,
+        creator: drop.creatorAddress,
+        creationDate: new Date(drop.creationTime * 1000).toLocaleDateString(), // optional: format timestamp
+        totalRewardPool: drop.totalClaimable,
+        totalRewardClaimed: drop.totalClaimed,
+        totalParticipants: drop.totalClaimable,
+        totalClaims: drop.totalClaimed,
+        contractAddress: drop.address,
+        hasUserClaimed: drop.hasUserClaimed,
+        baseURI: drop.baseURI,
+      }));
+
+      setPOAPDrops(drops);
+      setDuplicatePOAPDrops(drops);
+    }
   };
-
-  const [query, setQuery] = useState<string>("");
-
-  const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(TokenDrops);
-  const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(POAPDrops);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -58,7 +87,10 @@ const ClaimPage = () => {
         );
         setTokenDrops(filteredTokenDrops);
       } else if (selectedTabName === "POAPs") {
-        const filteredPOAPDrops = POAPDrops.filter(
+        if (!duplicatePoapdrops) {
+          return;
+        }
+        const filteredPOAPDrops = duplicatePoapdrops.filter(
           (drop) => drop.creator.toLowerCase() === query.toLowerCase()
         );
         setPOAPDrops(filteredPOAPDrops);
@@ -72,7 +104,10 @@ const ClaimPage = () => {
         // console.log(filteredTokenDrops.length === 0);
         setTokenDrops(filteredTokenDrops);
       } else if (selectedTabName === "POAPs") {
-        const filteredPOAPDrops = POAPDrops.filter((drop) =>
+        if (!duplicatePoapdrops) {
+          return;
+        }
+        const filteredPOAPDrops = duplicatePoapdrops.filter((drop) =>
           drop.name.toLowerCase().includes((query as string).toLowerCase())
         );
         setPOAPDrops(filteredPOAPDrops);
@@ -83,17 +118,18 @@ const ClaimPage = () => {
 
   const clearForm = () => {
     setTokenDrops(TokenDrops);
-    setPOAPDrops(POAPDrops);
+    setPOAPDrops(duplicatePoapdrops);
     setQuery("");
   };
-  const { getAllPoapDrops, getOwnerPoapDrops, getAllPoapDropsDetails } =
+  const { getAllPoapDropsDetails, allPoapDropsDetails, isLoadingAllPoapDrops } =
     useReadPoapFactoryFunctions();
-    
+
   useEffect(() => {
-    getAllPoapDrops();
-    getOwnerPoapDrops();
+    if (!address) {
+      return;
+    }
     getAllPoapDropsDetails();
-  }, []);
+  }, [address]);
 
   return (
     <div
@@ -190,9 +226,13 @@ const ClaimPage = () => {
               (tokendrops ?? []).map((drop, index) => (
                 <DropComp key={index} {...drop} />
               ))}
-            {selectedTabName == "POAPs" &&
-              (poapdrops ?? []).map((drop, index) => (
-                <POAPDropComp key={index} {...drop} />
+            {selectedTabName === "POAPs" &&
+              (isLoadingAllPoapDrops ? (
+                <ButtonLoader />
+              ) : (
+                (poapdrops ?? []).map((drop, index) => (
+                  <POAPDropComp key={index} {...drop} />
+                ))
               ))}
           </DropListStyle>
         )}

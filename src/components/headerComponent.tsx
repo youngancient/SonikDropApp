@@ -20,7 +20,7 @@ import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
 import ClickOutsideWrapper from "./outsideClick";
 import { IChains, supportedNetworks } from "../constants/chains";
-import { BrowserProvider, Eip1193Provider } from "ethers";
+import { BrowserProvider, Eip1193Provider, ethers } from "ethers";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useClearPoapFormInput } from "../hooks/useClearPoapForm";
@@ -45,6 +45,7 @@ export function HeaderComponent({
   const token = Cookies.get("token");
   const { walletProvider } = useAppKitProvider("eip155");
 
+  // when the user switches address, it should prompt them to sign message
   const onSignMessage = useCallback(async () => {
     if (!address) {
       toast.error("Please connect wallet");
@@ -53,7 +54,7 @@ export function HeaderComponent({
     try {
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
-
+      
       const message = `Welcome to SonikDrop! Please sign this message to authenticate.
       Wallet: ${address}
       Nonce: ${Math.floor(Math.random() * 1000000)}
@@ -61,18 +62,22 @@ export function HeaderComponent({
       Domain: sonikdrop.app
       This signature does not trigger any blockchain transaction or cost gas fees.
       `;
+      const msgBytes = ethers.toUtf8Bytes(message);
+      const digest = ethers.keccak256(msgBytes);
+      Cookies.set("digest",digest);
 
       const signature = await signer?.signMessage(message);
-      console.log("has signed!");
-      dispatch(setHasSigned());
+      Cookies.set("signature", signature);
 
+      dispatch(setHasSigned(true));
+      
       const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
       const response = await axios.post(`${BACKEND_URL}/auth/authenticate`, {
         signature,
         message,
         address,
       });
-
+      
       if (response.status === 200) {
         // console.log(response.data);
         const { data } = response.data;
@@ -134,6 +139,9 @@ export function HeaderComponent({
   useEffect(() => {
     if (!isConnected) {
       Cookies.remove("token");
+      Cookies.remove("signature");
+      Cookies.remove("digest");
+      dispatch(setHasSigned(false));
     }
   }, [isConnected]);
 

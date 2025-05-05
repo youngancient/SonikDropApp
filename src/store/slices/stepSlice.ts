@@ -43,8 +43,8 @@ export const stepSlice = createSlice({
     clearBack: (state) => {
       state.backStack = [];
     },
-    setHasSigned:(state) =>{
-      state.hasSigned = true;
+    setHasSigned:(state, action: PayloadAction<boolean>) =>{
+      state.hasSigned = action.payload;
     }
   },
 });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   claimCardVariants,
   moodVariant,
@@ -22,29 +22,36 @@ import {
 import ClickOutsideWrapper from "./outsideClick";
 import { AnimatePresence } from "framer-motion";
 import { useAppKitAccount } from "@reown/appkit/react";
+import { getPoapImageFromBaseURI } from "../utils/getImageFromBaseURI";
+import { useReadPoapFunctions } from "../hooks/specific/poap/useReadPoapAirdrop";
 
 export interface IDropComp {
   name: string;
   creator: string; //address
-  date?: string;
+  creationDate: string;
+  endDate?: string;
   totalRewardPool: number;
   totalRewardClaimed: number;
   totalParticipants: number;
   totalClaims: number;
   nftAddress?: string;
   isEditable?: boolean;
-  // img ?: string; havent figure how best to get this
+  hasUserClaimed?: boolean;
+  baseURI?: string;
+  contractAddress: string;
 }
 
 export const DropComp: React.FC<IDropComp> = ({
   name,
   creator,
-  date,
+  creationDate,
+  endDate,
   totalParticipants,
   totalRewardClaimed,
   totalRewardPool,
   nftAddress,
   totalClaims,
+  contractAddress,
   isEditable,
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -91,10 +98,10 @@ export const DropComp: React.FC<IDropComp> = ({
                 <h3>{totalRewardPool.toLocaleString()}ETH</h3>
               </div>
               <div>
-                <p>ENDING DATE</p>
+                <p>{endDate ? "ENDING DATE" : "CREATION DATE"}</p>
                 <div className="flex items-center gap-[0.625rem] justify-end">
                   <CalendarIcon />
-                  <h3>{date ? date : "none"}</h3>
+                  <h3>{endDate ? endDate : creationDate}</h3>
                 </div>
               </div>
             </div>
@@ -133,7 +140,9 @@ export const DropComp: React.FC<IDropComp> = ({
             </div>
           </div>
           <div className="btn">
-            <button onClick={() => setShowModal(true)}>View Airdrop</button>
+            <button onClick={() => setShowModal(true)}>
+              {isEditable ? "View Airdrop" : "Check Eligibility"}
+            </button>
           </div>
         </DropCompStyle>
       </ThreeDHoverWrapper>
@@ -143,12 +152,14 @@ export const DropComp: React.FC<IDropComp> = ({
             {...{
               name,
               creator,
-              date,
+              creationDate,
+              endDate,
               totalParticipants,
               totalRewardClaimed,
               totalRewardPool,
               nftAddress,
               totalClaims,
+              contractAddress,
               type: "token",
               isCreator:
                 creator.toLowerCase() === address?.toLowerCase() && isEditable,
@@ -164,12 +175,15 @@ export const DropComp: React.FC<IDropComp> = ({
 export const POAPDropComp: React.FC<IDropComp> = ({
   name,
   creator,
-  date,
+  creationDate,
+  endDate,
   totalParticipants,
   totalRewardClaimed,
   totalRewardPool,
   totalClaims,
+  contractAddress,
   isEditable,
+  baseURI,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
@@ -179,6 +193,30 @@ export const POAPDropComp: React.FC<IDropComp> = ({
       : percentageRaw.toFixed(1)
   );
   const { address } = useAppKitAccount();
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (!baseURI) {
+        return;
+      }
+      const image = await getPoapImageFromBaseURI(baseURI);
+      if (image) setImageUrl(image);
+    };
+
+    fetchImage();
+  }, [baseURI]);
+
+  const { checkEligibility } = useReadPoapFunctions(contractAddress);
+
+  const handleCheckEligibiltyOrView = async () => {
+    if (isEditable) {
+      setShowModal(true);
+      return;
+    }
+    const result = await checkEligibility();
+    console.log("result ->-> ", result);
+  };
 
   return (
     <>
@@ -191,7 +229,11 @@ export const POAPDropComp: React.FC<IDropComp> = ({
           whileInView="final"
         >
           <div className="poap-img">
-            <img src="/poap.avif" className="w-full h-full" alt="POAP image" />
+            <img
+              src={imageUrl ?? "/poap.avif"}
+              className="w-full h-full"
+              alt="POAP image"
+            />
           </div>
           <div className="top">
             <div className="one">
@@ -218,10 +260,10 @@ export const POAPDropComp: React.FC<IDropComp> = ({
                 <h3>{totalRewardPool.toLocaleString()}</h3>
               </div>
               <div>
-                <p>ENDING DATE</p>
+                <p>{endDate ? "ENDING DATE" : "CREATION DATE"}</p>
                 <div className="flex items-center gap-[0.625rem] justify-end">
                   <CalendarIcon />
-                  <h3>{date ? date : "none"}</h3>
+                  <h3>{endDate ? endDate : creationDate}</h3>
                 </div>
               </div>
             </div>
@@ -260,7 +302,9 @@ export const POAPDropComp: React.FC<IDropComp> = ({
             </div>
           </div>
           <div className="btn">
-            <button onClick={() => setShowModal(true)}>View POAP</button>
+            <button onClick={handleCheckEligibiltyOrView}>
+              {isEditable ? "View POAP" : "Check Eligibility"}
+            </button>
           </div>
         </DropCompStyle>
       </ThreeDHoverWrapper>
@@ -270,16 +314,19 @@ export const POAPDropComp: React.FC<IDropComp> = ({
             {...{
               name,
               creator,
-              date,
+              creationDate,
+              endDate,
               totalParticipants,
               totalRewardClaimed,
               totalRewardPool,
               totalClaims,
+              contractAddress,
               type: "poap",
               isCreator:
                 creator.toLowerCase() === address?.toLowerCase() && isEditable,
             }}
             closeModal={() => setShowModal(false)}
+            poapImg={imageUrl ?? undefined}
           />
         )}
       </AnimatePresence>
@@ -291,19 +338,22 @@ interface IClaimModal extends IDropComp {
   closeModal: () => void;
   type: "token" | "poap";
   isCreator?: boolean;
+  poapImg?: string;
 }
 export const ClaimModal: React.FC<IClaimModal> = ({
   closeModal,
   name,
   creator,
   nftAddress,
-  date,
+  creationDate,
+  endDate,
   totalParticipants,
   totalRewardClaimed,
   totalRewardPool,
   totalClaims,
   type,
   isCreator,
+  poapImg,
 }) => {
   // for participants
   const participantPercentageRaw = (totalClaims * 100) / totalParticipants;
@@ -370,7 +420,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
             {type === "poap" && (
               <div className="poap-img h-[12.625rem] md:h-[11.25rem] w-full rounded-[0.625rem]">
                 <img
-                  src="/poap.avif"
+                  src={poapImg ?? "/poap.avif"}
                   className="w-full h-full rounded-[0.625rem]"
                   alt="POAP image"
                 />
@@ -513,11 +563,11 @@ export const ClaimModal: React.FC<IClaimModal> = ({
               )}
               <div className="flex items-stretch justify-between gap-[1rem]">
                 <div className="flex flex-col addy">
-                  <h4>End Date</h4>
+                  <h4>{endDate ? "End Date" : "Creation Date"}</h4>
                   <div className="flex items-center gap-[0.25rem]">
                     <CalendarIcon />
                     <p className="whitespace-normal">
-                      {date ? date : "No End date"}
+                      {endDate ? endDate : creationDate}
                     </p>
                   </div>
                 </div>
