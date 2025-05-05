@@ -54,7 +54,6 @@ export function HeaderComponent({
     try {
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
-      console.log("address: ",signer.address);
       
       const message = `Welcome to SonikDrop! Please sign this message to authenticate.
       Wallet: ${address}
