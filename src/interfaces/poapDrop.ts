@@ -1,11 +1,11 @@
-export interface IPOAPDecodedResult {
+export interface IPOAPDrop {
     address: string;
     baseURI: string;
     name: string;
     creatorAddress: string;
-    totalClaimed: string;
-    totalClaimable: string;
-    percentageClaimed: string;
+    totalClaimed: number;
+    totalClaimable: number;
+    percentageClaimed: number;
     creationTime: number;
     hasUserClaimed : boolean;
   }
