@@ -20,7 +20,7 @@ import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
 import ClickOutsideWrapper from "./outsideClick";
 import { IChains, supportedNetworks } from "../constants/chains";
-import { BrowserProvider, Eip1193Provider, ethers } from "ethers";
+import { BrowserProvider, Eip1193Provider } from "ethers";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useClearPoapFormInput } from "../hooks/useClearPoapForm";
