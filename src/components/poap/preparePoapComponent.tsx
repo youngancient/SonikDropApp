@@ -16,12 +16,14 @@ import { ButtonLoader } from "../icons";
 
 export function PreparePoapComponent() {
   const [eventName, setEventName] = useState("");
+  const [tokenSymbol, setTokenSymbol] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [eventType, setEventType] = useState("");
   const [selectedFile, setSelectedFile] = useState<any | null>(null);
   const [uploadedEvnetFlyer, setUploadedEventFlyer] = useState("");
 
   const [eventNameError, setEventNameError] = useState("");
+  const [tokenSymbolError, setTokenSymbolError] = useState("");
   const [eventDescriptionError, setEventDescriptionError] = useState("");
   const [eventTypeError, setEventTypeError] = useState("");
   const [eventFlyerError, setEventFlyerError] = useState("");
@@ -37,11 +39,22 @@ export function PreparePoapComponent() {
     onDrop: (acceptedFiles) => {
       // Send only the first accepted file to the callback
       if (acceptedFiles?.length > 0) {
+
+        if(acceptedFiles?.length > 1) {
+          toast.error("Multiple images not allowed.");
+          return;
+        }
+
+        if(acceptedFiles[0].size > 2 * 1024 * 1024) {
+          toast.error("File too large (File should be 2MB max).");
+          return;
+        }
+
         setSelectedFile(acceptedFiles[0]);
       }
     },
-    maxSize: 2 * 1024 * 1024,
-    maxFiles: 1,
+    // maxSize: 2 * 1024 * 1024,
+    // maxFiles: 1,
     accept: {
       "image/*": [],
     },
@@ -124,7 +137,21 @@ export function PreparePoapComponent() {
       // console.log("eventName", eventName);
       // console.log("eventDescription", eventDescription);
       // console.log("eventType", eventType);
-      console.log("Picture", upload);
+      // console.log("Picture", upload);
+
+      const jsonMetadata = {
+        name: eventName,
+        description: eventDescription,
+        image: `ipfs://${upload.IpfsHash}`
+      }
+
+      const blob = new Blob([JSON.stringify(jsonMetadata)], { type: 'application/json' });
+
+      const file = new File([blob], 'metadata.json');
+
+      const JSONUpload = await pinata.upload.file(file!!);
+
+      console.log("JSONUpload", JSONUpload);
 
       sessionStorage.setItem(
         "poapEventDetails",
@@ -133,6 +160,7 @@ export function PreparePoapComponent() {
           eventDescription,
           eventType,
           selectedFile,
+          JSONUpload
         } as IPoapEvent)
       );
 
@@ -201,6 +229,48 @@ export function PreparePoapComponent() {
                 } mt-2`}
               >
                 {eventNameError}
+              </small>
+            </div>
+
+            <div>
+              <div className="text-left">Token symbol</div>
+              <input
+                className="w-full border-2 border-[#FFFFFF17] bg-transparent rounded-md py-2 px-1"
+                placeholder="Token symbol"
+                value={tokenSymbol}
+                // onBlur={() => {
+                  
+                // }}
+                onChange={(e) => {
+                  const { error } = Joi.string()
+                  .required()
+                  .min(1)
+                    .max(10)
+                    .messages({
+                      "any.required": "Token symbol is required",
+                      "string.base": "Token symbol must be a string",
+                      "string.max": "Token symbol has to be 50 characters maximum",
+                      "string.empty": "Token symbol can not be empty",
+                    })
+                    .validate(e.target.value);
+                  if (error) {
+                    setTokenSymbolError(error.message);
+                  } else {
+                    setTokenSymbolError("");
+                  }
+
+                  if(/^[a-zA-Z]*$/.test(e.target.value)) {
+                    setTokenSymbol((e.target.value).toLocaleUpperCase());
+                  }
+
+                }}
+              />
+              <small
+                className={`${
+                  tokenSymbolError ? "block text-red-400" : "hidden"
+                } mt-2`}
+              >
+                {tokenSymbolError}
               </small>
             </div>
 
@@ -294,6 +364,7 @@ export function PreparePoapComponent() {
               >
                 <input
                   {...getInputProps()}
+                  multiple={false}
                   onBlur={() => {
                     const { error } = Joi.any()
                       .required()
