@@ -258,7 +258,11 @@ export function PreparePoapComponent() {
                   } else {
                     setTokenSymbolError("");
                   }
-                  setTokenSymbol((e.target.value).toLocaleUpperCase());
+
+                  if(/^[a-zA-Z]*$/.test(e.target.value)) {
+                    setTokenSymbol((e.target.value).toLocaleUpperCase());
+                  }
+
                 }}
               />
               <small
