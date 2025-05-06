@@ -7,6 +7,14 @@ export const supportedNetworksDetails: INetworkDetail = {
   4202: "Lisk Sepolia",
 };
 
+export const nativeTokenMap: Record<number, { name: string; token: string }> = {
+  1: { name: "ethereum", token: "ETH" }, // mainnet
+  11155111: { name: "ethereum", token: "ETH" }, // testnet
+  84532: { name: "base", token: "ETH" }, // testnet (example)
+  57054: { name: "sonic-3", token: "S" }, // testnet
+  1001: { name: "kaia", token: "KAIA" }, // testnet
+};
+
 // for expansion to other testnet
 // 534351 : "Scroll Sepolia",
 // 421614 : "Arbitrum Sepolia",

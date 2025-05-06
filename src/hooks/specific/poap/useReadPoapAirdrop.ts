@@ -2,10 +2,12 @@ import { useCallback } from "react";
 import { usePOAPDropContract } from "../../useContracts";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+import { ErrorDecoder } from "ethers-decode-error";
 
 export const useReadPoapFunctions = (poapContractAddress: string) => {
   const poapDropContract = usePOAPDropContract(true, poapContractAddress);
   // check eligibility function returns (bool,number/null) -> (isEligible, gasToMint)
+  const errorDecoder = ErrorDecoder.create();
 
   const checkEligibility = useCallback(async (): Promise<{
     isEligible: boolean;
@@ -48,7 +50,8 @@ export const useReadPoapFunctions = (poapContractAddress: string) => {
         gasToMint: gasVal,
       };
     } catch (error) {
-      console.error("Eligibility check failed:", error);
+      const decodedError = await errorDecoder.decode(error);
+      console.error("Eligibility check failed:", decodedError);
       toast.error("Eligibility check failed");
       return { isEligible: false, gasToMint: null };
     }
