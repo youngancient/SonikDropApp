@@ -54,7 +54,7 @@ export function HeaderComponent({
     try {
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
-      
+
       const message = `Welcome to SonikDrop! Please sign this message to authenticate.
       Wallet: ${address}
       Nonce: ${Math.floor(Math.random() * 1000000)}
@@ -62,22 +62,27 @@ export function HeaderComponent({
       Domain: sonikdrop.app
       This signature does not trigger any blockchain transaction or cost gas fees.
       `;
-      const msgBytes = ethers.toUtf8Bytes(message);
-      const digest = ethers.keccak256(msgBytes);
-      Cookies.set("digest",digest);
-
       const signature = await signer?.signMessage(message);
+      // const msgBytes = ethers.toUtf8Bytes(message);
+      // const digest = ethers.keccak256(msgBytes);
+      // Cookies.set("digest", digest);
+
+      // const sig = await signer?.signMessage(digest);
+      // const { r, s, v } = ethers.Signature.from(sig);
+      // const signature = ethers.concat([r, s, ethers.toBeHex(v, 1)]);
+      // console.log("signature ",signature);
+      
       Cookies.set("signature", signature);
 
       dispatch(setHasSigned(true));
-      
+
       const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
       const response = await axios.post(`${BACKEND_URL}/auth/authenticate`, {
         signature,
         message,
         address,
       });
-      
+
       if (response.status === 200) {
         // console.log(response.data);
         const { data } = response.data;
