@@ -44,6 +44,12 @@ export const sonicBlazeTestnet:CaipNetwork = {
   id: 57054,
   chainNamespace: "eip155",
   caipNetworkId: "eip155:57054",
+  blockExplorers: {
+    default: {
+      name: "SonicScan",
+      url: "https://testnet.sonicscan.org", // replace with actual explorer URL
+    },
+  },
 }
 
 // export const electroneumTestNetwork:CaipNetwork = {
@@ -56,7 +62,7 @@ export const sonicBlazeTestnet:CaipNetwork = {
 //   }
 // }
 
-// add for Sonic chain
+
 // export const electroneumTestNetwork: CaipNetwork = {
 //   id: 5201420,
 //   chainNamespace: "eip155",

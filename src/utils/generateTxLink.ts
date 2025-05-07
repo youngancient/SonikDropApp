@@ -1,6 +1,5 @@
-import {
-  kairos,
-} from "@reown/appkit/networks";
+import { kairos } from "@reown/appkit/networks";
+
 import { baseSepolia, sepolia, sonicBlazeTestnet } from "../connection";
 
 export const generateTxExplorerLink = (
@@ -8,6 +7,7 @@ export const generateTxExplorerLink = (
   txHash: string
 ): string => {
   let explorerUrl = "";
+
   if (chainId === kairos.id) {
     explorerUrl += kairos.blockExplorers?.default.url;
   }

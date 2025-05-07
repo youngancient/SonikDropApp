@@ -63,14 +63,6 @@ export function HeaderComponent({
       This signature does not trigger any blockchain transaction or cost gas fees.
       `;
       const signature = await signer?.signMessage(message);
-      // const msgBytes = ethers.toUtf8Bytes(message);
-      // const digest = ethers.keccak256(msgBytes);
-      // Cookies.set("digest", digest);
-
-      // const sig = await signer?.signMessage(digest);
-      // const { r, s, v } = ethers.Signature.from(sig);
-      // const signature = ethers.concat([r, s, ethers.toBeHex(v, 1)]);
-      // console.log("signature ",signature);
       
       Cookies.set("signature", signature);
 

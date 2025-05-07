@@ -120,29 +120,33 @@ export function ApproveComponent() {
   };
 
   useEffect(() => {
-    const body = {
-      tokenAddress,
-      merkleRoot,
-      name,
-      nftAddress,
-      totalOutputTokens: ethers.parseUnits(
-        totalOutput.toString(),
-        tokenDetail?.decimals
-      ),
-      noOfClaimers,
-    };
-    if (approvalStatus === "success") {
-      // console.log("got here 1");
-      createTokenDrop(
-        body.tokenAddress,
-        body.merkleRoot,
-        body.name,
-        body.nftAddress,
-        body.noOfClaimers,
-        body.totalOutputTokens
-      );
-    }
-  }, [approvalStatus]);
+      const executeTokenDrop = async () => {
+        const body = {
+          tokenAddress,
+          merkleRoot,
+          name,
+          nftAddress,
+          totalOutputTokens: ethers.parseUnits(
+            totalOutput.toString(),
+            tokenDetail?.decimals
+          ),
+          noOfClaimers,
+        };
+        if (approvalStatus === "success") {
+          // console.log("got here 1");
+          await createTokenDrop(
+            body.tokenAddress,
+            body.merkleRoot,
+            body.name,
+            body.nftAddress,
+            body.noOfClaimers,
+            body.totalOutputTokens
+          );
+        }
+      };
+  
+      executeTokenDrop();
+    }, [approvalStatus]);
 
   useEffect(() => {
     if (creationStatus === "success") {
