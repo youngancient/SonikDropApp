@@ -7,12 +7,40 @@ export const supportedNetworksDetails: INetworkDetail = {
   4202: "Lisk Sepolia",
 };
 
-export const nativeTokenMap: Record<number, { name: string; token: string }> = {
-  1: { name: "ethereum", token: "ETH" }, // mainnet
-  11155111: { name: "ethereum", token: "ETH" }, // testnet
-  84532: { name: "base", token: "ETH" }, // testnet (example)
-  57054: { name: "sonic-3", token: "S" }, // testnet
-  1001: { name: "kaia", token: "KAIA" }, // testnet
+export const nativeTokenMap: Record<
+  number,
+  { name: string; coinGeckoId: string; token: string; blockExplorer: string }
+> = {
+  1: {
+    name: "Ethereum mainnet",
+    coinGeckoId: "ethereum",
+    token: "ETH",
+    blockExplorer: "",
+  }, // mainnet
+  11155111: {
+    name: "Sepolia",
+    coinGeckoId: "ethereum",
+    token: "ETH",
+    blockExplorer: "",
+  }, // testnet
+  84532: {
+    name: "Base sepolia",
+    coinGeckoId: "base",
+    token: "ETH",
+    blockExplorer: "",
+  }, // testnet (example)
+  57054: {
+    name: "Sonic Blaze testnet",
+    coinGeckoId: "sonic-3",
+    token: "S",
+    blockExplorer: "",
+  }, // testnet
+  1001: {
+    name: "Kaia testnet",
+    coinGeckoId: "kaia",
+    token: "KAIA",
+    blockExplorer: "",
+  }, // testnet
 };
 
 // for expansion to other testnet
@@ -57,8 +85,7 @@ export const supportedNetworks: IChains[] = [
     name: "Sonic Testnet",
     id: 57054,
     logo: "sonic_chain.webp",
-  }
-
+  },
 ];
 
 // {

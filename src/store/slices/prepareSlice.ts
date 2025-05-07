@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 import { IAirdropList } from "../../interfaces/CSVInterface";
 import { ITokenDetails } from "../../hooks/specific/useERC20";
-import { AirdropEntity } from "../../utils/merkleGen";
+import { ITokenAirdropClaim } from "../../interfaces/output";
 
 // Define a type for the slice state
 interface prepareState {
@@ -20,7 +20,7 @@ interface prepareState {
   powerValue: string;
   tokenDetail : ITokenDetails | null ;
   merkleHash : string;
-  merkleOutput : AirdropEntity[] | null;
+  merkleOutput : ITokenAirdropClaim[] | null;
   noOfClaimers : number;
 }
 
@@ -88,7 +88,7 @@ export const prepareSlice = createSlice({
     setMerkleHash: (state, action: PayloadAction<string>) => {
       state.merkleHash = action.payload;
     },
-    setMerkleOutput: (state, action: PayloadAction<AirdropEntity[] | null>) => {
+    setMerkleOutput: (state, action: PayloadAction<ITokenAirdropClaim[] | null>) => {
       state.merkleOutput = action.payload;
     },
     setNoOfClaimers:(state, action: PayloadAction<number>)=>{

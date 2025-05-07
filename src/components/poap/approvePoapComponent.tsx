@@ -6,8 +6,19 @@ import { ButtonLoader } from "../icons";
 import { CompletedModal } from "../completedModal";
 import { ICSV, IPoapEvent } from "../../interfaces/CSVInterface";
 import { useClearPoapFormInput } from "../../hooks/useClearPoapForm";
-
-
+import { useAppSelector } from "../../store/hooks";
+import {
+  selectNoOfPoapClaimers,
+  selectPoapMerkleHash,
+  selectPoapMerkleOutput,
+} from "../../store/slices/settingsSlice";
+import { usePoapFactoryFunctions } from "../../hooks/specific/poap/usePoapFactory";
+import { ethers } from "ethers";
+import useCalculateGasCost, {
+  GasInfo,
+} from "../../hooks/specific/useCalculateGas";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export function ApprovePoapComponent() {
   const [eventName, setEventName] = useState("");
@@ -15,11 +26,27 @@ export function ApprovePoapComponent() {
 
   const [csvToJSONData, setCSVToJSONData] = useState<ICSV[]>([]);
 
-  const [isLoadingBal, _setLoadingBal] = useState(false);
+  const [gasInfo, setGasInfo] = useState<GasInfo>({
+    native: "N/A",
+    usd: "N/A",
+    nativeWithToken: "N/A",
+  });
 
-  const [estimatedGasFee, _setEstimatedGasFee] = useState(0.05);
+  const merkleRoot = useAppSelector(selectPoapMerkleHash);
+  const merkleOutput = useAppSelector(selectPoapMerkleOutput);
+  const noOfClaimers = useAppSelector(selectNoOfPoapClaimers);
 
-  
+  const {
+    estimateCreatePoapGas,
+    isEstimating,
+    createPoapDrop,
+    isCreating,
+    poapFactoryContract,
+    deployedPoapDropContractAddress,
+    transactionHash,
+  } = usePoapFactoryFunctions();
+
+  const { estimate } = useCalculateGasCost();
 
   useEffect(() => {
     const csvData: ICSV[] = JSON.parse(
@@ -38,12 +65,83 @@ export function ApprovePoapComponent() {
     }
   }, []);
 
+  useEffect(() => {
+    const eventSymbol = "AFT";
+    const baseURI =
+      "ipfs://bafkreidolt4hcw7zbo2cp745g3zyommfz4e43g4pgdevu4ade2ujp2vgma";
+    const nftAddress = ethers.ZeroAddress;
+    if (!poapFactoryContract) {
+      return;
+    }
+
+    const fetchPoapGasEstimate = async () => {
+      const gas = await estimateCreatePoapGas(
+        merkleRoot,
+        eventName,
+        eventSymbol,
+        baseURI,
+        nftAddress,
+        noOfClaimers
+      );
+      if (!gas) {
+        return;
+      }
+      const gasData = await estimate(gas);
+      if (!gasData) {
+        return;
+      }
+      setGasInfo(gasData);
+    };
+    if (poapFactoryContract && merkleRoot && eventName && noOfClaimers > 0) {
+      fetchPoapGasEstimate();
+    }
+  }, [poapFactoryContract]);
+
   const { clearPoap } = useClearPoapFormInput();
   const [showModal, setShowModal] = useState(false);
 
-  const approve = () => {
+  const approve = async () => {
     // call contract
-    console.log(csvToJSONData);
+
+    const eventSymbol = "AFT";
+    const baseURI =
+      "ipfs://bafkreidolt4hcw7zbo2cp745g3zyommfz4e43g4pgdevu4ade2ujp2vgma";
+    const nftAddress = ethers.ZeroAddress;
+
+    const isCreated = await createPoapDrop(
+      merkleRoot,
+      eventName,
+      eventSymbol,
+      baseURI,
+      nftAddress,
+      noOfClaimers
+    );
+
+    if (!isCreated) {
+      return;
+    }
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    const token = Cookies.get("token");
+    const body = {
+      proofs: merkleOutput,
+      contractAddress: deployedPoapDropContractAddress,
+    };
+    setShowModal(true);
+
+    axios
+      .post(`${BACKEND_URL}/users/add-bulk-user`, body, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log("API call successful:", response);
+      })
+      .catch((error) => {
+        console.error("API call failed:", error);
+      });
+
     setTimeout(() => {
       setShowModal(true);
     }, 1200);
@@ -82,17 +180,13 @@ export function ApprovePoapComponent() {
                 </div>
                 <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                   <div className="font-bold text-white text-[20px]">
-                    {csvToJSONData?.length}
+                    {noOfClaimers}
                   </div>
                   <div className="text-sm text-white/[0.8]">Recipients</div>
                 </div>
                 <div className="border-2 border-[#FFFFFF17] bg-transparent rounded-lg p-4">
                   <div className="font-bold text-white text-[20px]">
-                    {isLoadingBal ? (
-                      <ButtonLoader />
-                    ) : (
-                      `$${estimatedGasFee.toFixed(2)}`
-                    )}
+                    {isEstimating ? <ButtonLoader /> : `${gasInfo.usd}`}
                   </div>
                   <div className="text-sm text-white/[0.8]">Gas Estimate</div>
                 </div>
@@ -119,15 +213,17 @@ export function ApprovePoapComponent() {
               </div>
             </div>
             <button
-              className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]"
+              className={`w-full bg-[#00A7FF] text-white py-2 rounded-[6px] transition ${
+                isCreating ? "cursor-not-allowed opacity-70" : ""
+              }`}
               onClick={approve}
             >
-              Approve
+              {isCreating ? <ButtonLoader /> : "Approve"}
             </button>
           </div>
         </motion.div>
       </AnimatePresence>
-      {showModal && <CompletedModal dropType="poap" txHash="" />}
+      {showModal && <CompletedModal dropType="poap" txHash={transactionHash} />}
     </>
   );
 }

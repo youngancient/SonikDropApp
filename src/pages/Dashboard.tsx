@@ -18,13 +18,13 @@ import { ethers } from "ethers";
 import { DropListStyle } from "../components/styles/claimpage";
 import {
   DropComp,
-  IDropComp,
   POAPDropComp,
 } from "../components/claimComponent";
 import { SonikNotConnected } from "../components/notConnected";
 import { textVariant } from "../animations/animation";
 import { useReadTokenFactoryFunctions } from "../hooks/specific/token/useReadTokenFactory";
 import { useReadPoapFactoryFunctions } from "../hooks/specific/poap/useReadPoapFactory";
+import { IDropComp } from "../interfaces/drop";
 
 const Dashboard = () => {
   // Note: Here only the airdrops created by the user are displayed

@@ -180,7 +180,7 @@ export function PrepareComponent() {
         })
       )
     );
-    // generate merkle tree root and merkle proofs
+    // generate merkle tree roothash and merkle proofs
     const { rootHash, output } = generateMerkleTree(csvToJSONData);
 
     dispatch(setMerkleHash(rootHash));
