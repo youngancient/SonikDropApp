@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { usePOAPDropContract } from "../../useContracts";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie";
 import { ErrorDecoder } from "ethers-decode-error";
 
 export const useReadPoapFunctions = (poapContractAddress: string) => {
@@ -11,7 +10,7 @@ export const useReadPoapFunctions = (poapContractAddress: string) => {
 
   const checkEligibility = useCallback(async (): Promise<{
     isEligible: boolean;
-    gasToMint: number | null;
+    gasToMint: bigint | null;
   }> => {
     if (!poapDropContract) {
       toast.error("PoapDrop Contract not found");
@@ -25,25 +24,20 @@ export const useReadPoapFunctions = (poapContractAddress: string) => {
       '0x79ec436321e0ee4d3657f6b4c44573e6af12266adc6fdb29f3f7de915ce4975d'
     ];
 
-    const digest = Cookies.get("digest");
-    const signature = Cookies.get("signature");
 
     try {
       const isEligible = await poapDropContract.checkEligibility(merkleProof);
-      let gasVal = 0;
+      let gasVal = null;
       console.log("===========================");
       console.log("is eligible ? -> ", isEligible);
-      console.log({digest, signature});
 
       if (isEligible){
         // why does this fail?
-        const gas = await poapDropContract["claimAirdrop(bytes32[],bytes32,bytes)"].estimateGas(
-          merkleProof,
-          digest,
-          signature
+        const gas = await poapDropContract["claimAirdrop(bytes32[])"].estimateGas(
+          merkleProof
         );
-        gasVal = Number(gas);
-        console.log("gas ", gasVal);
+        gasVal = gas;
+        console.log("gas ", Number(gasVal));
       }
       return {
         isEligible,

@@ -63,8 +63,6 @@ export function HeaderComponent({
       This signature does not trigger any blockchain transaction or cost gas fees.
       `;
       const signature = await signer?.signMessage(message);
-      
-      Cookies.set("signature", signature);
 
       dispatch(setHasSigned(true));
 
@@ -136,8 +134,6 @@ export function HeaderComponent({
   useEffect(() => {
     if (!isConnected) {
       Cookies.remove("token");
-      Cookies.remove("signature");
-      Cookies.remove("digest");
       dispatch(setHasSigned(false));
     }
   }, [isConnected]);
