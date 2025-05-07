@@ -96,18 +96,18 @@ export function ApproveComponent() {
     deployedAirdropContractAddress,
   } = useTokenFactoryFunctions();
 
-  const { approveTransfer, isLoadingApproval, approvalStatus } =
-    useTokenApproval(tokenAddress);
+  const { approveTransfer, isLoadingApproval } = useTokenApproval(tokenAddress);
 
   const approve = async () => {
-    console.log("Merkle root: ", merkleRoot);
-    console.log("Merkle output: ", merkleOutput);
-
     if (!tokenBalance) {
       return;
     }
     if (parseFloat(tokenBalance) < totalOutput) {
       toast.error("Insufficient balance to approve");
+      return;
+    }
+    if (!tokenDetail?.decimals) {
+      toast.error("Token details missing.");
       return;
     }
 
@@ -116,10 +116,10 @@ export function ApproveComponent() {
       tokenDetail?.decimals
     );
     // call approve
-    approveTransfer(totalOutputInWei.toString());
-  };
-
-  useEffect(() => {
+    const isApproved = await approveTransfer(totalOutputInWei.toString());
+    if (!isApproved) {
+      return;
+    }
     const body = {
       tokenAddress,
       merkleRoot,
@@ -131,49 +131,43 @@ export function ApproveComponent() {
       ),
       noOfClaimers,
     };
-    if (approvalStatus === "success") {
-      // console.log("got here 1");
-      createTokenDrop(
-        body.tokenAddress,
-        body.merkleRoot,
-        body.name,
-        body.nftAddress,
-        body.noOfClaimers,
-        body.totalOutputTokens
-      );
+
+    const isCreated = await createTokenDrop(
+      body.tokenAddress,
+      body.merkleRoot,
+      body.name,
+      body.nftAddress,
+      body.noOfClaimers,
+      body.totalOutputTokens
+    );
+    
+    if (!isCreated) {
+      return;
     }
-  }, [approvalStatus]);
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    const token = Cookies.get("token");
+    const body_v = {
+      proofs: merkleOutput,
+      contractAddress: deployedAirdropContractAddress,
+    };
 
-  useEffect(() => {
-    if (creationStatus === "success") {
-      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-      const token = Cookies.get("token");
-      const body = {
-        proofs: merkleOutput,
-        contractAddress: deployedAirdropContractAddress,
-      };
-      setShowModal(true);
-
-      axios
-        .post(`${BACKEND_URL}/users/add-bulk-user`, body, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response) => {
-          console.log("API call successful:", response);
-        })
-        .catch((error) => {
-          console.error("API call failed:", error);
-        });
-      // call API here
-      setTimeout(() => {
+    axios
+      .post(`${BACKEND_URL}/users/add-bulk-user`, body_v, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log("API call successful:", response);
+        setShowModal(true);
         dispatch(setTokenDetail(null));
         clear();
-      }, 500);
-    }
-  }, [creationStatus]);
+      })
+      .catch((error) => {
+        console.error("API call failed:", error);
+      });
+  };
 
   return (
     <>
@@ -251,7 +245,9 @@ export function ApproveComponent() {
               </div>
             </div>
             <button
-              className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]"
+              className={`w-full bg-[#00A7FF] text-white py-2 rounded-[6px] transition ${
+                isCreating ? "cursor-not-allowed opacity-70" : ""
+              }`}
               onClick={approve}
               disabled={isLoadingApproval || isCreating}
             >

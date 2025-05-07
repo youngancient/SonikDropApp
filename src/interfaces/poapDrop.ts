@@ -1,11 +1,12 @@
 export interface IPOAPDrop {
-    address: string;
+    address: string; 
     baseURI: string;
     name: string;
     creatorAddress: string;
     totalClaimed: number;
     totalClaimable: number;
-    percentageClaimed: number;
     creationTime: number;
+    endTime ?: number;
     hasUserClaimed : boolean;
+    nftAddress: string;
   }

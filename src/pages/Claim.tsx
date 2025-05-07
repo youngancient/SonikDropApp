@@ -10,7 +10,6 @@ import {
 } from "../components/icons";
 import {
   DropComp,
-  IDropComp,
   POAPDropComp,
 } from "../components/claimComponent";
 import { tabs, TokenDrops } from "../constants/data.ts";
@@ -19,6 +18,8 @@ import { textVariant } from "../animations/animation";
 import { SonikNotConnected } from "../components/notConnected.tsx";
 import { ethers } from "ethers";
 import { useReadPoapFactoryFunctions } from "../hooks/specific/poap/useReadPoapFactory.ts";
+import { IDropComp } from "../interfaces/drop.ts";
+import { formatToDDMMYYYY } from "../utils/getPaddedDate.ts";
 
 export interface TabSwitch {
   name: "Tokens" | "POAPs";
@@ -57,7 +58,7 @@ const ClaimPage = () => {
       const drops: IDropComp[] = allPoapDropsDetails.map((drop) => ({
         name: drop.name,
         creator: drop.creatorAddress,
-        creationDate: new Date(drop.creationTime * 1000).toLocaleDateString(), // optional: format timestamp
+        creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)), // optional: format timestamp
         totalRewardPool: drop.totalClaimable,
         totalRewardClaimed: drop.totalClaimed,
         totalParticipants: drop.totalClaimable,

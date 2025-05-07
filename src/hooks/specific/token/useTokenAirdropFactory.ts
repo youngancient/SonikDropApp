@@ -13,7 +13,6 @@ export const useTokenFactoryFunctions = () => {
   const [transactionHash, setTransactionHash] = useState<string>("");
   const [deployedAirdropContractAddress, setDeployedTokenContractAddress] =
     useState("0x");
-  
 
   const createTokenDrop = useCallback(
     async (
@@ -67,25 +66,25 @@ export const useTokenFactoryFunctions = () => {
             console.log("Deployment event not found.");
           }
           setCreationStatus("success");
-          return;
+          return true;
         }
       } catch (error) {
         console.log(error);
         toast.error("failed to create drop");
         setCreationStatus("failed");
+        return false;
       } finally {
         setIsCreating(false);
       }
     },
     [tokenFactoryContract]
   );
-  
+
   return {
     createTokenDrop,
     creationStatus,
     isCreating,
     transactionHash,
     deployedAirdropContractAddress,
-  
   };
 };

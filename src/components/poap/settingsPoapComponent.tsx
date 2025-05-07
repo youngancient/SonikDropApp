@@ -23,6 +23,9 @@ import {
   useAppKitAccount
 } from "@reown/appkit/react";
 import CsvMakerComponent from "../csvMakerComponent";
+import { generateMerkleTreeFromAddresses } from "../../utils/merkleGen";
+import { setNoOfPoapClaimers, setPoapMerkleHash, setPoapMerkleOutput } from "../../store/slices/settingsSlice";
+
 
 export function SettingsPoapComponent() {
 
@@ -46,9 +49,6 @@ export function SettingsPoapComponent() {
           );
 
           dispatch(setInvalidAirdropAddresses(invalidAddresses));
-
-          console.log("results.data", results.data);
-          console.log("IvAdd", invalidAddresses);
 
           if (invalidAddresses.length > 0) {
             toast.error(`${invalidAddresses.map((record: ICSV) => `"${record?.address}"`).join(", ")}` + (invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses"));
@@ -109,6 +109,17 @@ export function SettingsPoapComponent() {
 
       return;
     }
+
+    // generate tree roothash and merkle proofs
+    const {rootHash, output} = generateMerkleTreeFromAddresses(csvToJSONData);
+    
+    dispatch(setPoapMerkleHash(rootHash));
+    dispatch(setPoapMerkleOutput(output));
+    
+    dispatch(setNoOfPoapClaimers(csvToJSONData.length));
+
+    console.log({ rootHash });
+    console.log({ output });
 
     sessionStorage.setItem(
       "csvData",
