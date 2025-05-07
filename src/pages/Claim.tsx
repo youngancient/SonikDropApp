@@ -10,7 +10,6 @@ import {
 } from "../components/icons";
 import {
   DropComp,
-  IDropComp,
   POAPDropComp,
 } from "../components/claimComponent";
 import { tabs, TokenDrops } from "../constants/data.ts";
@@ -19,6 +18,7 @@ import { textVariant } from "../animations/animation";
 import { SonikNotConnected } from "../components/notConnected.tsx";
 import { ethers } from "ethers";
 import { useReadPoapFactoryFunctions } from "../hooks/specific/poap/useReadPoapFactory.ts";
+import { IDropComp } from "../interfaces/drop.ts";
 
 export interface TabSwitch {
   name: "Tokens" | "POAPs";

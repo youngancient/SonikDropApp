@@ -8,6 +8,7 @@ import { copyToClipboard, formatAddress } from "../utils/helpers";
 import ThreeDHoverWrapper from "./3dhover";
 import {
   BackArrow,
+  ButtonLoader,
   CalendarIcon,
   CheckedIcon,
   CopyIcon,
@@ -21,25 +22,17 @@ import {
 } from "./styles/claimpage";
 import ClickOutsideWrapper from "./outsideClick";
 import { AnimatePresence } from "framer-motion";
-import { useAppKitAccount } from "@reown/appkit/react";
+import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
 import { getPoapImageFromBaseURI } from "../utils/getImageFromBaseURI";
 import { useReadPoapFunctions } from "../hooks/specific/poap/useReadPoapAirdrop";
-
-export interface IDropComp {
-  name: string;
-  creator: string; //address
-  creationDate: string;
-  endDate?: string;
-  totalRewardPool: number;
-  totalRewardClaimed: number;
-  totalParticipants: number;
-  totalClaims: number;
-  nftAddress?: string;
-  isEditable?: boolean;
-  hasUserClaimed?: boolean;
-  baseURI?: string;
-  contractAddress: string;
-}
+import useCalculateGasCost, {
+  GasInfo,
+} from "../hooks/specific/useCalculateGas";
+import { IDropComp } from "../interfaces/drop";
+import { usePoapDropFunctions } from "../hooks/specific/poap/usePoapAirdrop";
+import { ClaimDropToastMsg } from "./customToast";
+import { toast } from "react-toastify";
+import { generateTxExplorerLink } from "../utils/generateTxLink";
 
 export const DropComp: React.FC<IDropComp> = ({
   name,
@@ -165,6 +158,8 @@ export const DropComp: React.FC<IDropComp> = ({
                 creator.toLowerCase() === address?.toLowerCase() && isEditable,
             }}
             closeModal={() => setShowModal(false)}
+            gasInfo={null}
+            isEligible={false}
           />
         )}
       </AnimatePresence>
@@ -184,6 +179,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
   contractAddress,
   isEditable,
   baseURI,
+  hasUserClaimed,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
@@ -194,6 +190,8 @@ export const POAPDropComp: React.FC<IDropComp> = ({
   );
   const { address } = useAppKitAccount();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
+  const [isEligible, setIsEligible] = useState(false);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -207,15 +205,28 @@ export const POAPDropComp: React.FC<IDropComp> = ({
     fetchImage();
   }, [baseURI]);
 
-  const { checkEligibility } = useReadPoapFunctions(contractAddress);
+  const { checkEligibility, isChecking } =
+    useReadPoapFunctions(contractAddress);
+  const { estimate, loadingGas } = useCalculateGasCost();
 
   const handleCheckEligibiltyOrView = async () => {
     if (isEditable) {
       setShowModal(true);
       return;
     }
-    const result = await checkEligibility();
-    console.log("result ->-> ", result);
+    const { isEligible, gasToMint } = await checkEligibility();
+    if (!isEligible) {
+      setShowModal(true);
+      return;
+    }
+    if (!gasToMint) {
+      setShowModal(true);
+      return;
+    }
+    setIsEligible(isEligible); // user is eligible
+    const gasData = await estimate(gasToMint);
+    setGasInfo(gasData);
+    setShowModal(true);
   };
 
   return (
@@ -302,8 +313,24 @@ export const POAPDropComp: React.FC<IDropComp> = ({
             </div>
           </div>
           <div className="btn">
-            <button onClick={handleCheckEligibiltyOrView}>
-              {isEditable ? "View POAP" : "Check Eligibility"}
+            {/* change color if hasCLaimed is true */}
+            <button
+              onClick={handleCheckEligibiltyOrView}
+              disabled={hasUserClaimed || isChecking}
+              className={`px-4 py-2 rounded text-white font-medium transition
+                ${hasUserClaimed ? "cursor-not-allowed" : ""}
+                ${isChecking || (loadingGas && "opacity-60 cursor-wait")}`}
+                style={hasUserClaimed ? { backgroundColor: "#244b36", } : undefined}
+            >
+              {isChecking || loadingGas ? (
+                <ButtonLoader />
+              ) : !isEditable && hasUserClaimed ? (
+                "Claimed!"
+              ) : isEditable ? (
+                "View POAP"
+              ) : (
+                "Check Eligibility"
+              )}
             </button>
           </div>
         </DropCompStyle>
@@ -327,6 +354,8 @@ export const POAPDropComp: React.FC<IDropComp> = ({
             }}
             closeModal={() => setShowModal(false)}
             poapImg={imageUrl ?? undefined}
+            gasInfo={gasInfo}
+            isEligible={isEligible}
           />
         )}
       </AnimatePresence>
@@ -339,9 +368,12 @@ interface IClaimModal extends IDropComp {
   type: "token" | "poap";
   isCreator?: boolean;
   poapImg?: string;
+  gasInfo: GasInfo | null;
+  isEligible: boolean;
 }
 export const ClaimModal: React.FC<IClaimModal> = ({
   closeModal,
+  contractAddress,
   name,
   creator,
   nftAddress,
@@ -354,6 +386,8 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   type,
   isCreator,
   poapImg,
+  isEligible,
+  gasInfo,
 }) => {
   // for participants
   const participantPercentageRaw = (totalClaims * 100) / totalParticipants;
@@ -371,11 +405,37 @@ export const ClaimModal: React.FC<IClaimModal> = ({
       : rewardPercentageRaw.toFixed(1)
   );
 
-  const handleClaim = (dropType: "token" | "poap") => {
+  const { mintPoap, isMinting, transactionHash } =
+    usePoapDropFunctions(contractAddress);
+  const { chainId } = useAppKitNetwork();
+
+  const popMsg = () => {
+    if (!chainId) {
+      return;
+    }
+    const url = generateTxExplorerLink(chainId, transactionHash);  // txhash is not showing up
+    console.log("url ->>>>>>>>>>>",url);
+    
+    toast((props) => <ClaimDropToastMsg {...props} />, {
+      data: {
+        text: "Minted sucessfully",
+        url: url,
+      },
+    });
+  };
+
+  const handleClaim = async (dropType: "token" | "poap") => {
     if (dropType === "token") {
       // handle token claim
     } else if (dropType === "poap") {
       // handle poap claim
+      console.log("mint the poap");
+      const isClaimed = await mintPoap();
+      if(!isClaimed){
+        return;
+      }
+      popMsg();
+      closeModal();
     }
   };
   const editAirdrop = (dropType: "token" | "poap") => {
@@ -575,16 +635,34 @@ export const ClaimModal: React.FC<IClaimModal> = ({
               <div className=" addy flex items-center justify-between w-full">
                 <div className="flex items-center justify-between w-full">
                   <h4>Estimated Gas Fee</h4>
-                  <p className="break-words">
-                    {0.0005}ETH &asymp; ${0.5}
-                  </p>
+                  {gasInfo ? (
+                    <p className="break-words">
+                      {gasInfo.nativeWithToken} &asymp; {gasInfo.usd}
+                    </p>
+                  ) : (
+                    <p className="break-words">N/A</p>
+                  )}
                 </div>
               </div>
             </div>
             {!isCreator && (
               <div className="btn flex w-full justify-center items-center gap-[1rem]">
-                <button onClick={() => handleClaim(type)}>
-                  {type === "token" ? "Claim Airdrop" : "Mint POAP"}
+                <button
+                  onClick={() => handleClaim(type)}
+                  disabled={!isEligible || isMinting}
+                  className={`transition
+                  ${!isEligible ? "bg-red-500 cursor-not-allowed" : ""}
+                  ${isMinting && "opacity-60 cursor-wait"}`}
+                >
+                  {isMinting ? (
+                    <ButtonLoader />
+                  ) : !isEligible ? (
+                    "Not Eligible!"
+                  ) : type === "token" ? (
+                    "Claim Airdrop"
+                  ) : (
+                    "Mint POAP"
+                  )}
                 </button>
               </div>
             )}

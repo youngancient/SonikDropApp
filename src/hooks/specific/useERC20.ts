@@ -14,7 +14,7 @@ export const useTokenApproval = (tokenAddress: string) => {
   const { address } = useAppKitAccount();
   const { chainId } = useAppKitNetwork();
 
-  const [approvalStatus, setApprovalStatus] = useState<"default" | "success" | "failed">("default");
+  // const [approvalStatus, setApprovalStatus] = useState<"default" | "success" | "failed">("default");
   const erc20Contract = useERC20Contract(true, tokenAddress);
   const [isLoadingApproval, setIsLoadingApproval] = useState(false);
 
@@ -55,13 +55,12 @@ export const useTokenApproval = (tokenAddress: string) => {
         );
         const reciept = await tx.wait();
         if (reciept.status === 1) {
-          setApprovalStatus("success");
-          return;
+          return true;
         }
       } catch (error) {
         console.log(error);
-        setApprovalStatus("failed");
         toast.error("Approval failed");
+        return false;
       } finally {
         setIsLoadingApproval(false);
       }
@@ -69,7 +68,7 @@ export const useTokenApproval = (tokenAddress: string) => {
     [erc20Contract, address, chainId]
   );
 
-  return { approveTransfer, isLoadingApproval,approvalStatus };
+  return { approveTransfer, isLoadingApproval };
 };
 
 export interface ITokenDetails {

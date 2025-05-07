@@ -108,7 +108,7 @@ export function ApprovePoapComponent() {
       "ipfs://bafkreidolt4hcw7zbo2cp745g3zyommfz4e43g4pgdevu4ade2ujp2vgma";
     const nftAddress = ethers.ZeroAddress;
 
-    await createPoapDrop(
+    const isCreated = await createPoapDrop(
       merkleRoot,
       eventName,
       eventSymbol,
@@ -117,6 +117,9 @@ export function ApprovePoapComponent() {
       noOfClaimers
     );
 
+    if (!isCreated) {
+      return;
+    }
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const token = Cookies.get("token");
     const body = {
@@ -210,7 +213,9 @@ export function ApprovePoapComponent() {
               </div>
             </div>
             <button
-              className="w-full bg-[#00A7FF] text-white py-2 rounded-[6px]"
+              className={`w-full bg-[#00A7FF] text-white py-2 rounded-[6px] transition ${
+                isCreating ? "cursor-not-allowed opacity-70" : ""
+              }`}
               onClick={approve}
             >
               {isCreating ? <ButtonLoader /> : "Approve"}

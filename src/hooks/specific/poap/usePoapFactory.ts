@@ -63,13 +63,14 @@ export const usePoapFactoryFunctions = () => {
             console.log("Deployment event not found.");
           }
           setCreationStatus("success");
-          return;
+          return true;
         }
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);
         console.log(decodedError);
         toast.error("failed to create drop");
         setCreationStatus("failed");
+        return false;
       } finally {
         setIsCreating(false);
       }

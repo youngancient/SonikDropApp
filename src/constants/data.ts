@@ -1,4 +1,5 @@
-import { IDropComp } from "../components/claimComponent";
+
+import { IDropComp } from "../interfaces/drop";
 import { TabSwitch } from "../pages/Claim";
 
 export const tabs: TabSwitch[] = [

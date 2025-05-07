@@ -97,9 +97,10 @@ export const useReadPoapFactoryFunctions = () => {
               creatorAddress,
               totalClaimed,
               totalClaimable,
-              percentageClaimed,
               creationTime,
+              endTime,
               hasUserClaimed,
+              nftAddress,
             ] = iface.decodeFunctionResult("getPoapInfo", res.returnData);
 
             return {
@@ -109,13 +110,19 @@ export const useReadPoapFactoryFunctions = () => {
               creatorAddress,
               totalClaimed: Number(totalClaimed),
               totalClaimable: Number(totalClaimable),
-              percentageClaimed: Number(percentageClaimed),
               creationTime: Number(creationTime),
+              endTime:
+                Number(creationTime) != Number(endTime)
+                  ? Number(endTime)
+                  : undefined,
               hasUserClaimed,
+              nftAddress:
+                ethers.ZeroAddress != nftAddress ? nftAddress : undefined,
             };
           }
         );
         setFn(decoded.filter((drop): drop is IPOAPDrop => drop !== null));
+        console.log(decoded);
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);
         toast.error(decodedError.reason);
@@ -165,6 +172,6 @@ export const useReadPoapFactoryFunctions = () => {
     allPoapDropsDetails,
     allOwnerPoapDropsDetails,
     isLoadingOwnerPoapDrops,
-    isLoadingAllPoapDrops
+    isLoadingAllPoapDrops,
   };
 };
