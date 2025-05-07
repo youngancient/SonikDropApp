@@ -33,6 +33,7 @@ const initialState: settingsState = {
   merkleHash: "",
   merkleOutput: null,
   noOfClaimers: 0,
+
 };
 
 export const settingsSlice = createSlice({

@@ -122,7 +122,6 @@ export const useReadPoapFactoryFunctions = () => {
           }
         );
         setFn(decoded.filter((drop): drop is IPOAPDrop => drop !== null));
-        console.log(decoded);
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);
         toast.error(decodedError.reason);
@@ -173,5 +172,6 @@ export const useReadPoapFactoryFunctions = () => {
     allOwnerPoapDropsDetails,
     isLoadingOwnerPoapDrops,
     isLoadingAllPoapDrops,
+    setAllPoapDropsDetails,
   };
 };

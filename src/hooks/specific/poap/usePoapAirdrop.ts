@@ -2,6 +2,7 @@ import { ErrorDecoder } from "ethers-decode-error";
 import { usePOAPDropContract } from "../../useContracts";
 import { toast } from "react-toastify";
 import { useCallback, useState } from "react";
+import { useReadPoapFactoryFunctions } from "./useReadPoapFactory";
 
 export const usePoapDropFunctions = (poapContractAddress: string) => {
   const poapDropContract = usePOAPDropContract(true, poapContractAddress);
@@ -9,6 +10,11 @@ export const usePoapDropFunctions = (poapContractAddress: string) => {
 
   const [transactionHash, setTransactionHash] = useState<string>("");
   const [isMinting, setIsMinting] = useState(false);
+
+  const { getAllPoapDropsDetails } =
+    useReadPoapFactoryFunctions();
+
+
 
   const mintPoap = useCallback(async () => {
     if (!poapDropContract) {
@@ -25,11 +31,13 @@ export const usePoapDropFunctions = (poapContractAddress: string) => {
 
     try {
       setIsMinting(true);
+      
       const tx = await poapDropContract["claimAirdrop(bytes32[])"](merkleProof);
       setTransactionHash(tx.hash);
 
       const reciept = await tx.wait();
       if (reciept.status === 1) {
+        await getAllPoapDropsDetails();   // not sure of how to fix this
         return true;
       }
     } catch (error) {
