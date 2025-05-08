@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 import { IPoapAirdropClaim } from "../../interfaces/output";
+import { IDropComp } from "../../interfaces/drop";
 
 // Define a type for the slice state
 interface settingsState {
@@ -33,7 +34,6 @@ const initialState: settingsState = {
   merkleHash: "",
   merkleOutput: null,
   noOfClaimers: 0,
-
 };
 
 export const settingsSlice = createSlice({

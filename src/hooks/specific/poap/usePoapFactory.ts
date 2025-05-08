@@ -50,7 +50,6 @@ export const usePoapFactoryFunctions = () => {
         const reciept = await tx.wait();
         if (reciept.status === 1) {
           toast.success("Creation Successful!");
-          console.log(reciept);
           // Find the emitted event with the new contract's address
           const eventLogs = reciept.logs;
 
