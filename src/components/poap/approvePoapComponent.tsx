@@ -19,7 +19,7 @@ import {
   selectNoOfPoapClaimers,
   selectPoapMerkleHash,
   selectPoapMerkleOutput,
-} from "../../store/slices/poapDataSlice";
+} from "../../store/slices/poapDropDataSlice";
 
 export function ApprovePoapComponent() {
   const [eventName, setEventName] = useState("");

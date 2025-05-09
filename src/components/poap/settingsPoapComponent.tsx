@@ -25,7 +25,7 @@ import {
   setNoOfPoapClaimers,
   setPoapMerkleHash,
   setPoapMerkleOutput,
-} from "../../store/slices/poapDataSlice";
+} from "../../store/slices/poapDropDataSlice";
 
 export function SettingsPoapComponent() {
   const dispatch = useAppDispatch();
