@@ -1,31 +1,38 @@
-
 export const TOKEN_AIRDROP_ABI = [
-    // Views
-    "function airdropEndTime() view returns (uint256)",
-    "function hasUserClaimedAirdrop(address user) view returns (bool claimed)",
-    "function getContractBalance() view returns (uint256)",
-    "function hasAirdropTimeEnded() view returns (bool)",
-    "function checkEligibility(uint256 _amount, bytes32[] _merkleProof) view returns (bool)",
-    "function name() view returns (string)",
-    "function merkleRoot() view returns (bytes32)",
-    "function tokenAddress() view returns (address)",
-    "function owner() view returns (address)",
-  
-    // Write
-    "function claimAirdrop(uint256 _amount, bytes32[] _merkleProof, bytes32 digest, bytes signature)",
-    "function claimAirdrop(uint256 _amount, bytes32[] _merkleProof, uint256 _tokenId, bytes32 digest, bytes signature)",
-    "function withdrawLeftOverToken()",
-    "function fundAirdrop(uint256 _amount)",
-    "function updateNftRequirement(address _newNft)",
-    "function turnOffNftRequirement()",
-    "function updateClaimTime(uint256 _claimTime)",
-  
-    // Events
-    "event AirdropClaimed(address indexed claimer, uint256 amount)",
-    "event AirdropTokenDeposited(address indexed owner, uint256 amount)",
-    "event WithdrawalSuccessful(address indexed caller, uint256 amount)",
-    "event NftRequirementUpdated(address indexed caller, uint256 timestamp, address nftAddress)",
-    "event NftRequirementToggled(address indexed caller, uint256 timestamp)",
-    "event ClaimTimeUpdated(address indexed caller, uint256 newEndTime)"
-  ];
-  
+  // Read/view functions
+  "function merkleRoot() view returns (bytes32)",
+  "function creationTime() view returns (uint256)",
+  "function name() view returns (string)",
+  "function owner() view returns (address)",
+  "function tokenAddress() view returns (address)",
+  "function nftAddress() view returns (address)",
+  "function isTimeLocked() view returns (bool)",
+  "function hasOwnerWithdrawn() view returns (bool)",
+  "function hasUserClaimedAirdrop(address user) view returns (bool)",
+  "function hasAirdropTimeEnded() view returns (bool)",
+  "function getContractBalance() view returns (uint256)",
+  "function checkEligibility(uint256 _amount, bytes32[] calldata _merkleProof) view returns (bool)",
+  "function totalOutputTokens() view returns (uint256)",
+  `function getDropInfo(address user) view returns (
+   string _name,
+   address creatorAddress,
+   uint256 totalClaimed,
+   uint256 totalClaimable,
+   uint256 totalClaimedtoken,
+   uint256 totalClaimabletoken,
+   uint256 _creationTime,
+   uint256 _endtime,
+   bool _hasOwnerWithdrawn,
+   bool _hasUserClaimedAirdrop,
+   address _nftAddress
+ )`,
+
+  // Write/public/external functions
+  "function claimAirdrop(uint256 _amount, bytes32[] calldata _merkleProof) external",
+  "function claimAirdrop(uint256 _amount, bytes32[] calldata _merkleProof, uint256 _tokenId) public",
+  "function withdrawLeftOverToken() external",
+  "function fundAirdrop(uint256 _amount) external",
+  "function updateNftRequirement(address _newNft) external",
+  "function turnOffNftRequirement() external",
+  "function updateClaimTime(uint256 _claimTime) external",
+];

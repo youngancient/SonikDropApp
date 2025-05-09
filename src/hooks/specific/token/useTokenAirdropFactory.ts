@@ -10,7 +10,6 @@ export const useTokenFactoryFunctions = () => {
     "default" | "success" | "failed"
   >("default");
   const [isCreating, setIsCreating] = useState(false);
-  const [transactionHash, setTransactionHash] = useState<string>("");
   const [deployedAirdropContractAddress, setDeployedTokenContractAddress] =
     useState("0x");
 
@@ -22,10 +21,13 @@ export const useTokenFactoryFunctions = () => {
       nftAddress: string,
       noOfClaimers: number,
       totalOutputTokens: bigint
-    ) => {
+    ): Promise<{
+      success: boolean;
+      transactionHash: string | null;
+    }> => {
       if (!tokenFactoryContract) {
         toast.error("Token Factory Contract not found");
-        return;
+        return { success: false, transactionHash: null };
       }
       try {
         setIsCreating(true);
@@ -48,12 +50,10 @@ export const useTokenFactoryFunctions = () => {
             gasLimit: 2000000,
           }
         );
-        setTransactionHash(tx.hash);
 
         const reciept = await tx.wait();
         if (reciept.status === 1) {
           toast.success("Creation Successful!");
-          console.log(reciept);
           // Find the emitted event with the new contract's address
           const eventLogs = reciept.logs;
 
@@ -66,16 +66,17 @@ export const useTokenFactoryFunctions = () => {
             console.log("Deployment event not found.");
           }
           setCreationStatus("success");
-          return true;
+          return { success: true, transactionHash: tx.hash };
         }
       } catch (error) {
         console.log(error);
         toast.error("failed to create drop");
         setCreationStatus("failed");
-        return false;
+        return { success: true, transactionHash: null };
       } finally {
         setIsCreating(false);
       }
+      return { success: false, transactionHash: null }; // Default return statement
     },
     [tokenFactoryContract]
   );
@@ -84,7 +85,6 @@ export const useTokenFactoryFunctions = () => {
     createTokenDrop,
     creationStatus,
     isCreating,
-    transactionHash,
     deployedAirdropContractAddress,
   };
 };

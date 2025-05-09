@@ -33,6 +33,8 @@ import { usePoapDropFunctions } from "../hooks/specific/poap/usePoapAirdrop";
 import { ClaimDropToastMsg } from "./customToast";
 import { toast } from "react-toastify";
 import { generateTxExplorerLink } from "../utils/generateTxLink";
+import { useAppDispatch } from "../store/hooks";
+import { updateAllPoapsAfterClaim } from "../store/slices/poapDataSlice";
 
 export const DropComp: React.FC<IDropComp> = ({
   name,
@@ -313,16 +315,20 @@ export const POAPDropComp: React.FC<IDropComp> = ({
             </div>
           </div>
           <div className="btn">
-            {/* change color if hasCLaimed is true */}
             <button
               onClick={handleCheckEligibiltyOrView}
-              disabled={hasUserClaimed || isChecking}
+              disabled={!isEditable && (hasUserClaimed || isChecking)}
               className={`px-4 py-2 rounded text-white font-medium transition
-                ${hasUserClaimed ? "cursor-not-allowed" : ""}
-                ${isChecking || (loadingGas && "opacity-60 cursor-wait")}`}
-                style={hasUserClaimed ? { backgroundColor: "#244b36", } : undefined}
+    ${!isEditable && hasUserClaimed ? "cursor-not-allowed" : ""}
+    ${!isEditable && (isChecking || loadingGas) ? "opacity-60 cursor-wait" : ""}
+  `}
+              style={
+                !isEditable && hasUserClaimed
+                  ? { backgroundColor: "#244b36" }
+                  : undefined
+              }
             >
-              {isChecking || loadingGas ? (
+              {!isEditable && (isChecking || loadingGas) ? (
                 <ButtonLoader />
               ) : !isEditable && hasUserClaimed ? (
                 "Claimed!"
@@ -405,17 +411,15 @@ export const ClaimModal: React.FC<IClaimModal> = ({
       : rewardPercentageRaw.toFixed(1)
   );
 
-  const { mintPoap, isMinting, transactionHash } =
-    usePoapDropFunctions(contractAddress);
+  const { mintPoap, isMinting } = usePoapDropFunctions(contractAddress);
   const { chainId } = useAppKitNetwork();
 
-  const popMsg = () => {
+  const popMsg = (txHash: string) => {
     if (!chainId) {
       return;
     }
-    const url = generateTxExplorerLink(chainId, transactionHash);  // txhash is not showing up
-    console.log("url ->>>>>>>>>>>",url);
-    
+    const url = generateTxExplorerLink(chainId, txHash); 
+
     toast((props) => <ClaimDropToastMsg {...props} />, {
       data: {
         text: "Minted sucessfully",
@@ -424,17 +428,26 @@ export const ClaimModal: React.FC<IClaimModal> = ({
     });
   };
 
+  const dispatch = useAppDispatch();
+
   const handleClaim = async (dropType: "token" | "poap") => {
     if (dropType === "token") {
       // handle token claim
     } else if (dropType === "poap") {
       // handle poap claim
       console.log("mint the poap");
-      const isClaimed = await mintPoap();
-      if(!isClaimed){
+      const { success, transactionHash } = await mintPoap();
+
+      if (!success) {
         return;
       }
-      popMsg();
+      if (!transactionHash) {
+        return;
+      }
+      dispatch(updateAllPoapsAfterClaim(contractAddress));
+      console.log("total rewards in modal claimed -> ", totalRewardClaimed);
+
+      popMsg(transactionHash);
       closeModal();
     }
   };

@@ -8,10 +8,7 @@ import {
   CircleCancel,
   MagnifyingGlass,
 } from "../components/icons";
-import {
-  DropComp,
-  POAPDropComp,
-} from "../components/claimComponent";
+import { DropComp, POAPDropComp } from "../components/claimComponent";
 import { tabs, TokenDrops } from "../constants/data.ts";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
@@ -20,6 +17,13 @@ import { ethers } from "ethers";
 import { useReadPoapFactoryFunctions } from "../hooks/specific/poap/useReadPoapFactory.ts";
 import { IDropComp } from "../interfaces/drop.ts";
 import { formatToDDMMYYYY } from "../utils/getPaddedDate.ts";
+import { useAppDispatch, useAppSelector } from "../store/hooks.ts";
+import {
+  setPOAPDrops,
+  setDuplicatePOAPDrops,
+  selectAllDuplicatePoapDrops,
+  selectAllPoapDrops,
+} from "../store/slices/poapDataSlice.ts";
 
 export interface TabSwitch {
   name: "Tokens" | "POAPs";
@@ -37,11 +41,11 @@ const ClaimPage = () => {
   const [query, setQuery] = useState<string>("");
 
   const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(TokenDrops);
-  const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(null);
+  
+  const duplicatePoapdrops = useAppSelector(selectAllDuplicatePoapDrops);
+  const poapdrops = useAppSelector(selectAllPoapDrops);
 
-  const [duplicatePoapdrops, setDuplicatePOAPDrops] = useState<
-    IDropComp[] | null
-  >(null);
+  const dispatch = useAppDispatch();
 
   const handleTabSwitch = (tabName: string) => {
     setSelectedTabName(tabName);
@@ -52,7 +56,7 @@ const ClaimPage = () => {
     setStateTabs(newTabs);
     if (tabName == "POAPs") {
       if (allPoapDropsDetails == null) {
-        setPOAPDrops(null);
+        dispatch(setPOAPDrops(null));
         return;
       }
       const drops: IDropComp[] = allPoapDropsDetails.map((drop) => ({
@@ -60,7 +64,7 @@ const ClaimPage = () => {
         creator: drop.creatorAddress,
         creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)), // optional: format timestamp
         totalRewardPool: drop.totalClaimable,
-        totalRewardClaimed: drop.totalClaimed,
+        totalRewardClaimed: drop.totalClaimed,  // since it's 1 mint per user, totalClaims == totalRewardClaimed
         totalParticipants: drop.totalClaimable,
         totalClaims: drop.totalClaimed,
         contractAddress: drop.address,
@@ -68,8 +72,8 @@ const ClaimPage = () => {
         baseURI: drop.baseURI,
       }));
 
-      setPOAPDrops(drops);
-      setDuplicatePOAPDrops(drops);
+      dispatch(setPOAPDrops(drops));
+      dispatch(setDuplicatePOAPDrops(drops));
     }
   };
 
@@ -94,7 +98,7 @@ const ClaimPage = () => {
         const filteredPOAPDrops = duplicatePoapdrops.filter(
           (drop) => drop.creator.toLowerCase() === query.toLowerCase()
         );
-        setPOAPDrops(filteredPOAPDrops);
+        dispatch(setPOAPDrops(filteredPOAPDrops));
       }
     } else {
       // search by name
@@ -111,15 +115,14 @@ const ClaimPage = () => {
         const filteredPOAPDrops = duplicatePoapdrops.filter((drop) =>
           drop.name.toLowerCase().includes((query as string).toLowerCase())
         );
-        setPOAPDrops(filteredPOAPDrops);
+        dispatch(setPOAPDrops(filteredPOAPDrops));
       }
     }
-    console.log(query);
   };
 
   const clearForm = () => {
     setTokenDrops(TokenDrops);
-    setPOAPDrops(duplicatePoapdrops);
+    dispatch(setPOAPDrops(duplicatePoapdrops));
     setQuery("");
   };
   const { getAllPoapDropsDetails, allPoapDropsDetails, isLoadingAllPoapDrops } =

@@ -2,24 +2,20 @@ import { ErrorDecoder } from "ethers-decode-error";
 import { usePOAPDropContract } from "../../useContracts";
 import { toast } from "react-toastify";
 import { useCallback, useState } from "react";
-import { useReadPoapFactoryFunctions } from "./useReadPoapFactory";
 
 export const usePoapDropFunctions = (poapContractAddress: string) => {
   const poapDropContract = usePOAPDropContract(true, poapContractAddress);
   const errorDecoder = ErrorDecoder.create();
 
-  const [transactionHash, setTransactionHash] = useState<string>("");
   const [isMinting, setIsMinting] = useState(false);
 
-  const { getAllPoapDropsDetails } =
-    useReadPoapFactoryFunctions();
-
-
-
-  const mintPoap = useCallback(async () => {
+  const mintPoap = useCallback(async (): Promise<{
+    success: boolean;
+    transactionHash: string | null;
+  }> => {
     if (!poapDropContract) {
       toast.error("PoapDrop Contract not found");
-      return;
+      return { success: false, transactionHash: null };
     }
 
     // get this merkleproof from the backend server (using the contract address and user address)
@@ -31,20 +27,16 @@ export const usePoapDropFunctions = (poapContractAddress: string) => {
 
     try {
       setIsMinting(true);
-      
+
       const tx = await poapDropContract["claimAirdrop(bytes32[])"](merkleProof);
-      setTransactionHash(tx.hash);
 
       const reciept = await tx.wait();
-      if (reciept.status === 1) {
-        await getAllPoapDropsDetails();   // not sure of how to fix this
-        return true;
-      }
+      return { success: reciept.status === 1, transactionHash: tx.hash };
     } catch (error) {
       const decodedError = await errorDecoder.decode(error);
       console.error("Mint failed:", decodedError);
       toast.error("Mint failed");
-      return false;
+      return { success: false, transactionHash: null };
     } finally {
       setIsMinting(false);
     }
@@ -52,7 +44,6 @@ export const usePoapDropFunctions = (poapContractAddress: string) => {
 
   return {
     mintPoap,
-    transactionHash,
     isMinting,
   };
 };

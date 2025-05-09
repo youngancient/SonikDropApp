@@ -7,11 +7,7 @@ import { CompletedModal } from "../completedModal";
 import { ICSV, IPoapEvent } from "../../interfaces/CSVInterface";
 import { useClearPoapFormInput } from "../../hooks/useClearPoapForm";
 import { useAppSelector } from "../../store/hooks";
-import {
-  selectNoOfPoapClaimers,
-  selectPoapMerkleHash,
-  selectPoapMerkleOutput,
-} from "../../store/slices/settingsSlice";
+
 import { usePoapFactoryFunctions } from "../../hooks/specific/poap/usePoapFactory";
 import { ethers } from "ethers";
 import useCalculateGasCost, {
@@ -19,6 +15,11 @@ import useCalculateGasCost, {
 } from "../../hooks/specific/useCalculateGas";
 import axios from "axios";
 import Cookies from "js-cookie";
+import {
+  selectNoOfPoapClaimers,
+  selectPoapMerkleHash,
+  selectPoapMerkleOutput,
+} from "../../store/slices/poapDataSlice";
 
 export function ApprovePoapComponent() {
   const [eventName, setEventName] = useState("");
