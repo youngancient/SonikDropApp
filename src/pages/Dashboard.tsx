@@ -13,18 +13,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { OptionComponent } from "../components/optionComponent";
 import { useEffect, useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { tabs, TokenDrops } from "../constants/data";
+import { tabs } from "../constants/data";
 import { ethers } from "ethers";
 import { DropListStyle } from "../components/styles/claimpage";
-import {
-  DropComp,
-  POAPDropComp,
-} from "../components/claimComponent";
+import { DropComp, POAPDropComp } from "../components/claimComponent";
 import { SonikNotConnected } from "../components/notConnected";
 import { textVariant } from "../animations/animation";
 import { useReadTokenFactoryFunctions } from "../hooks/specific/token/useReadTokenFactory";
 import { useReadPoapFactoryFunctions } from "../hooks/specific/poap/useReadPoapFactory";
 import { IDropComp } from "../interfaces/drop";
+import { mapTokenDrops } from "../utils/mapTokenDrop";
 
 const Dashboard = () => {
   // Note: Here only the airdrops created by the user are displayed
@@ -40,6 +38,10 @@ const Dashboard = () => {
   const [query, setQuery] = useState<string>("");
 
   const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(null);
+  const [duplicateTokenDrops, setDuplicateTokenDrops] = useState<
+    IDropComp[] | null
+  >(null);
+
   const [poapdrops, setPOAPDrops] = useState<IDropComp[] | null>(null);
 
   const [duplicatePoapdrops, setDuplicatePOAPDrops] = useState<
@@ -52,6 +54,14 @@ const Dashboard = () => {
     isLoadingOwnerPoapDrops,
   } = useReadPoapFactoryFunctions();
 
+  const {
+    allOwnerTokenDropsDetails,
+    getOwnerTokenDropsDetails,
+    isLoadingOwnerTokenDrops,
+  } = useReadTokenFactoryFunctions();
+
+  
+  // there's a bug here, if the user doesnt wait for the fetch in the useefect to be complete, the kini here is null
   const handleTabSwitch = (tabName: string) => {
     setSelectedTabName(tabName);
     const newTabs = stateTabs.map((ele) => {
@@ -80,22 +90,39 @@ const Dashboard = () => {
       setPOAPDrops(drops);
       setDuplicatePOAPDrops(drops);
     }
+    if (tabName == "Tokens") {
+      if (allOwnerTokenDropsDetails == null) {
+        setTokenDrops(null);
+        return;
+      }
+
+      const drops: IDropComp[] = mapTokenDrops(allOwnerTokenDropsDetails);
+      setTokenDrops(drops);
+      setDuplicateTokenDrops(drops);
+    }
   };
-  const { getOwnerTokenDrops } = useReadTokenFactoryFunctions();
 
   useEffect(() => {
     if (!address) {
       return;
     }
 
-    getOwnerTokenDrops(); // for token airdrop
+    const fetchData = async () => {
+      await getOwnerTokenDropsDetails();
+      
+      if (allOwnerTokenDropsDetails == null) {
+        setTokenDrops(null);
+        return;
+      }
+      
+      const drops: IDropComp[] = mapTokenDrops(allOwnerTokenDropsDetails);
+      setTokenDrops(drops);
+      setDuplicateTokenDrops(drops);
+      // get poap
+      await getOwnerPoapDropsDetails();
+    };
 
-    const userCreatedTokenDrops = TokenDrops.filter(
-      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
-    );
-    getOwnerPoapDropsDetails();
-
-    setTokenDrops(userCreatedTokenDrops);
+    fetchData();
   }, [address]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -107,7 +134,10 @@ const Dashboard = () => {
     if (ethers.isAddress(query)) {
       // search by address
       if (selectedTabName === "Tokens") {
-        const filteredTokenDrops = TokenDrops.filter(
+        if (!duplicateTokenDrops) {
+          return;
+        }
+        const filteredTokenDrops = duplicateTokenDrops.filter(
           (drop) => drop.creator.toLowerCase() === query.toLowerCase()
         );
         setTokenDrops(filteredTokenDrops);
@@ -123,7 +153,10 @@ const Dashboard = () => {
     } else {
       // search by name
       if (selectedTabName === "Tokens") {
-        const filteredTokenDrops = TokenDrops.filter((drop) =>
+        if (!duplicateTokenDrops) {
+          return;
+        }
+        const filteredTokenDrops = duplicateTokenDrops.filter((drop) =>
           drop.name.toLowerCase().includes((query as string).toLowerCase())
         );
         // console.log(filteredTokenDrops.length === 0);
@@ -138,15 +171,10 @@ const Dashboard = () => {
         setPOAPDrops(filteredPOAPDrops);
       }
     }
-    console.log(query);
   };
 
   const clearForm = () => {
-    const userCreatedTokenDrops = TokenDrops.filter(
-      (drop) => drop.creator.toLowerCase() === address?.toLowerCase()
-    );
-
-    setTokenDrops(userCreatedTokenDrops);
+    setTokenDrops(duplicateTokenDrops);
     setPOAPDrops(duplicatePoapdrops);
     setQuery("");
   };
@@ -267,8 +295,12 @@ const Dashboard = () => {
           {isConnected && (
             <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] pb-[4rem">
               {selectedTabName == "Tokens" &&
-                (tokendrops ?? []).map((drop, index) => (
-                  <DropComp key={index} {...drop} isEditable={true} />
+                (isLoadingOwnerTokenDrops ? (
+                  <ButtonLoader />
+                ) : (
+                  (tokendrops ?? []).map((drop, index) => (
+                    <DropComp key={index} {...drop} isEditable={true} />
+                  ))
                 ))}
               {selectedTabName === "POAPs" &&
                 (isLoadingOwnerPoapDrops ? (

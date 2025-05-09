@@ -9,7 +9,7 @@ import {
   MagnifyingGlass,
 } from "../components/icons";
 import { DropComp, POAPDropComp } from "../components/claimComponent";
-import { tabs, TokenDrops } from "../constants/data.ts";
+import { tabs } from "../constants/data.ts";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
 import { SonikNotConnected } from "../components/notConnected.tsx";
@@ -23,7 +23,15 @@ import {
   setDuplicatePOAPDrops,
   selectAllDuplicatePoapDrops,
   selectAllPoapDrops,
-} from "../store/slices/poapDataSlice.ts";
+} from "../store/slices/poapDropDataSlice.ts";
+import { useReadTokenFactoryFunctions } from "../hooks/specific/token/useReadTokenFactory.ts";
+import {
+  selectAllDuplicateTokenDrops,
+  selectAllTokenDrops,
+  setDuplicateTokenDrops,
+  setTokenDrops,
+} from "../store/slices/tokenDropDataSlice.ts";
+import { mapTokenDrops } from "../utils/mapTokenDrop.ts";
 
 export interface TabSwitch {
   name: "Tokens" | "POAPs";
@@ -31,7 +39,7 @@ export interface TabSwitch {
 }
 
 const ClaimPage = () => {
-  // Note: Here only the airdrops the user is eligible for are displayed
+  // Note: all airdrops arre listed
   const [stateTabs, setStateTabs] = useState(tabs);
 
   const [selectedTabName, setSelectedTabName] = useState("Tokens");
@@ -40,12 +48,22 @@ const ClaimPage = () => {
 
   const [query, setQuery] = useState<string>("");
 
-  const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(TokenDrops);
-  
   const duplicatePoapdrops = useAppSelector(selectAllDuplicatePoapDrops);
   const poapdrops = useAppSelector(selectAllPoapDrops);
 
+  const duplicateTokenDrops = useAppSelector(selectAllDuplicateTokenDrops);
+  const tokenDrops = useAppSelector(selectAllTokenDrops);
+
   const dispatch = useAppDispatch();
+
+  const { getAllPoapDropsDetails, allPoapDropsDetails, isLoadingAllPoapDrops } =
+    useReadPoapFactoryFunctions();
+
+  const {
+    getAllTokenDropsDetails,
+    allTokenDropsDetails,
+    isLoadingAllTokenDrops,
+  } = useReadTokenFactoryFunctions();
 
   const handleTabSwitch = (tabName: string) => {
     setSelectedTabName(tabName);
@@ -62,9 +80,9 @@ const ClaimPage = () => {
       const drops: IDropComp[] = allPoapDropsDetails.map((drop) => ({
         name: drop.name,
         creator: drop.creatorAddress,
-        creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)), // optional: format timestamp
+        creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)),
         totalRewardPool: drop.totalClaimable,
-        totalRewardClaimed: drop.totalClaimed,  // since it's 1 mint per user, totalClaims == totalRewardClaimed
+        totalRewardClaimed: drop.totalClaimed, // since it's 1 mint per user, totalClaims == totalRewardClaimed
         totalParticipants: drop.totalClaimable,
         totalClaims: drop.totalClaimed,
         contractAddress: drop.address,
@@ -74,6 +92,16 @@ const ClaimPage = () => {
 
       dispatch(setPOAPDrops(drops));
       dispatch(setDuplicatePOAPDrops(drops));
+    }
+    if (tabName == "Tokens") {
+      if (allTokenDropsDetails == null) {
+        setTokenDrops(null);
+        return;
+      }
+
+      const drops: IDropComp[] = mapTokenDrops(allTokenDropsDetails);
+      dispatch(setTokenDrops(drops));
+      dispatch(setDuplicateTokenDrops(drops));
     }
   };
 
@@ -87,7 +115,10 @@ const ClaimPage = () => {
     if (ethers.isAddress(query)) {
       // search by address
       if (selectedTabName === "Tokens") {
-        const filteredTokenDrops = TokenDrops.filter(
+        if (!duplicateTokenDrops) {
+          return;
+        }
+        const filteredTokenDrops = duplicateTokenDrops.filter(
           (drop) => drop.creator.toLowerCase() === query.toLowerCase()
         );
         setTokenDrops(filteredTokenDrops);
@@ -103,7 +134,10 @@ const ClaimPage = () => {
     } else {
       // search by name
       if (selectedTabName === "Tokens") {
-        const filteredTokenDrops = TokenDrops.filter((drop) =>
+        if (!duplicateTokenDrops) {
+          return;
+        }
+        const filteredTokenDrops = duplicateTokenDrops.filter((drop) =>
           drop.name.toLowerCase().includes((query as string).toLowerCase())
         );
         // console.log(filteredTokenDrops.length === 0);
@@ -121,18 +155,32 @@ const ClaimPage = () => {
   };
 
   const clearForm = () => {
-    setTokenDrops(TokenDrops);
+    dispatch(setTokenDrops(duplicateTokenDrops));
     dispatch(setPOAPDrops(duplicatePoapdrops));
     setQuery("");
   };
-  const { getAllPoapDropsDetails, allPoapDropsDetails, isLoadingAllPoapDrops } =
-    useReadPoapFactoryFunctions();
 
   useEffect(() => {
     if (!address) {
       return;
     }
-    getAllPoapDropsDetails();
+    const fetchData = async () => {
+      const drs = await getAllTokenDropsDetails();
+      console.log(drs);
+      
+
+      if (allTokenDropsDetails == null) {
+        dispatch(setTokenDrops(null));
+        return;
+      }
+
+      const drops: IDropComp[] = mapTokenDrops(allTokenDropsDetails);
+      dispatch(setTokenDrops(drops));
+      dispatch(setDuplicateTokenDrops(drops));
+      // get poap
+      await getAllPoapDropsDetails();
+    };
+    fetchData();
   }, [address]);
 
   return (
@@ -211,7 +259,7 @@ const ClaimPage = () => {
         </div>
 
         {isConnected &&
-          (tokendrops?.length === 0 || poapdrops?.length === 0) && (
+          (tokenDrops?.length === 0 || poapdrops?.length === 0) && (
             <motion.div
               className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
               initial="initial"
@@ -227,8 +275,12 @@ const ClaimPage = () => {
         {isConnected && (
           <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] mb-[4rem]">
             {selectedTabName == "Tokens" &&
-              (tokendrops ?? []).map((drop, index) => (
-                <DropComp key={index} {...drop} />
+              (isLoadingAllTokenDrops ? (
+                <ButtonLoader />
+              ) : (
+                (tokenDrops ?? []).map((drop, index) => (
+                  <DropComp key={index} {...drop} />
+                ))
               ))}
             {selectedTabName === "POAPs" &&
               (isLoadingAllPoapDrops ? (

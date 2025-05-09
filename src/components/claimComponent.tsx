@@ -34,7 +34,8 @@ import { ClaimDropToastMsg } from "./customToast";
 import { toast } from "react-toastify";
 import { generateTxExplorerLink } from "../utils/generateTxLink";
 import { useAppDispatch } from "../store/hooks";
-import { updateAllPoapsAfterClaim } from "../store/slices/poapDataSlice";
+import { updateAllPoapsAfterClaim } from "../store/slices/poapDropDataSlice";
+import { ethers } from "ethers";
 
 export const DropComp: React.FC<IDropComp> = ({
   name,
@@ -90,7 +91,7 @@ export const DropComp: React.FC<IDropComp> = ({
             <div className="two flex justify-between gap-[1rem] flex-wrap">
               <div className="">
                 <p className="">Reward Pool</p>
-                <h3>{totalRewardPool.toLocaleString()}ETH</h3>
+                <h3>{ethers.formatUnits(totalRewardPool.toString(),18)}ETH</h3>
               </div>
               <div>
                 <p>{endDate ? "ENDING DATE" : "CREATION DATE"}</p>

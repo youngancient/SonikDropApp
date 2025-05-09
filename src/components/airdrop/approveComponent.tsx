@@ -12,9 +12,6 @@ import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useClearFormInput } from "../../hooks/useClearForm";
 import {
-  selectMerkleHash,
-  selectMerkleOutput,
-  selectNoOfClaimers,
   selectTokenAddress,
   selectTokenDetail,
   setTokenDetail,
@@ -35,6 +32,7 @@ import {
 } from "../../store/slices/settingsSlice";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { selectMerkleHash, selectMerkleOutput, selectNoOfClaimers } from "../../store/slices/tokenDropDataSlice";
 
 export function ApproveComponent() {
   const dispatch = useAppDispatch();

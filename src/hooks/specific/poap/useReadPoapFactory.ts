@@ -61,12 +61,11 @@ export const useReadPoapFactoryFunctions = () => {
   const fetchPoapDropDetails = useCallback(
     async (
       dropAddresses: string[],
-      setFn: (drops: IPOAPDrop[]) => void,
       setLoading: (state: boolean) => void
-    ) => {
+    ): Promise<IPOAPDrop[]> => {
       if (!multicall3Contract) {
         toast.error("Multicall3 Contract not found");
-        return;
+        return [];
       }
       setLoading(true);
       try {
@@ -121,10 +120,11 @@ export const useReadPoapFactoryFunctions = () => {
             };
           }
         );
-        setFn(decoded.filter((drop): drop is IPOAPDrop => drop !== null));
+        return decoded.filter((drop): drop is IPOAPDrop => drop !== null);
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);
         toast.error(decodedError.reason);
+        return [];
       } finally {
         setLoading(false);
       }
@@ -132,33 +132,37 @@ export const useReadPoapFactoryFunctions = () => {
     [multicall3Contract, address]
   );
 
-  const getOwnerPoapDropsDetails = useCallback(async () => {
+  const getOwnerPoapDropsDetails = useCallback(async (): Promise<
+    IPOAPDrop[]
+  > => {
     if (!poapFactoryContract) {
       toast.error("Poap Factory Contract not found");
-      return;
+      return [];
     }
 
     const ownerDropAddresses =
       await poapFactoryContract.getOwnerSonikPoapClones(address);
-    fetchPoapDropDetails(
+    const drops = await fetchPoapDropDetails(
       ownerDropAddresses,
-      setAllOwnerPoapDropsDetails,
       setLoadingOwnerPoapDrops
     );
+    setAllOwnerPoapDropsDetails(drops);
+    return drops;
   }, [poapFactoryContract]);
 
-  const getAllPoapDropsDetails = useCallback(async () => {
+  const getAllPoapDropsDetails = useCallback(async (): Promise<IPOAPDrop[]> => {
     if (!poapFactoryContract) {
       toast.error("Poap Factory Contract not found");
-      return;
+      return [];
     }
 
     const allDropAddresses = await poapFactoryContract.getAllSonikPoapClones();
-    fetchPoapDropDetails(
+    const drops = await fetchPoapDropDetails(
       allDropAddresses,
-      setAllPoapDropsDetails,
       setLoadingAllPoapDrops
     );
+    setAllPoapDropsDetails(drops);
+    return drops;
   }, [poapFactoryContract]);
 
   return {
