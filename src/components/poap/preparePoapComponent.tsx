@@ -160,7 +160,7 @@ export function PreparePoapComponent() {
           eventDescription,
           eventType,
           selectedFile,
-          JSONUpload
+          JSONIPFSHash: JSONUpload.IpfsHash
         } as IPoapEvent)
       );
 
