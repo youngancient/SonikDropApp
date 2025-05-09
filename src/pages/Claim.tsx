@@ -23,7 +23,7 @@ import {
   setDuplicatePOAPDrops,
   selectAllDuplicatePoapDrops,
   selectAllPoapDrops,
-} from "../store/slices/dataSlice.ts";
+} from "../store/slices/poapDataSlice.ts";
 
 export interface TabSwitch {
   name: "Tokens" | "POAPs";

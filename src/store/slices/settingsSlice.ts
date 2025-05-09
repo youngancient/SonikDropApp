@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
-import { IPoapAirdropClaim } from "../../interfaces/output";
-import { IDropComp } from "../../interfaces/drop";
 
 // Define a type for the slice state
 interface settingsState {
@@ -15,9 +13,6 @@ interface settingsState {
   airdropEndMin: string;
   airdropEnd: string;
   onlyNFTOwnersCanClaim: boolean;
-  merkleHash: string;
-  merkleOutput: IPoapAirdropClaim[] | null;
-  noOfClaimers: number;
 }
 
 // Define the initial state using that type
@@ -31,9 +26,6 @@ const initialState: settingsState = {
   airdropEndMin: "",
   airdropEnd: "",
   onlyNFTOwnersCanClaim: false,
-  merkleHash: "",
-  merkleOutput: null,
-  noOfClaimers: 0,
 };
 
 export const settingsSlice = createSlice({
@@ -69,19 +61,6 @@ export const settingsSlice = createSlice({
     setOnlyNFTOwnersCanClaim: (state, action: PayloadAction<boolean>) => {
       state.onlyNFTOwnersCanClaim = action.payload;
     },
-    // for poap
-    setPoapMerkleHash: (state, action: PayloadAction<string>) => {
-      state.merkleHash = action.payload;
-    },
-    setPoapMerkleOutput: (
-      state,
-      action: PayloadAction<IPoapAirdropClaim[] | null>
-    ) => {
-      state.merkleOutput = action.payload;
-    },
-    setNoOfPoapClaimers: (state, action: PayloadAction<number>) => {
-      state.noOfClaimers = action.payload;
-    },
   },
 });
 
@@ -95,9 +74,6 @@ export const {
   setAirdropEndMin,
   setAirdropName,
   setAirdropNameError,
-  setPoapMerkleHash,
-  setPoapMerkleOutput,
-  setNoOfPoapClaimers,
 } = settingsSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
@@ -119,14 +95,5 @@ export const selectOnlyNFTOwnersCanClaim = (state: RootState) =>
   state.settings.onlyNFTOwnersCanClaim;
 export const selectAirdropName = (state: RootState) =>
   state.settings.airDropName;
-
-export const selectPoapMerkleHash = (state: RootState) =>
-  state.settings.merkleHash;
-
-export const selectPoapMerkleOutput = (state: RootState) =>
-  state.settings.merkleOutput;
-
-export const selectNoOfPoapClaimers = (state: RootState) =>
-  state.settings.noOfClaimers;
 
 export default settingsSlice.reducer;

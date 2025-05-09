@@ -34,7 +34,7 @@ import { ClaimDropToastMsg } from "./customToast";
 import { toast } from "react-toastify";
 import { generateTxExplorerLink } from "../utils/generateTxLink";
 import { useAppDispatch } from "../store/hooks";
-import { updateAllPoapsAfterClaim } from "../store/slices/dataSlice";
+import { updateAllPoapsAfterClaim } from "../store/slices/poapDataSlice";
 
 export const DropComp: React.FC<IDropComp> = ({
   name,

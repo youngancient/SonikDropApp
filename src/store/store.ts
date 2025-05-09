@@ -5,7 +5,7 @@ import settingsSlice from "./slices/settingsSlice";
 import approveSlice from "./slices/approveSlice";
 import poapStepSlice from "./slices/poapStepSlice";
 import preparePoapSlice from "./slices/preparePoapSlice";
-import dataSlice from "./slices/dataSlice";
+import poapDataSlice from "./slices/poapDataSlice";
 // ...
 
 export const store = configureStore({
@@ -16,7 +16,7 @@ export const store = configureStore({
     approve: approveSlice,
     poap: poapStepSlice,
     preparePoap: preparePoapSlice,
-    data: dataSlice,
+    poapData: poapDataSlice,
   },
 });
 
