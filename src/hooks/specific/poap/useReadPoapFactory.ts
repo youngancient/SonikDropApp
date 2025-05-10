@@ -61,8 +61,9 @@ export const useReadPoapFactoryFunctions = () => {
   const fetchPoapDropDetails = useCallback(
     async (
       dropAddresses: string[],
+      setFn: (drops: IPOAPDrop[]) => void,
       setLoading: (state: boolean) => void
-    ): Promise<IPOAPDrop[]> => {
+    ) => {
       if (!multicall3Contract) {
         toast.error("Multicall3 Contract not found");
         return [];
@@ -120,11 +121,10 @@ export const useReadPoapFactoryFunctions = () => {
             };
           }
         );
-        return decoded.filter((drop): drop is IPOAPDrop => drop !== null);
+        setFn(decoded.filter((drop): drop is IPOAPDrop => drop !== null));
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);
         toast.error(decodedError.reason);
-        return [];
       } finally {
         setLoading(false);
       }
@@ -132,9 +132,7 @@ export const useReadPoapFactoryFunctions = () => {
     [multicall3Contract, address]
   );
 
-  const getOwnerPoapDropsDetails = useCallback(async (): Promise<
-    IPOAPDrop[]
-  > => {
+  const getOwnerPoapDropsDetails = useCallback(async () => {
     if (!poapFactoryContract) {
       toast.error("Poap Factory Contract not found");
       return [];
@@ -142,27 +140,26 @@ export const useReadPoapFactoryFunctions = () => {
 
     const ownerDropAddresses =
       await poapFactoryContract.getOwnerSonikPoapClones(address);
-    const drops = await fetchPoapDropDetails(
+    await fetchPoapDropDetails(
       ownerDropAddresses,
+      setAllOwnerPoapDropsDetails,
       setLoadingOwnerPoapDrops
     );
-    setAllOwnerPoapDropsDetails(drops);
-    return drops;
   }, [poapFactoryContract]);
 
-  const getAllPoapDropsDetails = useCallback(async (): Promise<IPOAPDrop[]> => {
+  const getAllPoapDropsDetails = useCallback(async () => {
     if (!poapFactoryContract) {
       toast.error("Poap Factory Contract not found");
-      return [];
+      return;
     }
 
     const allDropAddresses = await poapFactoryContract.getAllSonikPoapClones();
-    const drops = await fetchPoapDropDetails(
+
+    await fetchPoapDropDetails(
       allDropAddresses,
+      setAllPoapDropsDetails,
       setLoadingAllPoapDrops
     );
-    setAllPoapDropsDetails(drops);
-    return drops;
   }, [poapFactoryContract]);
 
   return {

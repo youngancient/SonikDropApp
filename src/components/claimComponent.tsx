@@ -36,6 +36,9 @@ import { generateTxExplorerLink } from "../utils/generateTxLink";
 import { useAppDispatch } from "../store/hooks";
 import { updateAllPoapsAfterClaim } from "../store/slices/poapDropDataSlice";
 import { ethers } from "ethers";
+import { useReadTokenFunctions } from "../hooks/specific/token/useReadTokenAirdrop";
+import { useTokenDropFunctions } from "../hooks/specific/token/useTokenAirdrop";
+import { updateAllTokenDropsAfterClaim } from "../store/slices/tokenDropDataSlice";
 
 export const DropComp: React.FC<IDropComp> = ({
   name,
@@ -49,6 +52,7 @@ export const DropComp: React.FC<IDropComp> = ({
   totalClaims,
   contractAddress,
   isEditable,
+  hasUserClaimed,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
@@ -58,6 +62,34 @@ export const DropComp: React.FC<IDropComp> = ({
       : percentageRaw.toFixed(1)
   );
   const { address } = useAppKitAccount();
+
+  const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
+  const [isEligible, setIsEligible] = useState(false);
+
+  const { checkTokenDropEligibility, isChecking } =
+    useReadTokenFunctions(contractAddress);
+
+  const { estimate, loadingGas } = useCalculateGasCost();
+
+  const handleCheckEligibiltyOrView = async () => {
+    if (isEditable) {
+      setShowModal(true);
+      return;
+    }
+    const { isEligible, gasToMint } = await checkTokenDropEligibility();
+    if (!isEligible) {
+      setShowModal(true);
+      return;
+    }
+    if (!gasToMint) {
+      setShowModal(true);
+      return;
+    }
+    setIsEligible(isEligible); // user is eligible
+    const gasData = await estimate(gasToMint);
+    setGasInfo(gasData);
+    setShowModal(true);
+  };
 
   return (
     <>
@@ -91,7 +123,7 @@ export const DropComp: React.FC<IDropComp> = ({
             <div className="two flex justify-between gap-[1rem] flex-wrap">
               <div className="">
                 <p className="">Reward Pool</p>
-                <h3>{ethers.formatUnits(totalRewardPool.toString(),18)}ETH</h3>
+                <h3>{ethers.formatUnits(totalRewardPool.toString(), 18)}ETH</h3>
               </div>
               <div>
                 <p>{endDate ? "ENDING DATE" : "CREATION DATE"}</p>
@@ -139,6 +171,29 @@ export const DropComp: React.FC<IDropComp> = ({
             <button onClick={() => setShowModal(true)}>
               {isEditable ? "View Airdrop" : "Check Eligibility"}
             </button>
+            <button
+              onClick={handleCheckEligibiltyOrView}
+              disabled={!isEditable && (hasUserClaimed || isChecking)}
+              className={`px-4 py-2 rounded text-white font-medium transition
+    ${!isEditable && hasUserClaimed ? "cursor-not-allowed" : ""}
+    ${!isEditable && (isChecking || loadingGas) ? "opacity-60 cursor-wait" : ""}
+  `}
+              style={
+                !isEditable && hasUserClaimed
+                  ? { backgroundColor: "#244b36" }
+                  : undefined
+              }
+            >
+              {!isEditable && (isChecking || loadingGas) ? (
+                <ButtonLoader />
+              ) : !isEditable && hasUserClaimed ? (
+                "Claimed!"
+              ) : isEditable ? (
+                "View Airdrop"
+              ) : (
+                "Check Eligibility"
+              )}
+            </button>
           </div>
         </DropCompStyle>
       </ThreeDHoverWrapper>
@@ -161,8 +216,8 @@ export const DropComp: React.FC<IDropComp> = ({
                 creator.toLowerCase() === address?.toLowerCase() && isEditable,
             }}
             closeModal={() => setShowModal(false)}
-            gasInfo={null}
-            isEligible={false}
+            gasInfo={gasInfo}
+            isEligible={isEligible}
           />
         )}
       </AnimatePresence>
@@ -413,13 +468,14 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   );
 
   const { mintPoap, isMinting } = usePoapDropFunctions(contractAddress);
+  const { claimTokenDrop, isClaiming } = useTokenDropFunctions(contractAddress);
   const { chainId } = useAppKitNetwork();
 
   const popMsg = (txHash: string) => {
     if (!chainId) {
       return;
     }
-    const url = generateTxExplorerLink(chainId, txHash); 
+    const url = generateTxExplorerLink(chainId, txHash);
 
     toast((props) => <ClaimDropToastMsg {...props} />, {
       data: {
@@ -434,6 +490,23 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   const handleClaim = async (dropType: "token" | "poap") => {
     if (dropType === "token") {
       // handle token claim
+      console.log("claim the token drop");
+      const { success, transactionHash, amountClaimed } =
+        await claimTokenDrop();
+      if (!success) {
+        return;
+      }
+      if (!transactionHash) {
+        return;
+      }
+      if (!amountClaimed) {
+        return;
+      }
+      dispatch(
+        updateAllTokenDropsAfterClaim({ contractAddress, amountClaimed })
+      );
+      popMsg(transactionHash);
+      closeModal();
     } else if (dropType === "poap") {
       // handle poap claim
       console.log("mint the poap");
@@ -488,7 +561,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
             {type === "token" && (
               <div className="reward-pool flex flex-col items-center justify-center w-full">
                 <p>Reward Pool</p>
-                <h1>{totalRewardPool.toLocaleString()}ETH</h1>
+                <h1>{ethers.formatUnits(totalRewardPool.toString(), 18)}ETH</h1>
               </div>
             )}
             {type === "poap" && (
@@ -555,7 +628,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                   <div className="flex flex-col">
                     <p>Rewards Claimed</p>
                     <h4>
-                      {totalRewardClaimed.toLocaleString()}
+                      {ethers.formatUnits(totalRewardClaimed.toString(), 18)}
                       {type === "token" && "ETH"}
                     </h4>
                   </div>
@@ -663,12 +736,14 @@ export const ClaimModal: React.FC<IClaimModal> = ({
               <div className="btn flex w-full justify-center items-center gap-[1rem]">
                 <button
                   onClick={() => handleClaim(type)}
-                  disabled={!isEligible || isMinting}
+                  disabled={!isEligible || isMinting || isClaiming}
                   className={`transition
                   ${!isEligible ? "bg-red-500 cursor-not-allowed" : ""}
-                  ${isMinting && "opacity-60 cursor-wait"}`}
+                  ${isMinting || (isClaiming && "opacity-60 cursor-wait")}`}
                 >
                   {isMinting ? (
+                    <ButtonLoader />
+                  ) : isClaiming ? (
                     <ButtonLoader />
                   ) : !isEligible ? (
                     "Not Eligible!"
