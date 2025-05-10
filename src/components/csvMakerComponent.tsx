@@ -221,13 +221,13 @@ export default function CsvMakerComponent({
     } else if (csvType == "poap") {
       const stringResult = poapMakerList
         .map((result) => {
-          return `${result.address},1`;
+          return `${result.address}`;
         })
         .join(`\n`);
 
       const jsonData = poapMakerList.map((result) => ({
         address: result.address,
-        amount: 1,
+        // amount: 1,
       }));
 
       // sessionStorage.setItem("csv-from-poap", JSON.stringify(stringResult));
