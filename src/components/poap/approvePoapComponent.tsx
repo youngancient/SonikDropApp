@@ -24,6 +24,8 @@ import {
 export function ApprovePoapComponent() {
   const [eventName, setEventName] = useState("");
   const [eventType, setEventType] = useState("");
+  const [eventSymbol, setEventSymbol] = useState("");
+  const [baseURI, setBaseURI] = useState("");
 
   const [csvToJSONData, setCSVToJSONData] = useState<ICSV[]>([]);
 
@@ -63,13 +65,12 @@ export function ApprovePoapComponent() {
 
       setEventName(parsedPoapEventDetails.eventName);
       setEventType(parsedPoapEventDetails.eventType);
+      setEventSymbol(parsedPoapEventDetails.tokenSymbol);
+      setBaseURI(parsedPoapEventDetails.JSONIPFSHash);
     }
   }, []);
 
   useEffect(() => {
-    const eventSymbol = "AFT";
-    const baseURI =
-      "ipfs://bafkreidolt4hcw7zbo2cp745g3zyommfz4e43g4pgdevu4ade2ujp2vgma";
     const nftAddress = ethers.ZeroAddress;
     if (!poapFactoryContract) {
       return;
@@ -103,10 +104,7 @@ export function ApprovePoapComponent() {
 
   const approve = async () => {
     // call contract
-
-    const eventSymbol = "AFT";
-    const baseURI =
-      "ipfs://bafkreidolt4hcw7zbo2cp745g3zyommfz4e43g4pgdevu4ade2ujp2vgma";
+    // no nft is required to claim poap yet
     const nftAddress = ethers.ZeroAddress;
 
     const isCreated = await createPoapDrop(
