@@ -60,26 +60,26 @@ export function SettingsPoapComponent() {
             return;
           }
 
-          const invalidAmounts = results.data.filter(
-            (result: ICSV) =>
-              !/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString())
-          );
+          // const invalidAmounts = results.data.filter(
+          //   (result: ICSV) =>
+          //     !/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString())
+          // );
 
-          if (invalidAmounts.length > 0) {
-            toast.error(
-              invalidAmounts
-                .map((record: ICSV) => `"${record?.amount}"`)
-                .join(", ") +
-                (invalidAmounts.length == 1
-                  ? " is an invalid amount"
-                  : " are invalid amounts")
-            );
-            return;
-          }
+          // if (invalidAmounts.length > 0) {
+          //   toast.error(
+          //     invalidAmounts
+          //       .map((record: ICSV) => `"${record?.amount}"`)
+          //       .join(", ") +
+          //       (invalidAmounts.length == 1
+          //         ? " is an invalid amount"
+          //         : " are invalid amounts")
+          //   );
+          //   return;
+          // }
 
           const stringResult = results.data
             .map((result: ICSV) => {
-              return `${result.address},${result.amount}`;
+              return `${result.address}`;
             })
             .join(`\n`);
 

@@ -90,7 +90,7 @@ export function PrepareComponent() {
 
           const invalidAmounts = results.data.filter(
             (result: ICSV) =>
-              !/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString())
+              !/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount!!.toString())
           );
 
           if (invalidAmounts.length > 0) {
@@ -108,7 +108,7 @@ export function PrepareComponent() {
           const stringResult = results.data
             .map((result: ICSV) => {
               return `${result.address},${ethers.formatUnits(
-                result.amount.toString(),
+                result.amount!!.toString(),
                 tokenDetail.decimals as string | Numeric // Type assertion to ensure it's not null
               )}`;
             })
@@ -171,7 +171,7 @@ export function PrepareComponent() {
           // console.log("Data", data.amount);
           if (tokenDetail?.decimals !== null) {
             data.amount = ethers.formatUnits(
-              data.amount.toString(),
+              data.amount!!.toString(),
               tokenDetail.decimals
             );
           }

@@ -201,9 +201,9 @@ export function ApprovePoapComponent() {
                           <p className="text-white truncate">
                             Address: {recepients.address}
                           </p>
-                          <p className="text-white">
+                          {/* <p className="text-white">
                             Amount: {recepients.amount}
-                          </p>
+                          </p> */}
                         </div>
                       </div>
                     );
