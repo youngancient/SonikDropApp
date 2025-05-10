@@ -168,9 +168,6 @@ export const DropComp: React.FC<IDropComp> = ({
             </div>
           </div>
           <div className="btn">
-            <button onClick={() => setShowModal(true)}>
-              {isEditable ? "View Airdrop" : "Check Eligibility"}
-            </button>
             <button
               onClick={handleCheckEligibiltyOrView}
               disabled={!isEditable && (hasUserClaimed || isChecking)}
