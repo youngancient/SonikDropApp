@@ -12,5 +12,6 @@ export interface IPoapEvent {
       eventDescription: string,
       eventType: string,
       selectedFile: any,
-      JSONUpload: any
+      tokenSymbol: string,
+      JSONIPFSHash: string,
 }
