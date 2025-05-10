@@ -74,7 +74,6 @@ const ClaimPage = () => {
     setStateTabs(newTabs);
     if (tabName == "POAPs") {
       if (allPoapDropsDetails == null) {
-        dispatch(setPOAPDrops(null));
         return;
       }
       const drops: IDropComp[] = allPoapDropsDetails.map((drop) => ({
@@ -165,9 +164,7 @@ const ClaimPage = () => {
       return;
     }
     const fetchData = async () => {
-      const drs = await getAllTokenDropsDetails();
-      console.log(drs);
-      
+      await getAllTokenDropsDetails();
 
       if (allTokenDropsDetails == null) {
         dispatch(setTokenDrops(null));

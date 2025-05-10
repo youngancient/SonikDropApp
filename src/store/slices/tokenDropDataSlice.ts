@@ -38,8 +38,12 @@ export const tokenDataSlice = createSlice({
       state.duplicateTokendrops = action.payload;
     },
     // fix the token update
-    updateAllTokenDropsAfterClaim: (state, action: PayloadAction<string>) => {
-      const contractAddress = action.payload;
+    updateAllTokenDropsAfterClaim: (
+      state,
+      action: PayloadAction<{ contractAddress: string; amountClaimed: string }>
+    ) => {
+      const { contractAddress, amountClaimed } = action.payload;
+      const claimedAmount = Number(amountClaimed);
 
       if (state.tokenDrops) {
         state.tokenDrops = state.tokenDrops.map((drop) => {
@@ -48,7 +52,7 @@ export const tokenDataSlice = createSlice({
               ...drop,
               hasUserClaimed: true,
               totalClaims: drop.totalClaims + 1,
-              totalRewardClaimed: drop.totalClaims + 1, 
+              totalRewardClaimed: drop.totalClaims + claimedAmount,
             };
           }
           return drop;
@@ -62,7 +66,7 @@ export const tokenDataSlice = createSlice({
               ...drop,
               hasUserClaimed: true,
               totalClaims: drop.totalClaims + 1,
-              totalRewardClaimed: drop.totalClaims + 1,
+              totalRewardClaimed: drop.totalClaims + claimedAmount,
             };
           }
           return drop;
@@ -90,7 +94,7 @@ export const {
   setNoOfClaimers,
   setTokenDrops,
   setDuplicateTokenDrops,
-  updateAllTokenDropsAfterClaim
+  updateAllTokenDropsAfterClaim,
 } = tokenDataSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

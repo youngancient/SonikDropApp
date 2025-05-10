@@ -144,7 +144,7 @@ export const useReadTokenFactoryFunctions = () => {
 
     const ownerDropAddresses =
       await tokenFactoryContract.getOwnerSonikDropClones(address);
-    fetchTokenDropDetails(
+    await fetchTokenDropDetails(
       ownerDropAddresses,
       setAllOwnerTokenDropsDetails,
       setLoadingOwnerTokenDrops
@@ -158,7 +158,7 @@ export const useReadTokenFactoryFunctions = () => {
     }
 
     const allDropAddresses = await tokenFactoryContract.getAllSonikDropClones();
-    fetchTokenDropDetails(
+    await fetchTokenDropDetails(
       allDropAddresses,
       setAllTokenDropsDetails,
       setLoadingAllTokenDrops
