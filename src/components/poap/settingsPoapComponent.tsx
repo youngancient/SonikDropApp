@@ -14,28 +14,26 @@ import {
   setInvalidAirdropAddresses,
   setCsvDataError,
   setCsvToJSONData,
-  setShowCSVMaker
+  setShowCSVMaker,
 } from "../../store/slices/preparePoapSlice";
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  useAppKit,
-  useAppKitAccount
-} from "@reown/appkit/react";
+import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import CsvMakerComponent from "../csvMakerComponent";
 import { generateMerkleTreeFromAddresses } from "../../utils/merkleGen";
-import { setNoOfPoapClaimers, setPoapMerkleHash, setPoapMerkleOutput } from "../../store/slices/settingsSlice";
-
+import {
+  setNoOfPoapClaimers,
+  setPoapMerkleHash,
+  setPoapMerkleOutput,
+} from "../../store/slices/poapDropDataSlice";
 
 export function SettingsPoapComponent() {
-
   const dispatch = useAppDispatch();
 
   const csvData = useAppSelector(selectCsvData);
   const csvToJSONData = useAppSelector(selectCsvToJSONData);
   const csvDataError = useAppSelector(selectCsvDataError);
   const invalidAirdropAddresses = useAppSelector(selectInvalidAirdropAddresses);
-
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -51,23 +49,37 @@ export function SettingsPoapComponent() {
           dispatch(setInvalidAirdropAddresses(invalidAddresses));
 
           if (invalidAddresses.length > 0) {
-            toast.error(`${invalidAddresses.map((record: ICSV) => `"${record?.address}"`).join(", ")}` + (invalidAddresses.length == 1 ? " is an invalid address" : " are invalid addresses"));
+            toast.error(
+              `${invalidAddresses
+                .map((record: ICSV) => `"${record?.address}"`)
+                .join(", ")}` +
+                (invalidAddresses.length == 1
+                  ? " is an invalid address"
+                  : " are invalid addresses")
+            );
             return;
           }
 
+          // const invalidAmounts = results.data.filter(
+          //   (result: ICSV) =>
+          //     !/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString())
+          // );
 
-          const invalidAmounts = results.data.filter(
-            (result: ICSV) => !(/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString()))
-          );
-
-          if(invalidAmounts.length > 0) {
-            toast.error(invalidAmounts.map((record: ICSV) => `"${record?.amount}"`).join(", ") + (invalidAmounts.length == 1 ? " is an invalid amount": " are invalid amounts"));
-            return;
-          }
+          // if (invalidAmounts.length > 0) {
+          //   toast.error(
+          //     invalidAmounts
+          //       .map((record: ICSV) => `"${record?.amount}"`)
+          //       .join(", ") +
+          //       (invalidAmounts.length == 1
+          //         ? " is an invalid amount"
+          //         : " are invalid amounts")
+          //   );
+          //   return;
+          // }
 
           const stringResult = results.data
             .map((result: ICSV) => {
-              return `${result.address},${result.amount}`;
+              return `${result.address}`;
             })
             .join(`\n`);
 
@@ -84,16 +96,12 @@ export function SettingsPoapComponent() {
   const { open } = useAppKit();
 
   const nextPage = async () => {
-  
     if (!isConnected) {
       open();
       return;
     }
 
-    if (
-      !csvData ||
-      invalidAirdropAddresses.length > 0
-    ) {
+    if (!csvData || invalidAirdropAddresses.length > 0) {
       if (!csvData) {
         dispatch(setCsvDataError("Kindly upload a csv"));
         toast.error("Kindly upload a csv");
@@ -111,11 +119,11 @@ export function SettingsPoapComponent() {
     }
 
     // generate tree roothash and merkle proofs
-    const {rootHash, output} = generateMerkleTreeFromAddresses(csvToJSONData);
-    
+    const { rootHash, output } = generateMerkleTreeFromAddresses(csvToJSONData);
+
     dispatch(setPoapMerkleHash(rootHash));
     dispatch(setPoapMerkleOutput(output));
-    
+
     dispatch(setNoOfPoapClaimers(csvToJSONData.length));
 
     console.log({ rootHash });
@@ -134,7 +142,6 @@ export function SettingsPoapComponent() {
   };
 
   useEffect(() => {
-
     if (!csvData) {
       dispatch(setCsvDataError("Kindly upload a csv"));
     } else {
@@ -143,7 +150,10 @@ export function SettingsPoapComponent() {
 
     if (invalidAirdropAddresses.length > 0) {
       toast.error(
-        invalidAirdropAddresses.join(", ") + (invalidAirdropAddresses.length == 1 ? " is an invalid address": " are invalid addresses")
+        invalidAirdropAddresses.join(", ") +
+          (invalidAirdropAddresses.length == 1
+            ? " is an invalid address"
+            : " are invalid addresses")
       );
     }
   }, [csvData]);
@@ -225,7 +235,6 @@ export function SettingsPoapComponent() {
         </div>
 
         <CsvMakerComponent landingTab="POAPs" />
-
       </motion.div>
     </AnimatePresence>
   );

@@ -21,9 +21,6 @@ import {
   setTokenAddressError,
   setTokenDetail,
   selectTokenDetail,
-  setMerkleHash,
-  setMerkleOutput,
-  setNoOfClaimers,
 } from "../../store/slices/prepareSlice";
 import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -31,10 +28,13 @@ import { useAppKit, useAppKitAccount } from "@reown/appkit/react";
 import { useTokenDetail } from "../../hooks/specific/useERC20";
 import { generateMerkleTree } from "../../utils/merkleGen";
 import CsvMakerComponent from "../csvMakerComponent";
-
+import {
+  setMerkleHash,
+  setMerkleOutput,
+  setNoOfClaimers,
+} from "../../store/slices/tokenDropDataSlice";
 
 export function PrepareComponent() {
-
   const dispatch = useAppDispatch();
 
   const csvData = useAppSelector(selectCsvData);
@@ -43,7 +43,6 @@ export function PrepareComponent() {
   const tokenAddressError = useAppSelector(selectTokenAddressError);
   const csvDataError = useAppSelector(selectCsvDataError);
   const invalidAirdropAddresses = useAppSelector(selectInvalidAirdropAddresses);
-  
 
   const tokenDetail = useAppSelector(selectTokenDetail);
 
@@ -77,9 +76,9 @@ export function PrepareComponent() {
               invalidAddresses
                 .map((a: ICSV) => a.address.toString())
                 .join(", ") +
-              (invalidAddresses.length == 1
-                ? " is an invalid address"
-                : " are invalid addresses")
+                (invalidAddresses.length == 1
+                  ? " is an invalid address"
+                  : " are invalid addresses")
             );
             return;
           }
@@ -91,15 +90,15 @@ export function PrepareComponent() {
 
           const invalidAmounts = results.data.filter(
             (result: ICSV) =>
-              !/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount.toString())
+              !/^(\d+(\.\d+)?|\.\d+)$/.test(result.amount!!.toString())
           );
 
           if (invalidAmounts.length > 0) {
             toast.error(
               invalidAmounts.map((a: ICSV) => a.amount).join(", ") +
-              (invalidAmounts.length == 1
-                ? " is an invalid amount"
-                : " are invalid amounts")
+                (invalidAmounts.length == 1
+                  ? " is an invalid amount"
+                  : " are invalid amounts")
             );
             return;
           }
@@ -109,7 +108,7 @@ export function PrepareComponent() {
           const stringResult = results.data
             .map((result: ICSV) => {
               return `${result.address},${ethers.formatUnits(
-                result.amount.toString(),
+                result.amount!!.toString(),
                 tokenDetail.decimals as string | Numeric // Type assertion to ensure it's not null
               )}`;
             })
@@ -172,7 +171,7 @@ export function PrepareComponent() {
           // console.log("Data", data.amount);
           if (tokenDetail?.decimals !== null) {
             data.amount = ethers.formatUnits(
-              data.amount.toString(),
+              data.amount!!.toString(),
               tokenDetail.decimals
             );
           }
@@ -234,13 +233,13 @@ export function PrepareComponent() {
                 }}
               />
               <small
-                className={`${tokenAddressError ? "block text-red-400" : "hidden"
-                  } mt-2`}
+                className={`${
+                  tokenAddressError ? "block text-red-400" : "hidden"
+                } mt-2`}
               >
                 {tokenAddressError}
               </small>
               <small className={`${"text-gray-300"} mt-2`}>
-
                 {!tokenAddressError &&
                   (isLoadingDetails
                     ? "Loading..."
@@ -258,7 +257,7 @@ export function PrepareComponent() {
                   if (invalidAirdropAddresses.length > 0) {
                     toast.error(
                       invalidAirdropAddresses.join(", ") +
-                      " are invalid addresses"
+                        " are invalid addresses"
                     );
                   }
 
@@ -308,8 +307,9 @@ export function PrepareComponent() {
                     </label>
                   </div>
                   <small
-                    className={`${csvDataError ? "block text-red-400" : "hidden"
-                      } mt-2 text-center`}
+                    className={`${
+                      csvDataError ? "block text-red-400" : "hidden"
+                    } mt-2 text-center`}
                   >
                     {csvDataError}
                   </small>
@@ -318,18 +318,18 @@ export function PrepareComponent() {
             </div>
           </div>
           <button
-            className={`w-full py-2 rounded-md ${isConnected
-              ? "bg-[#00A7FF] text-white"
-              : "border border-[#00A7FF] text-white"
-              }`}
+            className={`w-full py-2 rounded-md ${
+              isConnected
+                ? "bg-[#00A7FF] text-white"
+                : "border border-[#00A7FF] text-white"
+            }`}
             onClick={nextPage}
           >
             {!isConnected ? "Connect Wallet" : "Continue"}
           </button>
         </div>
 
-              <CsvMakerComponent landingTab="Tokens" />
-
+        <CsvMakerComponent landingTab="Tokens" />
       </motion.div>
     </AnimatePresence>
   );

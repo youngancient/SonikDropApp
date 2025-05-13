@@ -66,7 +66,7 @@ export const useReadPoapFactoryFunctions = () => {
     ) => {
       if (!multicall3Contract) {
         toast.error("Multicall3 Contract not found");
-        return;
+        return [];
       }
       setLoading(true);
       try {
@@ -135,12 +135,12 @@ export const useReadPoapFactoryFunctions = () => {
   const getOwnerPoapDropsDetails = useCallback(async () => {
     if (!poapFactoryContract) {
       toast.error("Poap Factory Contract not found");
-      return;
+      return [];
     }
 
     const ownerDropAddresses =
       await poapFactoryContract.getOwnerSonikPoapClones(address);
-    fetchPoapDropDetails(
+    await fetchPoapDropDetails(
       ownerDropAddresses,
       setAllOwnerPoapDropsDetails,
       setLoadingOwnerPoapDrops
@@ -154,7 +154,8 @@ export const useReadPoapFactoryFunctions = () => {
     }
 
     const allDropAddresses = await poapFactoryContract.getAllSonikPoapClones();
-    fetchPoapDropDetails(
+
+    await fetchPoapDropDetails(
       allDropAddresses,
       setAllPoapDropsDetails,
       setLoadingAllPoapDrops

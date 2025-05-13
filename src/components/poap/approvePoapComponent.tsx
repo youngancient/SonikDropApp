@@ -7,11 +7,7 @@ import { CompletedModal } from "../completedModal";
 import { ICSV, IPoapEvent } from "../../interfaces/CSVInterface";
 import { useClearPoapFormInput } from "../../hooks/useClearPoapForm";
 import { useAppSelector } from "../../store/hooks";
-import {
-  selectNoOfPoapClaimers,
-  selectPoapMerkleHash,
-  selectPoapMerkleOutput,
-} from "../../store/slices/settingsSlice";
+
 import { usePoapFactoryFunctions } from "../../hooks/specific/poap/usePoapFactory";
 import { ethers } from "ethers";
 import useCalculateGasCost, {
@@ -19,10 +15,17 @@ import useCalculateGasCost, {
 } from "../../hooks/specific/useCalculateGas";
 import axios from "axios";
 import Cookies from "js-cookie";
+import {
+  selectNoOfPoapClaimers,
+  selectPoapMerkleHash,
+  selectPoapMerkleOutput,
+} from "../../store/slices/poapDropDataSlice";
 
 export function ApprovePoapComponent() {
   const [eventName, setEventName] = useState("");
   const [eventType, setEventType] = useState("");
+  const [eventSymbol, setEventSymbol] = useState("");
+  const [baseURI, setBaseURI] = useState("");
 
   const [csvToJSONData, setCSVToJSONData] = useState<ICSV[]>([]);
 
@@ -62,13 +65,12 @@ export function ApprovePoapComponent() {
 
       setEventName(parsedPoapEventDetails.eventName);
       setEventType(parsedPoapEventDetails.eventType);
+      setEventSymbol(parsedPoapEventDetails.tokenSymbol);
+      setBaseURI(parsedPoapEventDetails.JSONIPFSHash);
     }
   }, []);
 
   useEffect(() => {
-    const eventSymbol = "AFT";
-    const baseURI =
-      "ipfs://bafkreidolt4hcw7zbo2cp745g3zyommfz4e43g4pgdevu4ade2ujp2vgma";
     const nftAddress = ethers.ZeroAddress;
     if (!poapFactoryContract) {
       return;
@@ -102,10 +104,7 @@ export function ApprovePoapComponent() {
 
   const approve = async () => {
     // call contract
-
-    const eventSymbol = "AFT";
-    const baseURI =
-      "ipfs://bafkreidolt4hcw7zbo2cp745g3zyommfz4e43g4pgdevu4ade2ujp2vgma";
+    // no nft is required to claim poap yet
     const nftAddress = ethers.ZeroAddress;
 
     const isCreated = await createPoapDrop(
@@ -200,11 +199,11 @@ export function ApprovePoapComponent() {
                         <p>{index + 1}.</p>
                         <div className="flex flex-col gap-2">
                           <p className="text-white truncate">
-                            Address: {recepients.address}
+                            {recepients.address}
                           </p>
-                          <p className="text-white">
+                          {/* <p className="text-white">
                             Amount: {recepients.amount}
-                          </p>
+                          </p> */}
                         </div>
                       </div>
                     );

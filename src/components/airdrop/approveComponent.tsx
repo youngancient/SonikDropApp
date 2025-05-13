@@ -12,9 +12,6 @@ import { moodVariant } from "../../animations/animation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useClearFormInput } from "../../hooks/useClearForm";
 import {
-  selectMerkleHash,
-  selectMerkleOutput,
-  selectNoOfClaimers,
   selectTokenAddress,
   selectTokenDetail,
   setTokenDetail,
@@ -35,6 +32,7 @@ import {
 } from "../../store/slices/settingsSlice";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { selectMerkleHash, selectMerkleOutput, selectNoOfClaimers } from "../../store/slices/tokenDropDataSlice";
 
 export function ApproveComponent() {
   const dispatch = useAppDispatch();
@@ -92,12 +90,11 @@ export function ApproveComponent() {
     createTokenDrop,
     creationStatus,
     isCreating,
-    transactionHash,
     deployedAirdropContractAddress,
   } = useTokenFactoryFunctions();
 
   const { approveTransfer, isLoadingApproval } = useTokenApproval(tokenAddress);
-
+  const [txHash, setTxHash] = useState<string | null>(null);
   const approve = async () => {
     if (!tokenBalance) {
       return;
@@ -132,7 +129,7 @@ export function ApproveComponent() {
       noOfClaimers,
     };
 
-    const isCreated = await createTokenDrop(
+    const { success, transactionHash } = await createTokenDrop(
       body.tokenAddress,
       body.merkleRoot,
       body.name,
@@ -140,10 +137,14 @@ export function ApproveComponent() {
       body.noOfClaimers,
       body.totalOutputTokens
     );
-    
-    if (!isCreated) {
+
+    if (!success) {
       return;
     }
+    if (!transactionHash) {
+      return;
+    }
+    setTxHash(transactionHash);
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const token = Cookies.get("token");
     const body_v = {
@@ -262,9 +263,7 @@ export function ApproveComponent() {
           </div>
         </motion.div>
       </AnimatePresence>
-      {showModal && (
-        <CompletedModal dropType="airdrop" txHash={transactionHash} />
-      )}
+      {showModal && <CompletedModal dropType="airdrop" txHash={txHash || ""} />}
     </>
   );
 }

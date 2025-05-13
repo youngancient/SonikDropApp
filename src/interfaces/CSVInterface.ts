@@ -1,6 +1,6 @@
 export interface ICSV {
     address: string;
-    amount: number | string;
+    amount?: number | string;
 }
 
 export interface IAirdropList extends ICSV {
@@ -12,5 +12,6 @@ export interface IPoapEvent {
       eventDescription: string,
       eventType: string,
       selectedFile: any,
-      JSONUpload: any
+      tokenSymbol: string,
+      JSONIPFSHash: string,
 }
