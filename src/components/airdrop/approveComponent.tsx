@@ -32,7 +32,11 @@ import {
 } from "../../store/slices/settingsSlice";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { selectMerkleHash, selectMerkleOutput, selectNoOfClaimers } from "../../store/slices/tokenDropDataSlice";
+import {
+  selectMerkleHash,
+  selectMerkleOutput,
+  selectNoOfClaimers,
+} from "../../store/slices/tokenDropDataSlice";
 
 export function ApproveComponent() {
   const dispatch = useAppDispatch();
@@ -89,12 +93,13 @@ export function ApproveComponent() {
   const {
     createTokenDrop,
     creationStatus,
-    isCreating,
-    deployedAirdropContractAddress,
+    isCreating
   } = useTokenFactoryFunctions();
 
   const { approveTransfer, isLoadingApproval } = useTokenApproval(tokenAddress);
   const [txHash, setTxHash] = useState<string | null>(null);
+  const [isSendingToBackend, setIsSendingToBackend] = useState(false);
+
   const approve = async () => {
     if (!tokenBalance) {
       return;
@@ -129,7 +134,7 @@ export function ApproveComponent() {
       noOfClaimers,
     };
 
-    const { success, transactionHash } = await createTokenDrop(
+    const { success, transactionHash, deployedAirdropContractAddress } = await createTokenDrop(
       body.tokenAddress,
       body.merkleRoot,
       body.name,
@@ -151,7 +156,11 @@ export function ApproveComponent() {
       proofs: merkleOutput,
       contractAddress: deployedAirdropContractAddress,
     };
-
+    console.log(body_v);
+    
+    setIsSendingToBackend(true);
+    
+    toast.info("Please stay on this page until the drop is created.");
     axios
       .post(`${BACKEND_URL}/users/add-bulk-user`, body_v, {
         headers: {
@@ -161,12 +170,14 @@ export function ApproveComponent() {
       })
       .then((response) => {
         console.log("API call successful:", response);
+        setIsSendingToBackend(false);
         setShowModal(true);
         dispatch(setTokenDetail(null));
         clear();
       })
       .catch((error) => {
         console.error("API call failed:", error);
+        setIsSendingToBackend(false);
       });
   };
 
@@ -247,15 +258,17 @@ export function ApproveComponent() {
             </div>
             <button
               className={`w-full bg-[#00A7FF] text-white py-2 rounded-[6px] transition ${
-                isCreating ? "cursor-not-allowed opacity-70" : ""
+                isCreating || isSendingToBackend ? "cursor-not-allowed opacity-70" : ""
               }`}
               onClick={approve}
-              disabled={isLoadingApproval || isCreating}
+              disabled={
+                isLoadingApproval || isCreating || creationStatus === "success" || isSendingToBackend
+              }
             >
               {isLoadingApproval || isCreating ? (
                 <ButtonLoader />
-              ) : creationStatus === "success" ? (
-                "Completed"
+              ) : isSendingToBackend ? (
+                "Completing..."
               ) : (
                 "Approve"
               )}

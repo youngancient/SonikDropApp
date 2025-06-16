@@ -57,7 +57,7 @@ export const DropComp: React.FC<IDropComp> = ({
   tokenContractAddress,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
+  const percentageRaw = (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
   const [percentClaimed] = useState(
     percentageRaw % 1 === 0
       ? percentageRaw.toFixed(0)
@@ -263,7 +263,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
   hasUserClaimed,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
+  const percentageRaw = (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
   const [percentClaimed] = useState(
     percentageRaw % 1 === 0
       ? percentageRaw.toFixed(0)
@@ -485,7 +485,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   );
 
   // for rewards
-  const rewardPercentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
+  const rewardPercentageRaw = (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
   const [rewardPercentageClaimed] = useState(
     rewardPercentageRaw % 1 === 0
       ? rewardPercentageRaw.toFixed(0)

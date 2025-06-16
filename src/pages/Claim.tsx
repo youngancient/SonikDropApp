@@ -80,8 +80,8 @@ const ClaimPage = () => {
         name: drop.name,
         creator: drop.creatorAddress,
         creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)),
-        totalRewardPool: drop.totalClaimable,
-        totalRewardClaimed: drop.totalClaimed, // since it's 1 mint per user, totalClaims == totalRewardClaimed
+        totalRewardPool: BigInt(drop.totalClaimable),
+        totalRewardClaimed: BigInt(drop.totalClaimed), // since it's 1 mint per user, totalClaims == totalRewardClaimed
         totalParticipants: drop.totalClaimable,
         totalClaims: drop.totalClaimed,
         contractAddress: drop.address,
