@@ -586,7 +586,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
             {type === "token" && (
               <div className="reward-pool flex flex-col items-center justify-center w-full">
                 <p>Reward Pool</p>
-                <h1>{ethers.formatUnits(totalRewardPool.toString(), 18)}ETH</h1>
+                <h1>{ethers.formatUnits(totalRewardPool.toString(), 18)}{tokenDetails?.symbol}</h1>
               </div>
             )}
             {type === "poap" && (
@@ -654,7 +654,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                     <p>Rewards Claimed</p>
                     <h4>
                       {ethers.formatUnits(totalRewardClaimed.toString(), 18)}
-                      {type === "token" && "ETH"}
+                      {type === "token" && tokenDetails?.symbol}
                     </h4>
                   </div>
                   {isCreator && (

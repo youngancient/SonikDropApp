@@ -90,17 +90,54 @@ export function ApproveComponent() {
 
   const { clear } = useClearFormInput();
   const [showModal, setShowModal] = useState(false);
-  const {
-    createTokenDrop,
-    creationStatus,
-    isCreating
-  } = useTokenFactoryFunctions();
+  const { createTokenDrop, creationStatus, isCreating } =
+    useTokenFactoryFunctions();
 
   const { approveTransfer, isLoadingApproval } = useTokenApproval(tokenAddress);
   const [txHash, setTxHash] = useState<string | null>(null);
-  const [isSendingToBackend, setIsSendingToBackend] = useState(false);
+  const [backendStatus, setbackendStatus] = useState<
+    "error" | "success" | "sending" | null
+  >(null);
+  const [
+    storedDeployedAirdropContractAddress,
+    setDeployedAirdropContractAddress,
+  ] = useState<string | null>(null);
 
   const approve = async () => {
+    // if the drop has been created, but the upload of proofs to the backend fails
+    if (creationStatus === "success") {
+      // contract already deployed — only retry backend
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+      const token = Cookies.get("token");
+      const body_v = {
+        proofs: merkleOutput,
+        contractAddress: storedDeployedAirdropContractAddress,
+      };
+      console.log(body_v);
+      setbackendStatus("sending");
+      toast.info("Retrying drop finalization. Please stay on this page.");
+
+      axios
+        .post(`${BACKEND_URL}/users/add-bulk-user`, body_v, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log("Retry successful:", response);
+          setbackendStatus("success");
+          setShowModal(true);
+          dispatch(setTokenDetail(null));
+          clear();
+        })
+        .catch((error) => {
+          console.error("Retry failed:", error);
+          setbackendStatus("error");
+        });
+
+      return;
+    }
     if (!tokenBalance) {
       return;
     }
@@ -134,14 +171,15 @@ export function ApproveComponent() {
       noOfClaimers,
     };
 
-    const { success, transactionHash, deployedAirdropContractAddress } = await createTokenDrop(
-      body.tokenAddress,
-      body.merkleRoot,
-      body.name,
-      body.nftAddress,
-      body.noOfClaimers,
-      body.totalOutputTokens
-    );
+    const { success, transactionHash, deployedAirdropContractAddress } =
+      await createTokenDrop(
+        body.tokenAddress,
+        body.merkleRoot,
+        body.name,
+        body.nftAddress,
+        body.noOfClaimers,
+        body.totalOutputTokens
+      );
 
     if (!success) {
       return;
@@ -150,6 +188,7 @@ export function ApproveComponent() {
       return;
     }
     setTxHash(transactionHash);
+    setDeployedAirdropContractAddress(deployedAirdropContractAddress);
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const token = Cookies.get("token");
     const body_v = {
@@ -157,9 +196,9 @@ export function ApproveComponent() {
       contractAddress: deployedAirdropContractAddress,
     };
     console.log(body_v);
-    
-    setIsSendingToBackend(true);
-    
+
+    setbackendStatus("sending");
+
     toast.info("Please stay on this page until the drop is created.");
     axios
       .post(`${BACKEND_URL}/users/add-bulk-user`, body_v, {
@@ -170,14 +209,15 @@ export function ApproveComponent() {
       })
       .then((response) => {
         console.log("API call successful:", response);
-        setIsSendingToBackend(false);
+        setbackendStatus("success");
         setShowModal(true);
         dispatch(setTokenDetail(null));
         clear();
       })
       .catch((error) => {
         console.error("API call failed:", error);
-        setIsSendingToBackend(false);
+        setbackendStatus("error");
+        toast.error("Finalization failed. Retry");
       });
   };
 
@@ -258,17 +298,27 @@ export function ApproveComponent() {
             </div>
             <button
               className={`w-full bg-[#00A7FF] text-white py-2 rounded-[6px] transition ${
-                isCreating || isSendingToBackend ? "cursor-not-allowed opacity-70" : ""
+                isCreating || backendStatus == "sending"
+                  ? "cursor-not-allowed opacity-70"
+                  : ""
               }`}
               onClick={approve}
               disabled={
-                isLoadingApproval || isCreating || creationStatus === "success" || isSendingToBackend
+                isLoadingApproval ||
+                isCreating ||
+                backendStatus == "sending" ||
+                backendStatus == "success"
               }
             >
               {isLoadingApproval || isCreating ? (
                 <ButtonLoader />
-              ) : isSendingToBackend ? (
+              ) : backendStatus === "sending" ? (
                 "Completing..."
+              ) : creationStatus === "success" && backendStatus === "error" ? (
+                "Retry drop finalization"
+              ) : creationStatus === "success" &&
+                backendStatus === "success" ? (
+                "Done"
               ) : (
                 "Approve"
               )}
