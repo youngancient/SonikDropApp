@@ -2,6 +2,8 @@ import { useCallback, useState } from "react";
 import { useTokenAirdropContract } from "../../useContracts";
 import { toast } from "react-toastify";
 import { ErrorDecoder } from "ethers-decode-error";
+import { fetchUserByAddress } from "../../../utils/getDataFromBackend";
+import { useAppKitAccount } from "@reown/appkit/react";
 
 export const useReadTokenFunctions = (tokenDropContractAddress: string) => {
   const tokenDropContract = useTokenAirdropContract(
@@ -11,6 +13,7 @@ export const useReadTokenFunctions = (tokenDropContractAddress: string) => {
   // check eligibility function returns (bool,number/null) -> (isEligible, gasToMint)
   const errorDecoder = ErrorDecoder.create();
   const [isChecking, setIsChecking] = useState(false);
+  const {address} = useAppKitAccount();
 
   const checkTokenDropEligibility = useCallback(async (): Promise<{
     isEligible: boolean;
@@ -20,7 +23,10 @@ export const useReadTokenFunctions = (tokenDropContractAddress: string) => {
       toast.error("TokenDrop Contract not found");
       return { isEligible: false, gasToMint: null };
     }
-
+    if (!address) {
+      toast.error("Wallet not connected!");
+      return { isEligible: false, gasToMint: null };
+    }
     // get this merkleproof n amount from the backend server
     const amount = "310000000000000000000";
     const merkleProof = [
@@ -29,6 +35,8 @@ export const useReadTokenFunctions = (tokenDropContractAddress: string) => {
     ];
 
     try {
+      const data = await fetchUserByAddress(tokenDropContractAddress,address);
+      
       setIsChecking(true);
       const isEligible = await tokenDropContract.checkEligibility(
         amount,

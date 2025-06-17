@@ -11,10 +11,6 @@ export const usePoapFactoryFunctions = () => {
     "default" | "success" | "failed"
   >("default");
   const [isCreating, setIsCreating] = useState(false);
-  const [transactionHash, setTransactionHash] = useState<string>("");
-  const [deployedPoapDropContractAddress, setDeployedPoapContractAddress] =
-    useState("0x");
-
   const [isEstimating, setIsEstimating] = useState(false);
   const errorDecoder = ErrorDecoder.create();
 
@@ -26,10 +22,18 @@ export const usePoapFactoryFunctions = () => {
       baseURI: string,
       nftAddress: string,
       noOfClaimers: number
-    ) => {
+    ): Promise<{
+      success: boolean;
+      transactionHash: string | null;
+      deployedPoapDropContractAddress: string | null;
+    }> => {
       if (!poapFactoryContract) {
         toast.error("Poap Factory Contract not found");
-        return;
+        return {
+          success: false,
+          transactionHash: null,
+          deployedPoapDropContractAddress: null,
+        };
       }
       try {
         setIsCreating(true);
@@ -45,7 +49,6 @@ export const usePoapFactoryFunctions = () => {
         ](name, symbol, baseURI, merkleRoot, nftAddressClone, noOfClaimers, {
           gasLimit: 2000000,
         });
-        setTransactionHash(tx.hash);
 
         const reciept = await tx.wait();
         if (reciept.status === 1) {
@@ -53,26 +56,43 @@ export const usePoapFactoryFunctions = () => {
           // Find the emitted event with the new contract's address
           const eventLogs = reciept.logs;
 
-          if (eventLogs) {
-            const deployedContractAddress = eventLogs[0].topics[3];
-            setDeployedPoapContractAddress(
-              stripLeadingZeros(deployedContractAddress)
-            );
-          } else {
+          if (!eventLogs) {
             console.log("Deployment event not found.");
+            return {
+              success: false,
+              transactionHash: null,
+              deployedPoapDropContractAddress: null,
+            };
           }
+          const deployedContractAddress = eventLogs[0].topics[3];
           setCreationStatus("success");
-          return true;
+          return {
+            success: true,
+            transactionHash: tx.hash,
+            deployedPoapDropContractAddress: stripLeadingZeros(
+              deployedContractAddress
+            ),
+          };
         }
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);
         console.log(decodedError);
         toast.error("failed to create drop");
         setCreationStatus("failed");
-        return false;
+         return {
+          success: false,
+          transactionHash: null,
+          deployedPoapDropContractAddress: null,
+        };
       } finally {
         setIsCreating(false);
       }
+      // Ensure a return in case receipt.status !== 1 or other paths
+      return {
+        success: false,
+        transactionHash: null,
+        deployedPoapDropContractAddress: null,
+      };
     },
     [poapFactoryContract]
   );
@@ -85,7 +105,7 @@ export const usePoapFactoryFunctions = () => {
       baseURI: string,
       nftAddress: string,
       noOfClaimers: number
-    ):Promise<bigint | null> => {
+    ): Promise<bigint | null> => {
       if (!poapFactoryContract) {
         toast.error("Poap Factory Contract not found");
         return null;
@@ -125,8 +145,6 @@ export const usePoapFactoryFunctions = () => {
     createPoapDrop,
     creationStatus,
     isCreating,
-    transactionHash,
-    deployedPoapDropContractAddress,
     estimateCreatePoapGas,
     isEstimating,
     poapFactoryContract,

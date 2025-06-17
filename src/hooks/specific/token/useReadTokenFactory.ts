@@ -115,8 +115,8 @@ export const useReadTokenFactoryFunctions = () => {
               creatorAddress,
               totalClaimed: Number(totalClaimed),
               totalClaimable: Number(totalClaimable),
-              totalClaimedtoken: Number(totalClaimedtoken),
-              totalClaimabletoken: Number(totalClaimabletoken),
+              totalClaimedtoken: BigInt(totalClaimedtoken),
+              totalClaimabletoken: BigInt(totalClaimabletoken),
               creationTime: Number(creationTime),
               endTime:
                 Number(creationTime) != Number(endTime)

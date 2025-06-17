@@ -57,7 +57,7 @@ export const DropComp: React.FC<IDropComp> = ({
   tokenContractAddress,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
+  const percentageRaw = (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
   const [percentClaimed] = useState(
     percentageRaw % 1 === 0
       ? percentageRaw.toFixed(0)
@@ -263,7 +263,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
   hasUserClaimed,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
+  const percentageRaw = (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
   const [percentClaimed] = useState(
     percentageRaw % 1 === 0
       ? percentageRaw.toFixed(0)
@@ -485,7 +485,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   );
 
   // for rewards
-  const rewardPercentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
+  const rewardPercentageRaw = (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
   const [rewardPercentageClaimed] = useState(
     rewardPercentageRaw % 1 === 0
       ? rewardPercentageRaw.toFixed(0)
@@ -586,7 +586,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
             {type === "token" && (
               <div className="reward-pool flex flex-col items-center justify-center w-full">
                 <p>Reward Pool</p>
-                <h1>{ethers.formatUnits(totalRewardPool.toString(), 18)}ETH</h1>
+                <h1>{ethers.formatUnits(totalRewardPool.toString(), 18)}{tokenDetails?.symbol}</h1>
               </div>
             )}
             {type === "poap" && (
@@ -654,7 +654,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                     <p>Rewards Claimed</p>
                     <h4>
                       {ethers.formatUnits(totalRewardClaimed.toString(), 18)}
-                      {type === "token" && "ETH"}
+                      {type === "token" && tokenDetails?.symbol}
                     </h4>
                   </div>
                   {isCreator && (
