@@ -146,8 +146,6 @@ export const useTokenDetail = (tokenAddress: string) => {
       const decimals = await readOnlyERC20Contract.decimals();
       const symbol = await readOnlyERC20Contract.symbol();
 
-      console.log({ name, decimals, symbol });
-      console.log("Done fetching details2...");
       const metadata = { name, decimals: Number(decimals), symbol };
       return metadata;
     } catch (error) {

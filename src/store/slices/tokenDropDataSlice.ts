@@ -43,7 +43,7 @@ export const tokenDataSlice = createSlice({
       action: PayloadAction<{ contractAddress: string; amountClaimed: string }>
     ) => {
       const { contractAddress, amountClaimed } = action.payload;
-      const claimedAmount = Number(amountClaimed);
+      const claimedAmount = BigInt(amountClaimed);
 
       if (state.tokenDrops) {
         state.tokenDrops = state.tokenDrops.map((drop) => {
@@ -52,7 +52,7 @@ export const tokenDataSlice = createSlice({
               ...drop,
               hasUserClaimed: true,
               totalClaims: drop.totalClaims + 1,
-              totalRewardClaimed: drop.totalClaims + claimedAmount,
+              totalRewardClaimed: (drop.totalRewardClaimed ?? 0n) + claimedAmount,
             };
           }
           return drop;
@@ -66,7 +66,7 @@ export const tokenDataSlice = createSlice({
               ...drop,
               hasUserClaimed: true,
               totalClaims: drop.totalClaims + 1,
-              totalRewardClaimed: drop.totalClaims + claimedAmount,
+              totalRewardClaimed: (drop.totalRewardClaimed ?? 0n) + claimedAmount,
             };
           }
           return drop;

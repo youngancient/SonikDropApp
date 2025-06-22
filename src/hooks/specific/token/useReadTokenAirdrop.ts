@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { ErrorDecoder } from "ethers-decode-error";
 import { fetchUserByAddress } from "../../../utils/getDataFromBackend";
 import { useAppKitAccount } from "@reown/appkit/react";
+import { ITokenClaimDetails } from "../../../interfaces/tokenUserClaimDetails";
 
 export const useReadTokenFunctions = (tokenDropContractAddress: string) => {
   const tokenDropContract = useTokenAirdropContract(
@@ -13,31 +14,28 @@ export const useReadTokenFunctions = (tokenDropContractAddress: string) => {
   // check eligibility function returns (bool,number/null) -> (isEligible, gasToMint)
   const errorDecoder = ErrorDecoder.create();
   const [isChecking, setIsChecking] = useState(false);
-  const {address} = useAppKitAccount();
+  const { address } = useAppKitAccount();
 
   const checkTokenDropEligibility = useCallback(async (): Promise<{
     isEligible: boolean;
     gasToMint: bigint | null;
+    claimDetails: ITokenClaimDetails | null;
   }> => {
     if (!tokenDropContract) {
       toast.error("TokenDrop Contract not found");
-      return { isEligible: false, gasToMint: null };
+      return { isEligible: false, gasToMint: null, claimDetails: null };
     }
     if (!address) {
       toast.error("Wallet not connected!");
-      return { isEligible: false, gasToMint: null };
+      return { isEligible: false, gasToMint: null, claimDetails: null };
     }
-    // get this merkleproof n amount from the backend server
-    const amount = "310000000000000000000";
-    const merkleProof = [
-      "0xb5dedb24676b0a29ce0be50a25fa07f3dcc44b4eac2ae9516982fdc9a3c1ba34",
-      "0xb78af4f822d074f3ad6e6f0021118589f4bfce1e98f23121c01cd5623ccb8d84",
-    ];
-
     try {
-      const data = await fetchUserByAddress(tokenDropContractAddress,address);
-      
       setIsChecking(true);
+      //@note get merkleproof n amount from the backend server
+      const data = await fetchUserByAddress(tokenDropContractAddress, address);
+      const amount = data.amount.toString();
+      const merkleProof = data.proofs;
+
       const isEligible = await tokenDropContract.checkEligibility(
         amount,
         merkleProof
@@ -47,6 +45,7 @@ export const useReadTokenFunctions = (tokenDropContractAddress: string) => {
       console.log("is eligible ? -> ", isEligible);
 
       if (isEligible) {
+        console.log("got here!");
         // why does this fail?
         const gas = await tokenDropContract[
           "claimAirdrop(uint256,bytes32[])"
@@ -56,12 +55,16 @@ export const useReadTokenFunctions = (tokenDropContractAddress: string) => {
       return {
         isEligible,
         gasToMint: gasVal,
+        claimDetails: {
+          amount,
+          proof: merkleProof,
+        },
       };
     } catch (error) {
       const decodedError = await errorDecoder.decode(error);
       console.error("Eligibility check failed:", decodedError);
       toast.error("Eligibility check failed");
-      return { isEligible: false, gasToMint: null };
+      return { isEligible: false, gasToMint: null, claimDetails: null };
     } finally {
       setIsChecking(false);
     }

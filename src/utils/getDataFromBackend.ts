@@ -9,11 +9,12 @@ export async function fetchUserByAddress(
   try {
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const token = Cookies.get("token");
-    console.log(`drop address -> ${dropAddress} \n user address -> ${userAddress}`);
-    console.log("heree");
+    console.log(
+      `drop address -> ${dropAddress} \n user address -> ${userAddress}`
+    );
     console.log(token);
     const response = await axios.get(
-      `${BACKEND_URL}/users/get-user-by-address/${dropAddress}/${userAddress}`,
+      `${BACKEND_URL}/users/get-user-by-address/${dropAddress.toLowerCase()}/${userAddress.toLowerCase()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -21,9 +22,7 @@ export async function fetchUserByAddress(
         },
       }
     );
- 
-    console.log("User data:", response.data);
-    return response.data;
+    return response.data.data;
   } catch (error: any) {
     toast.error("Error fetching User proofs");
     console.error(

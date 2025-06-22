@@ -2,7 +2,6 @@ import {
   useAppKit,
   useAppKitAccount,
   useAppKitNetwork,
-  useAppKitProvider,
 } from "@reown/appkit/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { formatAddress } from "../utils/helpers";
@@ -20,11 +19,11 @@ import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
 import ClickOutsideWrapper from "./outsideClick";
 import { IChains, supportedNetworks } from "../constants/chains";
-import { BrowserProvider, Eip1193Provider } from "ethers";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useClearPoapFormInput } from "../hooks/useClearPoapForm";
-import axios from "axios";
+import { useAuthSignMessage } from "../hooks/auth/useAuth";
+import { SiginToastMsg } from "./signMessageToast";
 
 export function HeaderComponent({
   formType,
@@ -42,48 +41,7 @@ export function HeaderComponent({
   const { hasSigned } = useAppSelector((state) => state.step);
 
   // test sign message
-  const token = Cookies.get("token");
-  const { walletProvider } = useAppKitProvider("eip155");
-
-  // when the user switches address, it should prompt them to sign message
-  const onSignMessage = useCallback(async () => {
-    if (!address) {
-      toast.error("Please connect wallet");
-      return;
-    }
-    try {
-      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-      const signer = await provider.getSigner();
-
-      const message = `Welcome to SonikDrop! Please sign this message to authenticate.
-      Wallet: ${address}
-      Nonce: ${Math.floor(Math.random() * 1000000)}
-      Timestamp: ${new Date().toISOString()}
-      Domain: sonikdrop.app
-      This signature does not trigger any blockchain transaction or cost gas fees.
-      `;
-      const signature = await signer?.signMessage(message);
-
-      dispatch(setHasSigned(true));
-
-      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-      const response = await axios.post(`${BACKEND_URL}/auth/authenticate`, {
-        signature,
-        message,
-        address,
-      });
-
-      if (response.status === 200) {
-        // console.log(response.data);
-        const { data } = response.data;
-        Cookies.set("token", data);
-      }
-    } catch (error) {
-      console.error("Error signing message:", error);
-      toast.error("Failed to sign the message");
-      Cookies.set("token", "lmao");
-    }
-  }, [address, dispatch, walletProvider]);
+  // const token = Cookies.get("token");
 
   const handleButtonClick = () => {
     open();
@@ -111,16 +69,16 @@ export function HeaderComponent({
     }
   };
 
-  // how do we prevent the sign message from being called after a reload of the browser?
+  const { onSignMessage, signInStatus } = useAuthSignMessage();
 
   // Effect to handle sign message on connection
   useEffect(() => {
-    if (hasSigned) {
+    if (hasSigned || signInStatus == "pending") {
       return;
     }
     // added timeout to prevent immediate sign message
     const delayTimeout = setTimeout(() => {
-      if (isConnected && !token) {
+      if (isConnected && !Cookies.get("token")) {
         onSignMessage();
       }
     }, 2000);
@@ -129,7 +87,7 @@ export function HeaderComponent({
     return () => {
       clearTimeout(delayTimeout);
     };
-  }, [hasSigned, isConnected, onSignMessage, token]);
+  }, [hasSigned, isConnected]);
 
   useEffect(() => {
     if (!isConnected) {
@@ -138,6 +96,38 @@ export function HeaderComponent({
     }
   }, [isConnected]);
 
+  const popSignMsg = () => {
+    toast((props) => <SiginToastMsg {...props} />, {
+      data: {
+        text: "Authentication failed. Please try signing again.",
+        onSign: () => {
+          onSignMessage();
+        },
+      },
+    });
+  };
+
+  const goToDashboard = () => {
+    if (!Cookies.get("token")) {
+      handleButtonClickWithoutSignin();
+    }
+    navigate("/dashboard");
+  };
+
+  const handleButtonClickWithoutSignin = () => {
+    if (signInStatus == "pending") {
+      toast.info("SignIn in progress...");
+    } else if (signInStatus == "failed") {
+      popSignMsg();
+    }
+  };
+
+  useEffect(() => {
+    if (signInStatus === "failed") {
+      popSignMsg();
+    }
+  }, [signInStatus]);
+  
   return (
     <div className="px-2 px-[20px] md:px-[100px] lg:px-[200px]">
       <div className="flex justify-between text-white h-[60px] md:h-[100px] items-center">
@@ -163,7 +153,7 @@ export function HeaderComponent({
           <button
             type="button"
             className="px-4 py-1 h-[1.75rem] md:h-[2rem] rounded-md flex items-center justify-center bg-[rgba(255,255,255,0.08)] shadow-[0px_0px_0px_1px_rgba(225,228,234,0.20)] cursor-pointer"
-            onClick={() => navigate("/dashboard")}
+            onClick={goToDashboard}
           >
             <DashboardIcon />
           </button>

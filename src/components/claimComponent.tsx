@@ -40,6 +40,7 @@ import { useReadTokenFunctions } from "../hooks/specific/token/useReadTokenAirdr
 import { useTokenDropFunctions } from "../hooks/specific/token/useTokenAirdrop";
 import { updateAllTokenDropsAfterClaim } from "../store/slices/tokenDropDataSlice";
 import { ITokenDetails, useTokenDetail } from "../hooks/specific/useERC20";
+import { ITokenClaimDetails } from "../interfaces/tokenUserClaimDetails";
 
 export const DropComp: React.FC<IDropComp> = ({
   name,
@@ -57,7 +58,8 @@ export const DropComp: React.FC<IDropComp> = ({
   tokenContractAddress,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const percentageRaw = (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
+  const percentageRaw =
+    (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
   const [percentClaimed] = useState(
     percentageRaw % 1 === 0
       ? percentageRaw.toFixed(0)
@@ -67,6 +69,8 @@ export const DropComp: React.FC<IDropComp> = ({
 
   const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
   const [isEligible, setIsEligible] = useState(false);
+  const [userClaimDetails, setUserClaimDetails] =
+    useState<ITokenClaimDetails | null>(null);
 
   const { checkTokenDropEligibility, isChecking } =
     useReadTokenFunctions(contractAddress);
@@ -78,7 +82,8 @@ export const DropComp: React.FC<IDropComp> = ({
       setShowModal(true);
       return;
     }
-    const { isEligible, gasToMint } = await checkTokenDropEligibility();
+    const { isEligible, gasToMint, claimDetails } =
+      await checkTokenDropEligibility();
     if (!isEligible) {
       setShowModal(true);
       return;
@@ -87,6 +92,7 @@ export const DropComp: React.FC<IDropComp> = ({
       setShowModal(true);
       return;
     }
+    setUserClaimDetails(claimDetails);
     setIsEligible(isEligible); // user is eligible
     const gasData = await estimate(gasToMint);
     setGasInfo(gasData);
@@ -241,6 +247,7 @@ export const DropComp: React.FC<IDropComp> = ({
             gasInfo={gasInfo}
             isEligible={isEligible}
             tokenDetails={tokenDetails}
+            userClaimDetails={userClaimDetails}
           />
         )}
       </AnimatePresence>
@@ -263,7 +270,8 @@ export const POAPDropComp: React.FC<IDropComp> = ({
   hasUserClaimed,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const percentageRaw = (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
+  const percentageRaw =
+    (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
   const [percentClaimed] = useState(
     percentageRaw % 1 === 0
       ? percentageRaw.toFixed(0)
@@ -273,6 +281,9 @@ export const POAPDropComp: React.FC<IDropComp> = ({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
   const [isEligible, setIsEligible] = useState(false);
+
+  const [userPoapClaimDetails, setUserPoapClaimDetails] =
+    useState<string[] | null>(null);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -295,7 +306,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
       setShowModal(true);
       return;
     }
-    const { isEligible, gasToMint } = await checkEligibility();
+    const { isEligible, gasToMint, claimDetails } = await checkEligibility();
     if (!isEligible) {
       setShowModal(true);
       return;
@@ -304,6 +315,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
       setShowModal(true);
       return;
     }
+    setUserPoapClaimDetails(claimDetails);
     setIsEligible(isEligible); // user is eligible
     const gasData = await estimate(gasToMint);
     setGasInfo(gasData);
@@ -349,7 +361,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
             <div className="two flex justify-between gap-[1rem] flex-wrap">
               <div className="">
                 <p className="">Reward Pool</p>
-                <h3>{totalRewardPool.toLocaleString()}</h3>
+                <h3>{Number(totalRewardPool).toLocaleString()}</h3>
               </div>
               <div>
                 <p>{endDate ? "ENDING DATE" : "CREATION DATE"}</p>
@@ -441,6 +453,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
             poapImg={imageUrl ?? undefined}
             gasInfo={gasInfo}
             isEligible={isEligible}
+            userClaimDetails={userPoapClaimDetails}
           />
         )}
       </AnimatePresence>
@@ -456,6 +469,7 @@ interface IClaimModal extends IDropComp {
   gasInfo: GasInfo | null;
   isEligible: boolean;
   tokenDetails?: ITokenDetails | null;
+  userClaimDetails : ITokenClaimDetails | string[] | null;
 }
 export const ClaimModal: React.FC<IClaimModal> = ({
   closeModal,
@@ -475,6 +489,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   isEligible,
   gasInfo,
   tokenDetails,
+  userClaimDetails
 }) => {
   // for participants
   const participantPercentageRaw = (totalClaims * 100) / totalParticipants;
@@ -485,7 +500,8 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   );
 
   // for rewards
-  const rewardPercentageRaw = (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
+  const rewardPercentageRaw =
+    (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
   const [rewardPercentageClaimed] = useState(
     rewardPercentageRaw % 1 === 0
       ? rewardPercentageRaw.toFixed(0)
@@ -496,7 +512,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   const { claimTokenDrop, isClaiming } = useTokenDropFunctions(contractAddress);
   const { chainId } = useAppKitNetwork();
 
-  const popMsg = (txHash: string) => {
+  const popMsg = (txHash: string, msg : string) => {
     if (!chainId) {
       return;
     }
@@ -504,7 +520,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
 
     toast((props) => <ClaimDropToastMsg {...props} />, {
       data: {
-        text: "Minted sucessfully",
+        text: msg,
         url: url,
       },
     });
@@ -516,8 +532,13 @@ export const ClaimModal: React.FC<IClaimModal> = ({
     if (dropType === "token") {
       // handle token claim
       console.log("claim the token drop");
+      if(!userClaimDetails || Array.isArray(userClaimDetails)){
+        toast.error("invalid claim details!");
+        return;
+      }
       const { success, transactionHash, amountClaimed } =
-        await claimTokenDrop();
+        await claimTokenDrop(userClaimDetails);
+
       if (!success) {
         return;
       }
@@ -530,12 +551,16 @@ export const ClaimModal: React.FC<IClaimModal> = ({
       dispatch(
         updateAllTokenDropsAfterClaim({ contractAddress, amountClaimed })
       );
-      popMsg(transactionHash);
+      popMsg(transactionHash, "Claimed Successfully");
       closeModal();
     } else if (dropType === "poap") {
       // handle poap claim
       console.log("mint the poap");
-      const { success, transactionHash } = await mintPoap();
+      if (!Array.isArray(userClaimDetails)) {
+        toast.error("Invalid claim details!");
+        return;
+      }
+      const { success, transactionHash } = await mintPoap(userClaimDetails);
 
       if (!success) {
         return;
@@ -543,10 +568,9 @@ export const ClaimModal: React.FC<IClaimModal> = ({
       if (!transactionHash) {
         return;
       }
-      dispatch(updateAllPoapsAfterClaim(contractAddress));
-      console.log("total rewards in modal claimed -> ", totalRewardClaimed);
+      dispatch(updateAllPoapsAfterClaim(contractAddress)); 
 
-      popMsg(transactionHash);
+      popMsg(transactionHash,"Minted Successfully");
       closeModal();
     }
   };
@@ -586,7 +610,10 @@ export const ClaimModal: React.FC<IClaimModal> = ({
             {type === "token" && (
               <div className="reward-pool flex flex-col items-center justify-center w-full">
                 <p>Reward Pool</p>
-                <h1>{ethers.formatUnits(totalRewardPool.toString(), 18)}{tokenDetails?.symbol}</h1>
+                <h1>
+                  {ethers.formatUnits(totalRewardPool.toString(), 18)}
+                  {tokenDetails?.symbol}
+                </h1>
               </div>
             )}
             {type === "poap" && (
