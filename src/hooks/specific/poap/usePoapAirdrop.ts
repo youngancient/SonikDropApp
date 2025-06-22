@@ -9,7 +9,7 @@ export const usePoapDropFunctions = (poapContractAddress: string) => {
 
   const [isMinting, setIsMinting] = useState(false);
 
-  const mintPoap = useCallback(async (): Promise<{
+  const mintPoap = useCallback(async (userPoapClaim : string[]): Promise<{
     success: boolean;
     transactionHash: string | null;
   }> => {
@@ -27,7 +27,7 @@ export const usePoapDropFunctions = (poapContractAddress: string) => {
 
     try {
       setIsMinting(true);
-
+      console.log("got here", userPoapClaim);
       const tx = await poapDropContract["claimAirdrop(bytes32[])"](merkleProof);
 
       const reciept = await tx.wait();

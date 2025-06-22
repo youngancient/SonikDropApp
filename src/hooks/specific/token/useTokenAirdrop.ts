@@ -2,6 +2,7 @@ import { ErrorDecoder } from "ethers-decode-error";
 import { useTokenAirdropContract } from "../../useContracts";
 import { toast } from "react-toastify";
 import { useCallback, useState } from "react";
+import { ITokenClaimDetails } from "../../../interfaces/tokenUserClaimDetails";
 
 export const useTokenDropFunctions = (tokenDropContractAddress: string) => {
   const tokenDropContract = useTokenAirdropContract(
@@ -12,7 +13,7 @@ export const useTokenDropFunctions = (tokenDropContractAddress: string) => {
 
   const [isClaiming, setIsClaiming] = useState(false);
 
-  const claimTokenDrop = useCallback(async (): Promise<{
+  const claimTokenDrop = useCallback(async (tokenUserClaimDetails : ITokenClaimDetails): Promise<{
     success: boolean;
     transactionHash: string | null;
     amountClaimed: string | null;
@@ -32,7 +33,8 @@ export const useTokenDropFunctions = (tokenDropContractAddress: string) => {
 
     try {
       setIsClaiming(true);
-
+      console.log("got here",tokenUserClaimDetails);
+      
       const tx = await tokenDropContract["claimAirdrop(uint256,bytes32[])"](
         amount,
         merkleProof
