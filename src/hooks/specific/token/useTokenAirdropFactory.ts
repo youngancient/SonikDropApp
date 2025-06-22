@@ -10,8 +10,6 @@ export const useTokenFactoryFunctions = () => {
     "default" | "success" | "failed"
   >("default");
   const [isCreating, setIsCreating] = useState(false);
-  const [deployedAirdropContractAddress, setDeployedTokenContractAddress] =
-    useState("0x");
 
   const createTokenDrop = useCallback(
     async (
@@ -24,10 +22,15 @@ export const useTokenFactoryFunctions = () => {
     ): Promise<{
       success: boolean;
       transactionHash: string | null;
+      deployedAirdropContractAddress: string | null;
     }> => {
       if (!tokenFactoryContract) {
         toast.error("Token Factory Contract not found");
-        return { success: false, transactionHash: null };
+        return {
+          success: false,
+          transactionHash: null,
+          deployedAirdropContractAddress: null,
+        };
       }
       try {
         setIsCreating(true);
@@ -57,26 +60,41 @@ export const useTokenFactoryFunctions = () => {
           // Find the emitted event with the new contract's address
           const eventLogs = reciept.logs;
 
-          if (eventLogs) {
-            const deployedContractAddress = eventLogs[0].topics[2];
-            setDeployedTokenContractAddress(
-              stripLeadingZeros(deployedContractAddress)
-            );
-          } else {
+          if (!eventLogs) {
             console.log("Deployment event not found.");
+            return {
+              success: false,
+              transactionHash: null,
+              deployedAirdropContractAddress: null,
+            };
           }
+          const deployedContractAddress = eventLogs[0].topics[2];
           setCreationStatus("success");
-          return { success: true, transactionHash: tx.hash };
+          return {
+            success: true,
+            transactionHash: tx.hash,
+            deployedAirdropContractAddress: stripLeadingZeros(
+              deployedContractAddress
+            ),
+          };
         }
       } catch (error) {
         console.log(error);
         toast.error("failed to create drop");
         setCreationStatus("failed");
-        return { success: true, transactionHash: null };
+        return {
+          success: false,
+          transactionHash: null,
+          deployedAirdropContractAddress: null,
+        };
       } finally {
         setIsCreating(false);
       }
-      return { success: false, transactionHash: null }; // Default return statement
+      return {
+        success: false,
+        transactionHash: null,
+        deployedAirdropContractAddress: null,
+      };
     },
     [tokenFactoryContract]
   );
@@ -85,6 +103,5 @@ export const useTokenFactoryFunctions = () => {
     createTokenDrop,
     creationStatus,
     isCreating,
-    deployedAirdropContractAddress,
   };
 };

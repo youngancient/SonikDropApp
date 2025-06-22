@@ -20,6 +20,7 @@ import {
   selectPoapMerkleHash,
   selectPoapMerkleOutput,
 } from "../../store/slices/poapDropDataSlice";
+import { toast } from "react-toastify";
 
 export function ApprovePoapComponent() {
   const [eventName, setEventName] = useState("");
@@ -45,8 +46,6 @@ export function ApprovePoapComponent() {
     createPoapDrop,
     isCreating,
     poapFactoryContract,
-    deployedPoapDropContractAddress,
-    transactionHash,
   } = usePoapFactoryFunctions();
 
   const { estimate } = useCalculateGasCost();
@@ -101,31 +100,85 @@ export function ApprovePoapComponent() {
 
   const { clearPoap } = useClearPoapFormInput();
   const [showModal, setShowModal] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const [backendStatus, setbackendStatus] = useState<
+    "error" | "success" | "sending" | null
+  >(null);
+  const [
+    storedDeployedPoapDropContractAddress,
+    setDeployedPoapDropContractAddress,
+  ] = useState<string | null>(null);
 
   const approve = async () => {
+    // if the drop has been created, but the upload of proofs to the backend fails
+    if (isSuccess) {
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+      const token = Cookies.get("token");
+      const body = {
+        proofs: merkleOutput,
+        contractAddress: storedDeployedPoapDropContractAddress,
+      };
+      console.log(body);
+
+      setbackendStatus("sending");
+      toast.info("Please stay on this page until the drop is created.");
+
+      axios
+        .post(`${BACKEND_URL}/users/add-bulk-user`, body, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log("API call successful:", response);
+          setShowModal(true);
+          setbackendStatus("success");
+          clearPoap();
+        })
+        .catch((error) => {
+          console.error("API call failed:", error);
+          setbackendStatus("error");
+        });
+      return;
+    }
     // call contract
     // no nft is required to claim poap yet
     const nftAddress = ethers.ZeroAddress;
 
-    const isCreated = await createPoapDrop(
-      merkleRoot,
-      eventName,
-      eventSymbol,
-      baseURI,
-      nftAddress,
-      noOfClaimers
-    );
+    const { success, transactionHash, deployedPoapDropContractAddress } =
+      await createPoapDrop(
+        merkleRoot,
+        eventName,
+        eventSymbol,
+        baseURI,
+        nftAddress,
+        noOfClaimers
+      );
 
-    if (!isCreated) {
+    if (!success) {
       return;
     }
+    if (!transactionHash) {
+      return;
+    }
+    setTxHash(transactionHash);
+    setIsSuccess(success);
+    setDeployedPoapDropContractAddress(deployedPoapDropContractAddress);
+
+    // post to backend
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const token = Cookies.get("token");
     const body = {
       proofs: merkleOutput,
       contractAddress: deployedPoapDropContractAddress,
     };
-    setShowModal(true);
+    console.log(body);
+
+    setbackendStatus("sending");
+    toast.info("Please stay on this page until the drop is created.");
 
     axios
       .post(`${BACKEND_URL}/users/add-bulk-user`, body, {
@@ -136,16 +189,14 @@ export function ApprovePoapComponent() {
       })
       .then((response) => {
         console.log("API call successful:", response);
+        setShowModal(true);
+        setbackendStatus("success");
+        clearPoap();
       })
       .catch((error) => {
         console.error("API call failed:", error);
+        setbackendStatus("error");
       });
-
-    setTimeout(() => {
-      setShowModal(true);
-    }, 1200);
-
-    clearPoap();
   };
 
   return (
@@ -213,16 +264,33 @@ export function ApprovePoapComponent() {
             </div>
             <button
               className={`w-full bg-[#00A7FF] text-white py-2 rounded-[6px] transition ${
-                isCreating ? "cursor-not-allowed opacity-70" : ""
+                isCreating || backendStatus == "sending"
+                  ? "cursor-not-allowed opacity-70"
+                  : ""
               }`}
               onClick={approve}
+              disabled={
+                isCreating ||
+                backendStatus == "sending" ||
+                backendStatus == "success"
+              }
             >
-              {isCreating ? <ButtonLoader /> : "Approve"}
+              {isCreating ? (
+                <ButtonLoader />
+              ) : backendStatus === "sending" ? (
+                "Completing..."
+              ) : isSuccess && backendStatus === "error" ? (
+                "Retry drop finalization"
+              ) : isSuccess && backendStatus === "success" ? (
+                "Done"
+              ) : (
+                "Approve"
+              )}
             </button>
           </div>
         </motion.div>
       </AnimatePresence>
-      {showModal && <CompletedModal dropType="poap" txHash={transactionHash} />}
+      {showModal && <CompletedModal dropType="poap" txHash={txHash || ""} />}
     </>
   );
 }

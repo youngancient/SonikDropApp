@@ -11,8 +11,6 @@ export const Hero = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
-  
-
   return (
     <HeroStyles>
       <div className="text mt-12 md:mt-10">

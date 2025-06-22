@@ -80,14 +80,15 @@ const ClaimPage = () => {
         name: drop.name,
         creator: drop.creatorAddress,
         creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)),
-        totalRewardPool: drop.totalClaimable,
-        totalRewardClaimed: drop.totalClaimed, // since it's 1 mint per user, totalClaims == totalRewardClaimed
+        totalRewardPool: BigInt(drop.totalClaimable),
+        totalRewardClaimed: BigInt(drop.totalClaimed), // since it's 1 mint per user, totalClaims == totalRewardClaimed
         totalParticipants: drop.totalClaimable,
         totalClaims: drop.totalClaimed,
         contractAddress: drop.address,
         hasUserClaimed: drop.hasUserClaimed,
         baseURI: drop.baseURI,
       }));
+      console.log(drops);
 
       dispatch(setPOAPDrops(drops));
       dispatch(setDuplicatePOAPDrops(drops));
@@ -136,11 +137,13 @@ const ClaimPage = () => {
         if (!duplicateTokenDrops) {
           return;
         }
+
         const filteredTokenDrops = duplicateTokenDrops.filter((drop) =>
           drop.name.toLowerCase().includes((query as string).toLowerCase())
         );
+        console.log("got here", filteredTokenDrops);
         // console.log(filteredTokenDrops.length === 0);
-        setTokenDrops(filteredTokenDrops);
+        dispatch(setTokenDrops(filteredTokenDrops));
       } else if (selectedTabName === "POAPs") {
         if (!duplicatePoapdrops) {
           return;
@@ -155,7 +158,7 @@ const ClaimPage = () => {
 
   const clearForm = () => {
     dispatch(setTokenDrops(duplicateTokenDrops));
-    dispatch(setPOAPDrops(duplicatePoapdrops));
+    // dispatch(setPOAPDrops(duplicatePoapdrops));
     setQuery("");
   };
 
