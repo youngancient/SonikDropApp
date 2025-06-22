@@ -512,7 +512,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   const { claimTokenDrop, isClaiming } = useTokenDropFunctions(contractAddress);
   const { chainId } = useAppKitNetwork();
 
-  const popMsg = (txHash: string) => {
+  const popMsg = (txHash: string, msg : string) => {
     if (!chainId) {
       return;
     }
@@ -520,7 +520,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
 
     toast((props) => <ClaimDropToastMsg {...props} />, {
       data: {
-        text: "Minted sucessfully",
+        text: msg,
         url: url,
       },
     });
@@ -551,7 +551,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
       dispatch(
         updateAllTokenDropsAfterClaim({ contractAddress, amountClaimed })
       );
-      popMsg(transactionHash);
+      popMsg(transactionHash, "Claimed Successfully");
       closeModal();
     } else if (dropType === "poap") {
       // handle poap claim
@@ -568,10 +568,9 @@ export const ClaimModal: React.FC<IClaimModal> = ({
       if (!transactionHash) {
         return;
       }
-      dispatch(updateAllPoapsAfterClaim(contractAddress));
-      console.log("total rewards in modal claimed -> ", totalRewardClaimed);
+      dispatch(updateAllPoapsAfterClaim(contractAddress)); 
 
-      popMsg(transactionHash);
+      popMsg(transactionHash,"Minted Successfully");
       closeModal();
     }
   };
