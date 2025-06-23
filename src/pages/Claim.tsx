@@ -158,7 +158,7 @@ const ClaimPage = () => {
 
   const clearForm = () => {
     dispatch(setTokenDrops(duplicateTokenDrops));
-    // dispatch(setPOAPDrops(duplicatePoapdrops));
+    dispatch(setPOAPDrops(duplicatePoapdrops));
     setQuery("");
   };
 
