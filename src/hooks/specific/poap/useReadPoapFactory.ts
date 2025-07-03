@@ -69,6 +69,8 @@ export const useReadPoapFactoryFunctions = () => {
         return [];
       }
       setLoading(true);
+      console.log("got here");
+      
       try {
         const iface = new ethers.Interface(POAP_AIRDROP_ABI);
 
@@ -121,6 +123,7 @@ export const useReadPoapFactoryFunctions = () => {
             };
           }
         );
+        console.log("decoded result",decoded);
         setFn(decoded.filter((drop): drop is IPOAPDrop => drop !== null));
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);
