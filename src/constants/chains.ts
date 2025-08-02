@@ -86,6 +86,11 @@ export const supportedNetworks: IChains[] = [
     id: 57054,
     logo: "sonic_chain.webp",
   },
+  {
+    name : "Morph Testnet",
+    id: 2810,
+    logo : "morph.webp"
+  }
 ];
 
 // {
