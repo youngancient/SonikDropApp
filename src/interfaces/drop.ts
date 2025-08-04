@@ -3,8 +3,8 @@ export interface IDropComp {
   creator: string; //address
   creationDate: string;
   endDate ?: string;
-  totalRewardPool: bigint;
-  totalRewardClaimed: bigint;
+  totalRewardPool: string;
+  totalRewardClaimed: string;
   totalParticipants: number;
   totalClaims: number;
   nftAddress?: string;

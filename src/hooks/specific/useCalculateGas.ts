@@ -43,6 +43,8 @@ const useCalculateGasCost = () => {
           `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoTokenId}&vs_currencies=usd`
         );
         const usdRate = res.data[coingeckoTokenId]?.usd ?? 0;
+        console.log(gasCostNativeRaw);
+        
         const gasCostUsd = (parseFloat(gasCostNativeRaw) * usdRate).toFixed(4);
 
         const nativeTokenSymbol = nativeTokenMap[Number(chainId)]?.token;

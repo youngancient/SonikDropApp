@@ -41,6 +41,12 @@ export const nativeTokenMap: Record<
     token: "KAIA",
     blockExplorer: "",
   }, // testnet
+  2810: {
+    name: "Morph holesky",
+    coinGeckoId: "ethereum", // Assuming you're using ETH on Morph
+    token: "ETH",
+    blockExplorer: "",
+  },
 };
 
 // for expansion to other testnet
@@ -87,10 +93,10 @@ export const supportedNetworks: IChains[] = [
     logo: "sonic_chain.webp",
   },
   {
-    name : "Morph Testnet",
+    name: "Morph Testnet",
     id: 2810,
-    logo : "morph.webp"
-  }
+    logo: "morph.webp",
+  },
 ];
 
 // {

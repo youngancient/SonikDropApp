@@ -163,7 +163,7 @@ export const useReadPoapFactoryFunctions = () => {
       setAllPoapDropsDetails,
       setLoadingAllPoapDrops
     );
-  }, [poapFactoryContract]);
+  }, [poapFactoryContract,fetchPoapDropDetails]);
 
   return {
     getOwnerPoapDrops,

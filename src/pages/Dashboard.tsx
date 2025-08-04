@@ -78,8 +78,8 @@ const Dashboard = () => {
         name: drop.name,
         creator: drop.creatorAddress,
         creationDate: new Date(drop.creationTime * 1000).toLocaleDateString(), // optional: format timestamp
-        totalRewardPool: BigInt(drop.totalClaimable),
-        totalRewardClaimed: BigInt(drop.totalClaimed),
+        totalRewardPool: BigInt(drop.totalClaimable).toString(),
+        totalRewardClaimed: BigInt(drop.totalClaimed).toString(),
         totalParticipants: drop.totalClaimable,
         totalClaims: drop.totalClaimed,
         contractAddress: drop.address,
