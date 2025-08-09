@@ -23,6 +23,7 @@ import { useReadTokenFactoryFunctions } from "../hooks/specific/token/useReadTok
 import { useReadPoapFactoryFunctions } from "../hooks/specific/poap/useReadPoapFactory";
 import { IDropComp } from "../interfaces/drop";
 import { mapTokenDrops } from "../utils/mapTokenDrop";
+import { formatToDDMMYYYY } from "../utils/getPaddedDate";
 
 const Dashboard = () => {
   // Note: Here only the airdrops created by the user are displayed
@@ -50,12 +51,10 @@ const Dashboard = () => {
 
   const {
     getOwnerPoapDropsDetails,
-    allOwnerPoapDropsDetails,
     isLoadingOwnerPoapDrops,
   } = useReadPoapFactoryFunctions();
 
   const {
-    allOwnerTokenDropsDetails,
     getOwnerTokenDropsDetails,
     isLoadingOwnerTokenDrops,
   } = useReadTokenFactoryFunctions();
@@ -69,61 +68,52 @@ const Dashboard = () => {
     });
     clearForm();
     setStateTabs(newTabs);
-    if (tabName == "POAPs") {
-      if (allOwnerPoapDropsDetails == null) {
-        setPOAPDrops(null);
-        return;
-      }
-      const drops: IDropComp[] = allOwnerPoapDropsDetails.map((drop) => ({
-        name: drop.name,
-        creator: drop.creatorAddress,
-        creationDate: new Date(drop.creationTime * 1000).toLocaleDateString(), // optional: format timestamp
-        totalRewardPool: BigInt(drop.totalClaimable).toString(),
-        totalRewardClaimed: BigInt(drop.totalClaimed).toString(),
-        totalParticipants: drop.totalClaimable,
-        totalClaims: drop.totalClaimed,
-        contractAddress: drop.address,
-        hasUserClaimed: drop.hasUserClaimed,
-        baseURI: drop.baseURI,
-      }));
-
-      setPOAPDrops(drops);
-      setDuplicatePOAPDrops(drops);
-    }
-    if (tabName == "Tokens") {
-      if (allOwnerTokenDropsDetails == null) {
-        setTokenDrops(null);
-        return;
-      }
-
-      const drops: IDropComp[] = mapTokenDrops(allOwnerTokenDropsDetails);
-      setTokenDrops(drops);
-      setDuplicateTokenDrops(drops);
-    }
   };
 
-  useEffect(() => {
-    if (!address) {
-      return;
-    }
 
-    const fetchData = async () => {
-      await getOwnerTokenDropsDetails();
-      
-      if (allOwnerTokenDropsDetails == null) {
-        setTokenDrops(null);
+
+  useEffect(() => {
+      if (!address) {
         return;
       }
-      
-      const drops: IDropComp[] = mapTokenDrops(allOwnerTokenDropsDetails);
-      setTokenDrops(drops);
-      setDuplicateTokenDrops(drops);
-      // get poap
-      await getOwnerPoapDropsDetails();
-    };
-
-    fetchData();
-  }, [address]);
+      const fetchData = async () => {
+        const allOwnerTokenDropsDetails = await getOwnerTokenDropsDetails();
+  
+        if (allOwnerTokenDropsDetails == null) {
+          setTokenDrops(null);
+          return;
+        }
+  
+        const drops: IDropComp[] = mapTokenDrops(allOwnerTokenDropsDetails);
+        setTokenDrops(drops);
+        setDuplicateTokenDrops(drops);
+        // get poap
+        const asyncPoapDrops = await getOwnerPoapDropsDetails();
+        if(asyncPoapDrops == null){
+          setPOAPDrops(null);
+          return;
+        }
+        const poapDrops: IDropComp[] = asyncPoapDrops.map((drop) => ({
+          name: drop.name,
+          creator: drop.creatorAddress,
+          creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)),
+          totalRewardPool: BigInt(drop.totalClaimable).toString(),
+          totalRewardClaimed: BigInt(drop.totalClaimed).toString(), // since it's 1 mint per user, totalClaims == totalRewardClaimed
+          totalParticipants: drop.totalClaimable,
+          totalClaims: drop.totalClaimed,
+          contractAddress: drop.address,
+          hasUserClaimed: drop.hasUserClaimed,
+          baseURI: drop.baseURI,
+          endDate: drop.endTime
+            ? formatToDDMMYYYY(new Date(drop.endTime * 1000))
+            : undefined,
+        }));
+        console.log(poapDrops);
+        setPOAPDrops(poapDrops);
+        setDuplicatePOAPDrops(poapDrops);
+      };
+      fetchData();
+    }, [address,selectedTabName]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

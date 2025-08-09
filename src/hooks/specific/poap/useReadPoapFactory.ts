@@ -26,13 +26,13 @@ export const useReadPoapFactoryFunctions = () => {
     string[] | null
   >(null);
 
-  const [allPoapDropsDetails, setAllPoapDropsDetails] = useState<
-    IPOAPDrop[] | null
-  >(null);
+  // const [allPoapDropsDetails, setAllPoapDropsDetails] = useState<
+  //   IPOAPDrop[] | null
+  // >(null);
 
-  const [allOwnerPoapDropsDetails, setAllOwnerPoapDropsDetails] = useState<
-    IPOAPDrop[] | null
-  >(null);
+  // const [allOwnerPoapDropsDetails, setAllOwnerPoapDropsDetails] = useState<
+  //   IPOAPDrop[] | null
+  // >(null);
 
   // loading state
   const [isLoadingOwnerPoapDrops, setLoadingOwnerPoapDrops] = useState(false);
@@ -61,7 +61,6 @@ export const useReadPoapFactoryFunctions = () => {
   const fetchPoapDropDetails = useCallback(
     async (
       dropAddresses: string[],
-      setFn: (drops: IPOAPDrop[]) => void,
       setLoading: (state: boolean) => void
     ) => {
       if (!multicall3Contract) {
@@ -128,7 +127,6 @@ export const useReadPoapFactoryFunctions = () => {
           }
         );
         // console.log("decoded result",decoded);
-        setFn(decoded.filter((drop): drop is IPOAPDrop => drop !== null));
         return decoded.filter((drop): drop is IPOAPDrop => drop !== null);
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);
@@ -148,11 +146,12 @@ export const useReadPoapFactoryFunctions = () => {
 
     const ownerDropAddresses =
       await poapFactoryContract.getOwnerSonikPoapClones(address);
-    await fetchPoapDropDetails(
+    const ownerPoapDrops = await fetchPoapDropDetails(
       ownerDropAddresses,
-      setAllOwnerPoapDropsDetails,
       setLoadingOwnerPoapDrops
     );
+
+    return ownerPoapDrops;
   }, [poapFactoryContract, address, fetchPoapDropDetails]);
 
   const getAllPoapDropsDetails = useCallback(async () => {
@@ -165,7 +164,6 @@ export const useReadPoapFactoryFunctions = () => {
 
     const drops = await fetchPoapDropDetails(
       allDropAddresses,
-      setAllPoapDropsDetails,
       setLoadingAllPoapDrops
     );
     return drops;
@@ -178,10 +176,7 @@ export const useReadPoapFactoryFunctions = () => {
     getOwnerPoapDropsDetails,
     allPoapDropsAddresses,
     allOwnerPoapDropsAddresses,
-    allPoapDropsDetails,
-    allOwnerPoapDropsDetails,
     isLoadingOwnerPoapDrops,
     isLoadingAllPoapDrops,
-    setAllPoapDropsDetails,
   };
 };

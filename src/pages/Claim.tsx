@@ -56,12 +56,11 @@ const ClaimPage = () => {
   const duplicateTokenDrops = useAppSelector(selectAllDuplicateTokenDrops);
   const tokenDrops = useAppSelector(selectAllTokenDrops);
 
-  const { getAllPoapDropsDetails, allPoapDropsDetails, isLoadingAllPoapDrops } =
+  const { getAllPoapDropsDetails, isLoadingAllPoapDrops } =
     useReadPoapFactoryFunctions();
 
   const {
     getAllTokenDropsDetails,
-    allTokenDropsDetails,
     isLoadingAllTokenDrops,
   } = useReadTokenFactoryFunctions();
 
@@ -72,33 +71,6 @@ const ClaimPage = () => {
     });
     clearForm();
     setStateTabs(newTabs);
-    // if (tabName == "POAPs" && allPoapDropsDetails) {
-    //   console.log("switched to poaps");
-      
-    //   const drops: IDropComp[] = allPoapDropsDetails.map((drop) => ({
-    //     name: drop.name,
-    //     creator: drop.creatorAddress,
-    //     creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)),
-    //     totalRewardPool: BigInt(drop.totalClaimable).toString(),
-    //     totalRewardClaimed: BigInt(drop.totalClaimed).toString(), // since it's 1 mint per user, totalClaims == totalRewardClaimed
-    //     totalParticipants: drop.totalClaimable,
-    //     totalClaims: drop.totalClaimed,
-    //     contractAddress: drop.address,
-    //     hasUserClaimed: drop.hasUserClaimed,
-    //     baseURI: drop.baseURI,
-    //     endDate: drop.endTime
-    //       ? formatToDDMMYYYY(new Date(drop.endTime * 1000))
-    //       : undefined,
-    //   }));
-    //   console.log(drops);
-
-    //   dispatch(setPOAPDrops(drops));
-    //   dispatch(setDuplicatePOAPDrops(drops));
-    // } else if (tabName == "Tokens" && allTokenDropsDetails) {
-    //   const drops: IDropComp[] = mapTokenDrops(allTokenDropsDetails);
-    //   dispatch(setTokenDrops(drops));
-    //   dispatch(setDuplicateTokenDrops(drops));
-    // }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -156,7 +128,7 @@ const ClaimPage = () => {
       return;
     }
     const fetchData = async () => {
-      await getAllTokenDropsDetails();
+      const allTokenDropsDetails = await getAllTokenDropsDetails();
 
       if (allTokenDropsDetails == null) {
         dispatch(setTokenDrops(null));

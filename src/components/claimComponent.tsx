@@ -329,7 +329,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
       }
       try {
         const image = await getPoapImageFromBaseURI(baseURI);
-        console.log(image, baseURI);
+    
         
         setImageUrl(image || null);
       } catch (error) {
