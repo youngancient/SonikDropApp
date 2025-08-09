@@ -1,5 +1,6 @@
 import styled, { keyframes, css } from "styled-components";
 import { Rotate } from "../animations/button";
+import React from "react";
 
 export const LogoIcon = () => {
   return (
@@ -107,6 +108,19 @@ export const BNB: React.FC<ILink> = ({ href }) => {
     </ChainDivStyle>
   );
 };
+
+export const Morph: React.FC<ILink> = ({ href }) => {
+  return (
+    <ChainDivStyle
+      bottom={100}
+      right={150}
+      onClick={() => href && window.open(href, "_blank")}
+    >
+     <img src="/morph.webp" alt="morph" /> 
+    </ChainDivStyle>
+  );
+};
+
 export const ETH: React.FC<ILink> = ({ href }) => {
   return (
     <ChainDivStyle
@@ -151,17 +165,17 @@ export const Polygon: React.FC<ILink> = ({ href }) => {
     </ChainDivStyle>
   );
 };
-export const Arbitrum: React.FC<ILink> = ({ href }) => {
-  return (
-    <ChainDivStyle
-      bottom={100}
-      right={150}
-      onClick={() => href && window.open(href, "_blank")}
-    >
-      <img src="/Arbitrum.svg" alt="arbitrum" />
-    </ChainDivStyle>
-  );
-};
+// export const Arbitrum: React.FC<ILink> = ({ href }) => {
+//   return (
+//     <ChainDivStyle
+//       bottom={100}
+//       right={150}
+//       onClick={() => href && window.open(href, "_blank")}
+//     >
+//       <img src="/Arbitrum.svg" alt="arbitrum" />
+//     </ChainDivStyle>
+//   );
+// };
 export const Kaia: React.FC<ILink> = ({ href }) => {
   return (
     <ChainDivStyle
@@ -214,7 +228,7 @@ export const ChainDivStyle = styled.div<IChainDiv>`
   cursor: pointer;
   scale: 0.8;
   transition: filter 0.3s ease, scale 0.3s ease;
-  
+
   &:hover {
     filter: blur(0px);
     scale: 0.9;
@@ -250,42 +264,57 @@ export const ChainDivStyle = styled.div<IChainDiv>`
   @media (max-width: 1024px) {
     width: 70px;
     height: 70px;
-    
+
     /* Adjust positioning for tablet */
-    ${({ top }) => top !== undefined && css`
-      top: ${Math.max(top * 0.8, 10)}px;
-    `}
-    ${({ bottom }) => bottom !== undefined && css`
-      bottom: ${Math.max(bottom * 0.8, 10)}px;
-    `}
-    ${({ left }) => left !== undefined && css`
-      left: ${Math.max(left * 0.8, 10)}px;
-    `}
-    ${({ right }) => right !== undefined && css`
-      right: ${Math.max(right * 0.8, 10)}px;
-    `}
+    ${({ top }) =>
+      top !== undefined &&
+      css`
+        top: ${Math.max(top * 0.8, 10)}px;
+      `}
+    ${({ bottom }) =>
+      bottom !== undefined &&
+      css`
+        bottom: ${Math.max(bottom * 0.8, 10)}px;
+      `}
+    ${({ left }) =>
+      left !== undefined &&
+      css`
+        left: ${Math.max(left * 0.8, 10)}px;
+      `}
+    ${({ right }) =>
+      right !== undefined &&
+      css`
+        right: ${Math.max(right * 0.8, 10)}px;
+      `}
   }
 
-  
   /* Mobile Breakpoint */
   @media (max-width: 767px) {
     display: block;
     width: 50px;
     height: 50px;
     z-index: -1; /* Place icons behind other elements */
-    
-    ${({ top }) => top !== undefined && css`
-      top: ${Math.max(top * 0.6, 5)}px;
-    `}
-    ${({ bottom }) => bottom !== undefined && css`
-      bottom: ${Math.max(bottom * 1.5, 60)}px;
-    `}
-    ${({ left }) => left !== undefined && css`
-      left: ${Math.max(left * 0.6, 5)}px;
-    `}
-    ${({ right }) => right !== undefined && css`
-      right: ${Math.max(right * 0.6, 5)}px;
-    `}
+
+    ${({ top }) =>
+      top !== undefined &&
+      css`
+        top: ${Math.max(top * 0.6, 5)}px;
+      `}
+    ${({ bottom }) =>
+      bottom !== undefined &&
+      css`
+        bottom: ${Math.max(bottom * 1.5, 60)}px;
+      `}
+    ${({ left }) =>
+      left !== undefined &&
+      css`
+        left: ${Math.max(left * 0.6, 5)}px;
+      `}
+    ${({ right }) =>
+      right !== undefined &&
+      css`
+        right: ${Math.max(right * 0.6, 5)}px;
+      `}
 
     /* Increased blur effect and reduced opacity for mobile */
     filter: blur(12px);
@@ -742,3 +771,4 @@ export const DashboardIcon = () => {
     </svg>
   );
 };
+

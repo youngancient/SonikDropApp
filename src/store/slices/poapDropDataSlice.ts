@@ -47,7 +47,7 @@ export const poapDataSlice = createSlice({
               ...drop,
               hasUserClaimed: true,
               totalClaims: drop.totalClaims + 1,
-              totalRewardClaimed: BigInt(drop.totalClaims) + BigInt(1), // since it's 1 mint per user, totalClaims == totalRewardClaimed
+              totalRewardClaimed: (BigInt(drop.totalClaims) + BigInt(1)).toString(), // since it's 1 mint per user, totalClaims == totalRewardClaimed
             };
           }
           return drop;
@@ -61,7 +61,7 @@ export const poapDataSlice = createSlice({
               ...drop,
               hasUserClaimed: true,
               totalClaims: drop.totalClaims + 1,
-              totalRewardClaimed: BigInt(drop.totalClaims) + BigInt(1),
+              totalRewardClaimed: (BigInt(drop.totalClaims) + BigInt(1)).toString(),
             };
           }
           return drop;
