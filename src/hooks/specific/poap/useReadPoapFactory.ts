@@ -47,7 +47,7 @@ export const useReadPoapFactoryFunctions = () => {
     const ownerDropsAddresses =
       await poapFactoryContract.getOwnerSonikPoapClones(address);
     setAllOwnerPoapDropsAddresses(ownerDropsAddresses);
-  }, [poapFactoryContract]);
+  }, [poapFactoryContract, address]);
 
   const getAllPoapDrops = useCallback(async () => {
     if (!poapFactoryContract) {
@@ -68,8 +68,12 @@ export const useReadPoapFactoryFunctions = () => {
         toast.error("Multicall3 Contract not found");
         return [];
       }
+      if (!address) {
+        toast.error("Address not found");
+        return;
+      }
       setLoading(true);
-      console.log("got here");
+      console.log("got here poap");
       
       try {
         const iface = new ethers.Interface(POAP_AIRDROP_ABI);
@@ -123,8 +127,9 @@ export const useReadPoapFactoryFunctions = () => {
             };
           }
         );
-        console.log("decoded result",decoded);
+        // console.log("decoded result",decoded);
         setFn(decoded.filter((drop): drop is IPOAPDrop => drop !== null));
+        return decoded.filter((drop): drop is IPOAPDrop => drop !== null);
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);
         toast.error(decodedError.reason);
@@ -148,7 +153,7 @@ export const useReadPoapFactoryFunctions = () => {
       setAllOwnerPoapDropsDetails,
       setLoadingOwnerPoapDrops
     );
-  }, [poapFactoryContract]);
+  }, [poapFactoryContract, address, fetchPoapDropDetails]);
 
   const getAllPoapDropsDetails = useCallback(async () => {
     if (!poapFactoryContract) {
@@ -158,12 +163,13 @@ export const useReadPoapFactoryFunctions = () => {
 
     const allDropAddresses = await poapFactoryContract.getAllSonikPoapClones();
 
-    await fetchPoapDropDetails(
+    const drops = await fetchPoapDropDetails(
       allDropAddresses,
       setAllPoapDropsDetails,
       setLoadingAllPoapDrops
     );
-  }, [poapFactoryContract,fetchPoapDropDetails]);
+    return drops;
+  }, [poapFactoryContract, fetchPoapDropDetails]);
 
   return {
     getOwnerPoapDrops,

@@ -329,6 +329,8 @@ export const POAPDropComp: React.FC<IDropComp> = ({
       }
       try {
         const image = await getPoapImageFromBaseURI(baseURI);
+        console.log(image, baseURI);
+        
         setImageUrl(image || null);
       } catch (error) {
         console.error("Error fetching POAP image:", error);
@@ -863,18 +865,20 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                   </div>
                 </div>
               </div>
-              <div className=" addy flex items-center justify-between w-full">
-                <div className="flex items-center justify-between w-full">
-                  <h4>Estimated Gas Fee</h4>
-                  {gasInfo ? (
-                    <p className="break-words">
-                      {gasInfo.nativeWithToken} &asymp; {gasInfo.usd}
-                    </p>
-                  ) : (
-                    <p className="break-words">N/A</p>
-                  )}
+              {!isCreator && (
+                <div className=" addy flex items-center justify-between w-full">
+                  <div className="flex items-center justify-between w-full">
+                    <h4>Estimated Gas Fee</h4>
+                    {gasInfo ? (
+                      <p className="break-words">
+                        {gasInfo.nativeWithToken} &asymp; {gasInfo.usd}
+                      </p>
+                    ) : (
+                      <p className="break-words">N/A</p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             {!isCreator && (
               <div className="btn flex w-full justify-center items-center gap-[1rem]">

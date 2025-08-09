@@ -72,31 +72,33 @@ const ClaimPage = () => {
     });
     clearForm();
     setStateTabs(newTabs);
-    if (tabName == "POAPs" && allPoapDropsDetails) {
-      const drops: IDropComp[] = allPoapDropsDetails.map((drop) => ({
-        name: drop.name,
-        creator: drop.creatorAddress,
-        creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)),
-        totalRewardPool: BigInt(drop.totalClaimable).toString(),
-        totalRewardClaimed: BigInt(drop.totalClaimed).toString(), // since it's 1 mint per user, totalClaims == totalRewardClaimed
-        totalParticipants: drop.totalClaimable,
-        totalClaims: drop.totalClaimed,
-        contractAddress: drop.address,
-        hasUserClaimed: drop.hasUserClaimed,
-        baseURI: drop.baseURI,
-        endDate: drop.endTime
-          ? formatToDDMMYYYY(new Date(drop.endTime * 1000))
-          : undefined,
-      }));
-      console.log(drops);
+    // if (tabName == "POAPs" && allPoapDropsDetails) {
+    //   console.log("switched to poaps");
+      
+    //   const drops: IDropComp[] = allPoapDropsDetails.map((drop) => ({
+    //     name: drop.name,
+    //     creator: drop.creatorAddress,
+    //     creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)),
+    //     totalRewardPool: BigInt(drop.totalClaimable).toString(),
+    //     totalRewardClaimed: BigInt(drop.totalClaimed).toString(), // since it's 1 mint per user, totalClaims == totalRewardClaimed
+    //     totalParticipants: drop.totalClaimable,
+    //     totalClaims: drop.totalClaimed,
+    //     contractAddress: drop.address,
+    //     hasUserClaimed: drop.hasUserClaimed,
+    //     baseURI: drop.baseURI,
+    //     endDate: drop.endTime
+    //       ? formatToDDMMYYYY(new Date(drop.endTime * 1000))
+    //       : undefined,
+    //   }));
+    //   console.log(drops);
 
-      dispatch(setPOAPDrops(drops));
-      dispatch(setDuplicatePOAPDrops(drops));
-    } else if (tabName == "Tokens" && allTokenDropsDetails) {
-      const drops: IDropComp[] = mapTokenDrops(allTokenDropsDetails);
-      dispatch(setTokenDrops(drops));
-      dispatch(setDuplicateTokenDrops(drops));
-    }
+    //   dispatch(setPOAPDrops(drops));
+    //   dispatch(setDuplicatePOAPDrops(drops));
+    // } else if (tabName == "Tokens" && allTokenDropsDetails) {
+    //   const drops: IDropComp[] = mapTokenDrops(allTokenDropsDetails);
+    //   dispatch(setTokenDrops(drops));
+    //   dispatch(setDuplicateTokenDrops(drops));
+    // }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -165,10 +167,32 @@ const ClaimPage = () => {
       dispatch(setTokenDrops(drops));
       dispatch(setDuplicateTokenDrops(drops));
       // get poap
-      await getAllPoapDropsDetails();
+      const asyncPoapDrops = await getAllPoapDropsDetails();
+      if(asyncPoapDrops == null){
+        dispatch(setPOAPDrops(null));
+        return;
+      }
+      const poapDrops: IDropComp[] = asyncPoapDrops.map((drop) => ({
+        name: drop.name,
+        creator: drop.creatorAddress,
+        creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)),
+        totalRewardPool: BigInt(drop.totalClaimable).toString(),
+        totalRewardClaimed: BigInt(drop.totalClaimed).toString(), // since it's 1 mint per user, totalClaims == totalRewardClaimed
+        totalParticipants: drop.totalClaimable,
+        totalClaims: drop.totalClaimed,
+        contractAddress: drop.address,
+        hasUserClaimed: drop.hasUserClaimed,
+        baseURI: drop.baseURI,
+        endDate: drop.endTime
+          ? formatToDDMMYYYY(new Date(drop.endTime * 1000))
+          : undefined,
+      }));
+      console.log(poapDrops);
+      dispatch(setPOAPDrops(poapDrops));
+      dispatch(setDuplicatePOAPDrops(poapDrops));
     };
     fetchData();
-  }, [address]);
+  }, [address,selectedTabName]);
 
   return (
     <div
