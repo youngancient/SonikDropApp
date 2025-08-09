@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   claimCardVariants,
   moodVariant,
@@ -58,13 +58,24 @@ export const DropComp: React.FC<IDropComp> = ({
   tokenContractAddress,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const percentageRaw =
-    (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
-  const [percentClaimed] = useState(
-    percentageRaw % 1 === 0
-      ? percentageRaw.toFixed(0)
-      : percentageRaw.toFixed(1)
-  );
+  // Calculate percentage using BigInt to handle large values
+  const percentClaimed = useMemo(() => {
+    try {
+      const claimed = BigInt(totalRewardClaimed);
+      const pool = BigInt(totalRewardPool);
+      if (pool === 0n) return 0; // Avoid division by zero
+      return Number((claimed * 1000n) / pool) / 10; // Multiply by 1000 for 1 decimal precision
+    } catch (error) {
+      console.error("Error calculating percentClaimed:", error);
+      return 0;
+    }
+  }, [totalRewardClaimed, totalRewardPool]);
+
+  const formattedPercent =
+    percentClaimed % 1 === 0
+      ? percentClaimed.toFixed(0)
+      : percentClaimed.toFixed(1);
+
   const { address } = useAppKitAccount();
 
   const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
@@ -107,11 +118,21 @@ export const DropComp: React.FC<IDropComp> = ({
 
   useEffect(() => {
     const fetchDeet = async () => {
-      const tokenDetails = await fetchDetailsWithoutRedux();
-      setTokenDetails(tokenDetails);
+      if (!tokenContractAddress) {
+        setTokenDetails(null);
+        return;
+      }
+      try {
+        const details = await fetchDetailsWithoutRedux();
+        setTokenDetails(details);
+      } catch (error) {
+        console.error("Error fetching token details:", error);
+        setTokenDetails(null);
+      }
     };
     fetchDeet();
-  }, []);
+  }, [tokenContractAddress, fetchDetailsWithoutRedux]);
+
   return (
     <>
       <ThreeDHoverWrapper>
@@ -148,11 +169,13 @@ export const DropComp: React.FC<IDropComp> = ({
                   <ButtonLoader />
                 ) : (
                   <h3>
-                    {ethers.formatUnits(
-                      totalRewardPool.toString(),
-                      tokenDetails?.decimals
-                    )}
-                    {tokenDetails?.symbol}
+                    {tokenDetails
+                      ? ethers.formatUnits(
+                          totalRewardPool,
+                          tokenDetails.decimals
+                        )
+                      : "N/A"}{" "}
+                    {tokenDetails?.symbol || ""}
                   </h3>
                 )}
               </div>
@@ -160,7 +183,7 @@ export const DropComp: React.FC<IDropComp> = ({
                 <p>{endDate ? "ENDING DATE" : "CREATION DATE"}</p>
                 <div className="flex items-center gap-[0.625rem] justify-end">
                   <CalendarIcon />
-                  <h3>{endDate ? endDate : creationDate}</h3>
+                  <h3>{endDate || creationDate}</h3>
                 </div>
               </div>
             </div>
@@ -168,28 +191,28 @@ export const DropComp: React.FC<IDropComp> = ({
             <div className="three">
               <div
                 className={`rounded-md h-[0.75rem] flex items-center gap-[0.25rem] ${
-                  parseInt(percentClaimed) !== 100
+                  parseInt(formattedPercent) !== 100
                     ? "bg-[#283245]"
                     : "bg-[rgba(157,211,175,0.28)] p-[0.25rem]"
                 }`}
               >
-                {parseInt(percentClaimed) !== 100 && (
+                {parseInt(formattedPercent) !== 100 && (
                   <div
                     className="rounded-md inner h-[0.75rem] flex items-center justify-end pr-[0.75rem]"
                     style={{
-                      width: `${percentClaimed}%`,
+                      width: `${formattedPercent}%`,
                     }}
                   >
-                    {parseInt(percentClaimed) > 80 &&
-                      parseInt(percentClaimed) !== 100 && (
-                        <p className="mini">{percentClaimed}%</p>
+                    {parseInt(formattedPercent) > 80 &&
+                      parseInt(formattedPercent) !== 100 && (
+                        <p className="mini">{formattedPercent}%</p>
                       )}
                   </div>
                 )}
-                {parseInt(percentClaimed) < 80 && (
-                  <p className="tiny">{percentClaimed}%</p>
+                {parseInt(formattedPercent) < 80 && (
+                  <p className="tiny">{formattedPercent}%</p>
                 )}
-                {parseInt(percentClaimed) === 100 && (
+                {parseInt(formattedPercent) === 100 && (
                   <>
                     <CheckedIcon />
                     <p className="text-completed">Completed</p>
@@ -270,30 +293,50 @@ export const POAPDropComp: React.FC<IDropComp> = ({
   hasUserClaimed,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const percentageRaw =
-    (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
-  const [percentClaimed] = useState(
-    percentageRaw % 1 === 0
-      ? percentageRaw.toFixed(0)
-      : percentageRaw.toFixed(1)
-  );
+
+  // Calculate percentage using BigInt to handle large values safely
+  const percentClaimed = useMemo(() => {
+    try {
+      const claimed = BigInt(totalRewardClaimed);
+      const pool = BigInt(totalRewardPool);
+      if (pool === 0n) return 0; // Avoid division by zero
+      return Number((claimed * 1000n) / pool) / 10; // Multiply by 1000 for 1 decimal precision
+    } catch (error) {
+      console.error("Error calculating percentClaimed:", error);
+      return 0;
+    }
+  }, [totalRewardClaimed, totalRewardPool]);
+
+  const formattedPercent =
+    percentClaimed % 1 === 0
+      ? percentClaimed.toFixed(0)
+      : percentClaimed.toFixed(1);
+
   const { address } = useAppKitAccount();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
   const [isEligible, setIsEligible] = useState(false);
 
-  const [userPoapClaimDetails, setUserPoapClaimDetails] =
-    useState<string[] | null>(null);
+  const [userPoapClaimDetails, setUserPoapClaimDetails] = useState<
+    string[] | null
+  >(null);
 
   useEffect(() => {
     const fetchImage = async () => {
       if (!baseURI) {
+        setImageUrl(null);
         return;
       }
-      const image = await getPoapImageFromBaseURI(baseURI);
-      if (image) setImageUrl(image);
+      try {
+        const image = await getPoapImageFromBaseURI(baseURI);
+    
+        
+        setImageUrl(image || null);
+      } catch (error) {
+        console.error("Error fetching POAP image:", error);
+        setImageUrl(null);
+      }
     };
-
     fetchImage();
   }, [baseURI]);
 
@@ -361,13 +404,18 @@ export const POAPDropComp: React.FC<IDropComp> = ({
             <div className="two flex justify-between gap-[1rem] flex-wrap">
               <div className="">
                 <p className="">Reward Pool</p>
-                <h3>{Number(totalRewardPool).toLocaleString()}</h3>
+                <h3>
+                  {" "}
+                  {totalRewardPool === "0"
+                    ? "0"
+                    : Number(totalRewardPool).toLocaleString() || "N/A"}
+                </h3>
               </div>
               <div>
                 <p>{endDate ? "ENDING DATE" : "CREATION DATE"}</p>
                 <div className="flex items-center gap-[0.625rem] justify-end">
                   <CalendarIcon />
-                  <h3>{endDate ? endDate : creationDate}</h3>
+                  <h3>{endDate || creationDate}</h3>
                 </div>
               </div>
             </div>
@@ -375,28 +423,28 @@ export const POAPDropComp: React.FC<IDropComp> = ({
             <div className="three">
               <div
                 className={`rounded-md h-[0.75rem] flex items-center gap-[0.25rem] ${
-                  parseInt(percentClaimed) !== 100
+                  parseInt(formattedPercent) !== 100
                     ? "bg-[#283245]"
                     : "bg-[rgba(157,211,175,0.28)] p-[0.25rem]"
                 }`}
               >
-                {parseInt(percentClaimed) !== 100 && (
+                {parseInt(formattedPercent) !== 100 && (
                   <div
                     className="rounded-md inner h-[0.75rem] flex items-center justify-end pr-[0.75rem]"
                     style={{
                       width: `${percentClaimed}%`,
                     }}
                   >
-                    {parseInt(percentClaimed) > 80 &&
-                      parseInt(percentClaimed) !== 100 && (
+                    {parseInt(formattedPercent) > 80 &&
+                      parseInt(formattedPercent) !== 100 && (
                         <p className="mini">{percentClaimed}%</p>
                       )}
                   </div>
                 )}
-                {parseInt(percentClaimed) < 80 && (
-                  <p className="tiny">{percentClaimed}%</p>
+                {parseInt(formattedPercent) < 80 && (
+                  <p className="tiny">{formattedPercent}%</p>
                 )}
-                {parseInt(percentClaimed) === 100 && (
+                {parseInt(formattedPercent) === 100 && (
                   <>
                     <CheckedIcon />
                     <p className="text-completed">Completed</p>
@@ -469,7 +517,7 @@ interface IClaimModal extends IDropComp {
   gasInfo: GasInfo | null;
   isEligible: boolean;
   tokenDetails?: ITokenDetails | null;
-  userClaimDetails : ITokenClaimDetails | string[] | null;
+  userClaimDetails: ITokenClaimDetails | string[] | null;
 }
 export const ClaimModal: React.FC<IClaimModal> = ({
   closeModal,
@@ -489,30 +537,52 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   isEligible,
   gasInfo,
   tokenDetails,
-  userClaimDetails
+  userClaimDetails,
 }) => {
-  // for participants
-  const participantPercentageRaw = (totalClaims * 100) / totalParticipants;
-  const [participantPercentClaimed] = useState(
-    participantPercentageRaw % 1 === 0
-      ? participantPercentageRaw.toFixed(0)
-      : participantPercentageRaw.toFixed(1)
-  );
+  // Calculate participant percentage, always returning a string
+  const participantPercentClaimed = useMemo((): string => {
+    if (totalParticipants === 0) return "0"; // Return string "0" to avoid type mismatch
+    const percentage = (totalClaims * 100) / totalParticipants;
+    return percentage % 1 === 0 ? percentage.toFixed(0) : percentage.toFixed(1);
+  }, [totalClaims, totalParticipants]);
 
-  // for rewards
-  const rewardPercentageRaw =
-    (Number(totalRewardClaimed) * 100) / Number(totalRewardPool);
-  const [rewardPercentageClaimed] = useState(
-    rewardPercentageRaw % 1 === 0
-      ? rewardPercentageRaw.toFixed(0)
-      : rewardPercentageRaw.toFixed(1)
-  );
+  // Calculate reward percentage using BigInt for large values
+  const rewardPercentageClaimed = useMemo(() => {
+    try {
+      const claimed = BigInt(totalRewardClaimed);
+      const pool = BigInt(totalRewardPool);
+      if (pool === 0n) return 0; // Avoid division by zero
+      return Number((claimed * 1000n) / pool) / 10; // 1 decimal precision
+    } catch (error) {
+      console.error("Error calculating rewardPercentageClaimed:", error);
+      return 0;
+    }
+  }, [totalRewardClaimed, totalRewardPool]);
+
+  const formattedRewardPercent =
+    rewardPercentageClaimed % 1 === 0
+      ? rewardPercentageClaimed.toFixed(0)
+      : rewardPercentageClaimed.toFixed(1);
 
   const { mintPoap, isMinting } = usePoapDropFunctions(contractAddress);
   const { claimTokenDrop, isClaiming } = useTokenDropFunctions(contractAddress);
   const { chainId } = useAppKitNetwork();
 
-  const popMsg = (txHash: string, msg : string) => {
+  const [isCreatorAddressCopied, setIsCreatorAddressCopied] = useState(false);
+  const [isNftAddressCopied, setIsNftAddressCopied] = useState(false);
+
+  // Reset copied states after 3 seconds
+  useEffect(() => {
+    if (isCreatorAddressCopied || isNftAddressCopied) {
+      const timer = setTimeout(() => {
+        setIsCreatorAddressCopied(false);
+        setIsNftAddressCopied(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isCreatorAddressCopied, isNftAddressCopied]);
+
+  const popMsg = (txHash: string, msg: string) => {
     if (!chainId) {
       return;
     }
@@ -532,20 +602,16 @@ export const ClaimModal: React.FC<IClaimModal> = ({
     if (dropType === "token") {
       // handle token claim
       console.log("claim the token drop");
-      if(!userClaimDetails || Array.isArray(userClaimDetails)){
+      if (!userClaimDetails || Array.isArray(userClaimDetails)) {
         toast.error("invalid claim details!");
         return;
       }
-      const { success, transactionHash, amountClaimed } =
-        await claimTokenDrop(userClaimDetails);
+      const { success, transactionHash, amountClaimed } = await claimTokenDrop(
+        userClaimDetails
+      );
 
-      if (!success) {
-        return;
-      }
-      if (!transactionHash) {
-        return;
-      }
-      if (!amountClaimed) {
+      if (!success || !transactionHash || !amountClaimed) {
+        toast.error("Token claim failed");
         return;
       }
       dispatch(
@@ -568,9 +634,9 @@ export const ClaimModal: React.FC<IClaimModal> = ({
       if (!transactionHash) {
         return;
       }
-      dispatch(updateAllPoapsAfterClaim(contractAddress)); 
+      dispatch(updateAllPoapsAfterClaim(contractAddress));
 
-      popMsg(transactionHash,"Minted Successfully");
+      popMsg(transactionHash, "Minted Successfully");
       closeModal();
     }
   };
@@ -588,8 +654,20 @@ export const ClaimModal: React.FC<IClaimModal> = ({
       // handle poap airdrop end
     }
   };
-  const [isCreatorAddressCopied, setIsCreatorAddressCopied] = useState(false);
-  const [isNftAddressCopied, setIsNftAddressCopied] = useState(false);
+
+  // Format reward values
+  const formattedPool =
+    type === "token" && tokenDetails
+      ? ethers.formatUnits(totalRewardPool, tokenDetails.decimals)
+      : totalRewardPool === "0"
+      ? "0"
+      : Number(totalRewardPool).toLocaleString() || "N/A";
+  const formattedClaimed =
+    type === "token" && tokenDetails
+      ? ethers.formatUnits(totalRewardClaimed, tokenDetails.decimals)
+      : totalRewardClaimed === "0"
+      ? "0"
+      : Number(totalRewardClaimed).toLocaleString() || "N/A";
 
   return (
     <FlexAbsoluteModalStyles
@@ -611,8 +689,8 @@ export const ClaimModal: React.FC<IClaimModal> = ({
               <div className="reward-pool flex flex-col items-center justify-center w-full">
                 <p>Reward Pool</p>
                 <h1>
-                  {ethers.formatUnits(totalRewardPool.toString(), 18)}
-                  {tokenDetails?.symbol}
+                  {formattedPool}
+                  {tokenDetails?.symbol || ""}
                 </h1>
               </div>
             )}
@@ -680,35 +758,35 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                   <div className="flex flex-col">
                     <p>Rewards Claimed</p>
                     <h4>
-                      {ethers.formatUnits(totalRewardClaimed.toString(), 18)}
+                      {formattedClaimed}
                       {type === "token" && tokenDetails?.symbol}
                     </h4>
                   </div>
                   {isCreator && (
                     <div
                       className={`rounded-md h-[0.75rem] flex items-center gap-[0.25rem] ${
-                        parseInt(rewardPercentageClaimed) !== 100
+                        parseInt(formattedRewardPercent) !== 100
                           ? "bg-[#283245]"
                           : "bg-[rgba(157,211,175,0.28)] p-[0.25rem]"
                       }`}
                     >
-                      {parseInt(rewardPercentageClaimed) !== 100 && (
+                      {parseInt(formattedRewardPercent) !== 100 && (
                         <div
                           className="rounded-md inner h-[0.75rem] flex items-center justify-end pr-[0.75rem]"
                           style={{
                             width: `${rewardPercentageClaimed}%`,
                           }}
                         >
-                          {parseInt(rewardPercentageClaimed) > 80 &&
-                            parseInt(rewardPercentageClaimed) !== 100 && (
-                              <p className="mini">{rewardPercentageClaimed}%</p>
+                          {parseInt(formattedRewardPercent) > 80 &&
+                            parseInt(formattedRewardPercent) !== 100 && (
+                              <p className="mini">{formattedRewardPercent}%</p>
                             )}
                         </div>
                       )}
-                      {parseInt(rewardPercentageClaimed) < 80 && (
-                        <p className="tiny">{rewardPercentageClaimed}%</p>
+                      {parseInt(formattedRewardPercent) < 80 && (
+                        <p className="tiny">{formattedRewardPercent}%</p>
                       )}
-                      {parseInt(rewardPercentageClaimed) === 100 && (
+                      {parseInt(formattedRewardPercent) === 100 && (
                         <>
                           <CheckedIcon />
                           <p className="text-completed">Completed</p>
@@ -787,18 +865,20 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                   </div>
                 </div>
               </div>
-              <div className=" addy flex items-center justify-between w-full">
-                <div className="flex items-center justify-between w-full">
-                  <h4>Estimated Gas Fee</h4>
-                  {gasInfo ? (
-                    <p className="break-words">
-                      {gasInfo.nativeWithToken} &asymp; {gasInfo.usd}
-                    </p>
-                  ) : (
-                    <p className="break-words">N/A</p>
-                  )}
+              {!isCreator && (
+                <div className=" addy flex items-center justify-between w-full">
+                  <div className="flex items-center justify-between w-full">
+                    <h4>Estimated Gas Fee</h4>
+                    {gasInfo ? (
+                      <p className="break-words">
+                        {gasInfo.nativeWithToken} &asymp; {gasInfo.usd}
+                      </p>
+                    ) : (
+                      <p className="break-words">N/A</p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             {!isCreator && (
               <div className="btn flex w-full justify-center items-center gap-[1rem]">

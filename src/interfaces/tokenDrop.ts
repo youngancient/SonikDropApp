@@ -4,8 +4,8 @@ export interface ITokenDrop {
   creatorAddress: string;
   totalClaimed: number;
   totalClaimable: number;
-  totalClaimedtoken: bigint;
-  totalClaimabletoken: bigint;
+  totalClaimedtoken: string;
+  totalClaimabletoken: string;
   creationTime: number;
   endTime?: number;
   hasOwnerWithdrawn: boolean;

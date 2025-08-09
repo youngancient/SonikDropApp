@@ -33,6 +33,8 @@ export const useReadTokenFunctions = (tokenDropContractAddress: string) => {
       setIsChecking(true);
       //@note get merkleproof n amount from the backend server
       const data = await fetchUserByAddress(tokenDropContractAddress, address);
+      console.log(data);
+      
       const amount = data.amount.toString();
       const merkleProof = data.proofs;
 

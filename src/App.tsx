@@ -2,7 +2,7 @@ import "./App.css";
 import "./connection.ts";
 import { HeaderComponent } from "./components/headerComponent.tsx";
 import { Hero } from "./components/heroComponent.tsx";
-import { BNB, ETH , Optimism, Kaia, Arbitrum, Polygon, Base, Sonic} from "./components/icons.tsx";
+import { BNB, ETH , Optimism, Kaia, Polygon, Base, Sonic, Morph} from "./components/icons.tsx";
 import { ChainHrefs } from "./constants/chainHrefs.ts";
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
       <ETH href={ChainHrefs.Ethereum} />
       <Optimism href={ChainHrefs.Optimism} />
       <Kaia href={ChainHrefs.Kaia} />
-      <Arbitrum href={ChainHrefs.Arbitrum} />
+      <Morph href={ChainHrefs.Morph} />
       <Polygon href={ChainHrefs.Polygon} />
       <Base href={ChainHrefs.Base} />
       <Sonic href={ChainHrefs.Sonic} />

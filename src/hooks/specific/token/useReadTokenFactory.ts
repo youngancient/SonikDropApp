@@ -26,13 +26,13 @@ export const useReadTokenFactoryFunctions = () => {
   const [allOwnerTokenDropsAddresses, setAllOwnerTokenDropsAddresses] =
     useState<string[] | null>(null);
 
-  const [allTokenDropsDetails, setAllTokenDropsDetails] = useState<
-    ITokenDrop[] | null
-  >(null);
+  // const [allTokenDropsDetails, setAllTokenDropsDetails] = useState<
+  //   ITokenDrop[] | null
+  // >(null);
 
-  const [allOwnerTokenDropsDetails, setAllOwnerTokenDropsDetails] = useState<
-    ITokenDrop[] | null
-  >(null);
+  // const [allOwnerTokenDropsDetails, setAllOwnerTokenDropsDetails] = useState<
+  //   ITokenDrop[] | null
+  // >(null);
 
   // loading state
   const [isLoadingOwnerTokenDrops, setLoadingOwnerTokenDrops] = useState(false);
@@ -44,28 +44,39 @@ export const useReadTokenFactoryFunctions = () => {
       toast.error("Token Factory Contract not found");
       return;
     }
-    const ownerDropsAddresses =
-      await tokenFactoryContract.getOwnerSonikDropClones(address);
-    setAllOwnerTokenDropsAddresses(ownerDropsAddresses);
-  }, [tokenFactoryContract]);
+    try {
+      const ownerDropsAddresses =
+        await tokenFactoryContract.getOwnerSonikDropClones(address);
+      setAllOwnerTokenDropsAddresses(ownerDropsAddresses);
+    } catch (error) {
+      console.error("Error fetching owner token drops:", error);
+      toast.error("Failed to fetch owner token drops");
+    }
+  }, [tokenFactoryContract, address]);
 
   const getAllTokenDrops = useCallback(async () => {
     if (!tokenFactoryContract) {
       toast.error("Token Factory Contract not found");
       return;
     }
-    const allDropAddresses = await tokenFactoryContract.getAllSonikDropClones();
-    setAllTokenDropsAddresses(allDropAddresses);
+    try {
+      const allDropAddresses =
+        await tokenFactoryContract.getAllSonikDropClones();
+      setAllTokenDropsAddresses(allDropAddresses);
+    } catch (error) {
+      console.error("Error fetching all token drops:", error);
+      toast.error("Failed to fetch all token drops");
+    }
   }, [tokenFactoryContract]);
 
   const fetchTokenDropDetails = useCallback(
-    async (
-      dropAddresses: string[],
-      setFn: (drops: ITokenDrop[]) => void,
-      setLoading: (state: boolean) => void
-    ) => {
+    async (dropAddresses: string[], setLoading: (state: boolean) => void) => {
       if (!multicall3Contract) {
         toast.error("Multicall3 Contract not found");
+        return;
+      }
+      if (!address) {
+        toast.error("Address not found");
         return;
       }
       setLoading(true);
@@ -106,17 +117,20 @@ export const useReadTokenFactoryFunctions = () => {
               tokenContractAddress,
             ] = iface.decodeFunctionResult("getDropInfo", res.returnData);
 
-            const men= iface.decodeFunctionResult("getDropInfo", res.returnData);
-            console.log("men -> ",men);
-            
+            const men = iface.decodeFunctionResult(
+              "getDropInfo",
+              res.returnData
+            );
+            console.log("men -> ", men);
+
             return {
               address: dropAddresses[idx],
               name,
               creatorAddress,
               totalClaimed: Number(totalClaimed),
               totalClaimable: Number(totalClaimable),
-              totalClaimedtoken: BigInt(totalClaimedtoken),
-              totalClaimabletoken: BigInt(totalClaimabletoken),
+              totalClaimedtoken: BigInt(totalClaimedtoken).toString(),
+              totalClaimabletoken: BigInt(totalClaimabletoken).toString(),
               creationTime: Number(creationTime),
               endTime:
                 Number(creationTime) != Number(endTime)
@@ -131,7 +145,7 @@ export const useReadTokenFactoryFunctions = () => {
           }
         );
         console.log("decoded result: ", decoded);
-        setFn(decoded.filter((drop): drop is ITokenDrop => drop !== null));
+        return decoded.filter((drop): drop is ITokenDrop => drop !== null);
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);
         toast.error(decodedError.reason);
@@ -148,28 +162,38 @@ export const useReadTokenFactoryFunctions = () => {
       return;
     }
 
-    const ownerDropAddresses =
-      await tokenFactoryContract.getOwnerSonikDropClones(address);
-    await fetchTokenDropDetails(
-      ownerDropAddresses,
-      setAllOwnerTokenDropsDetails,
-      setLoadingOwnerTokenDrops
-    );
-  }, [tokenFactoryContract]);
+    try {
+      const ownerDropAddresses =
+        await tokenFactoryContract.getOwnerSonikDropClones(address);
+      const ownerTokenDrops = await fetchTokenDropDetails(
+        ownerDropAddresses,
+        setLoadingOwnerTokenDrops
+      );
+      return ownerTokenDrops;
+    } catch (error) {
+      console.error("Error fetching owner token drop details:", error);
+      toast.error("Failed to fetch owner token drop details");
+    }
+  }, [tokenFactoryContract, address, fetchTokenDropDetails]);
 
   const getAllTokenDropsDetails = useCallback(async () => {
     if (!tokenFactoryContract) {
       toast.error("Token Factory Contract not found");
       return;
     }
-
-    const allDropAddresses = await tokenFactoryContract.getAllSonikDropClones();
-    await fetchTokenDropDetails(
-      allDropAddresses,
-      setAllTokenDropsDetails,
-      setLoadingAllTokenDrops
-    );
-  }, [tokenFactoryContract]);
+    try {
+      const allDropAddresses =
+        await tokenFactoryContract.getAllSonikDropClones();
+      const allTokenDrops = await fetchTokenDropDetails(
+        allDropAddresses,
+        setLoadingAllTokenDrops
+      );
+      return allTokenDrops;
+    } catch (error) {
+      console.error("Error fetching all token drop details:", error);
+      toast.error("Failed to fetch all token drop details");
+    }
+  }, [tokenFactoryContract, fetchTokenDropDetails]);
 
   return {
     getOwnerTokenDrops,
@@ -178,8 +202,6 @@ export const useReadTokenFactoryFunctions = () => {
     getOwnerTokenDropsDetails,
     allTokenDropsAddresses,
     allOwnerTokenDropsAddresses,
-    allTokenDropsDetails,
-    allOwnerTokenDropsDetails,
     isLoadingOwnerTokenDrops,
     isLoadingAllTokenDrops,
   };
