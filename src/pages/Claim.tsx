@@ -59,10 +59,8 @@ const ClaimPage = () => {
   const { getAllPoapDropsDetails, isLoadingAllPoapDrops } =
     useReadPoapFactoryFunctions();
 
-  const {
-    getAllTokenDropsDetails,
-    isLoadingAllTokenDrops,
-  } = useReadTokenFactoryFunctions();
+  const { getAllTokenDropsDetails, isLoadingAllTokenDrops } =
+    useReadTokenFactoryFunctions();
 
   const handleTabSwitch = (tabName: "Tokens" | "POAPs") => {
     setSelectedTabName(tabName);
@@ -140,7 +138,7 @@ const ClaimPage = () => {
       dispatch(setDuplicateTokenDrops(drops));
       // get poap
       const asyncPoapDrops = await getAllPoapDropsDetails();
-      if(asyncPoapDrops == null){
+      if (asyncPoapDrops == null) {
         dispatch(setPOAPDrops(null));
         return;
       }
@@ -164,7 +162,7 @@ const ClaimPage = () => {
       dispatch(setDuplicatePOAPDrops(poapDrops));
     };
     fetchData();
-  }, [address,selectedTabName]);
+  }, [address]);
 
   return (
     <div
@@ -241,19 +239,30 @@ const ClaimPage = () => {
           </div>
         </div>
 
-        {isConnected &&
-          (tokenDrops?.length === 0 || poapdrops?.length === 0) && (
-            <motion.div
-              className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
-              initial="initial"
-              animate="final"
-              exit="exit"
-              key="empty"
-              variants={textVariant}
-            >
-              <h1 className="text-center">No Drops Found🧐</h1>
-            </motion.div>
-          )}
+        {isConnected && selectedTabName === "Tokens" && tokenDrops?.length === 0 && (
+          <motion.div
+            className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
+            initial="initial"
+            animate="final"
+            exit="exit"
+            key="empty-tokens"
+            variants={textVariant}
+          >
+            <h1 className="text-center">No Token Drops Found 🧐</h1>
+          </motion.div>
+        )}
+        {isConnected && selectedTabName === "POAPs" && poapdrops?.length === 0 && (
+          <motion.div
+            className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
+            initial="initial"
+            animate="final"
+            exit="exit"
+            key="empty-poaps"
+            variants={textVariant}
+          >
+            <h1 className="text-center">No POAP Drops Found 🧐</h1>
+          </motion.div>
+        )}
 
         {isConnected && (
           <DropListStyle className="drop-list mt-[2rem] md:mt-[3rem] mb-[4rem]">
