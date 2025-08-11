@@ -38,7 +38,7 @@ const Dashboard = () => {
 
   const [query, setQuery] = useState<string>("");
 
-  const [tokendrops, setTokenDrops] = useState<IDropComp[] | null>(null);
+  const [tokenDrops, setTokenDrops] = useState<IDropComp[] | null>(null);
   const [duplicateTokenDrops, setDuplicateTokenDrops] = useState<
     IDropComp[] | null
   >(null);
@@ -49,17 +49,12 @@ const Dashboard = () => {
     IDropComp[] | null
   >(null);
 
-  const {
-    getOwnerPoapDropsDetails,
-    isLoadingOwnerPoapDrops,
-  } = useReadPoapFactoryFunctions();
+  const { getOwnerPoapDropsDetails, isLoadingOwnerPoapDrops } =
+    useReadPoapFactoryFunctions();
 
-  const {
-    getOwnerTokenDropsDetails,
-    isLoadingOwnerTokenDrops,
-  } = useReadTokenFactoryFunctions();
+  const { getOwnerTokenDropsDetails, isLoadingOwnerTokenDrops } =
+    useReadTokenFactoryFunctions();
 
-  
   // there's a bug here, if the user doesnt wait for the fetch in the useefect to be complete, the kini here is null
   const handleTabSwitch = (tabName: string) => {
     setSelectedTabName(tabName);
@@ -70,50 +65,48 @@ const Dashboard = () => {
     setStateTabs(newTabs);
   };
 
-
-
   useEffect(() => {
-      if (!address) {
+    if (!address) {
+      return;
+    }
+    const fetchData = async () => {
+      const allOwnerTokenDropsDetails = await getOwnerTokenDropsDetails();
+
+      if (allOwnerTokenDropsDetails == null) {
+        setTokenDrops(null);
         return;
       }
-      const fetchData = async () => {
-        const allOwnerTokenDropsDetails = await getOwnerTokenDropsDetails();
-  
-        if (allOwnerTokenDropsDetails == null) {
-          setTokenDrops(null);
-          return;
-        }
-  
-        const drops: IDropComp[] = mapTokenDrops(allOwnerTokenDropsDetails);
-        setTokenDrops(drops);
-        setDuplicateTokenDrops(drops);
-        // get poap
-        const asyncPoapDrops = await getOwnerPoapDropsDetails();
-        if(asyncPoapDrops == null){
-          setPOAPDrops(null);
-          return;
-        }
-        const poapDrops: IDropComp[] = asyncPoapDrops.map((drop) => ({
-          name: drop.name,
-          creator: drop.creatorAddress,
-          creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)),
-          totalRewardPool: BigInt(drop.totalClaimable).toString(),
-          totalRewardClaimed: BigInt(drop.totalClaimed).toString(), // since it's 1 mint per user, totalClaims == totalRewardClaimed
-          totalParticipants: drop.totalClaimable,
-          totalClaims: drop.totalClaimed,
-          contractAddress: drop.address,
-          hasUserClaimed: drop.hasUserClaimed,
-          baseURI: drop.baseURI,
-          endDate: drop.endTime
-            ? formatToDDMMYYYY(new Date(drop.endTime * 1000))
-            : undefined,
-        }));
-        console.log(poapDrops);
-        setPOAPDrops(poapDrops);
-        setDuplicatePOAPDrops(poapDrops);
-      };
-      fetchData();
-    }, [address,selectedTabName]);
+
+      const drops: IDropComp[] = mapTokenDrops(allOwnerTokenDropsDetails);
+      setTokenDrops(drops);
+      setDuplicateTokenDrops(drops);
+      // get poap
+      const asyncPoapDrops = await getOwnerPoapDropsDetails();
+      if (asyncPoapDrops == null) {
+        setPOAPDrops(null);
+        return;
+      }
+      const poapDrops: IDropComp[] = asyncPoapDrops.map((drop) => ({
+        name: drop.name,
+        creator: drop.creatorAddress,
+        creationDate: formatToDDMMYYYY(new Date(drop.creationTime * 1000)),
+        totalRewardPool: BigInt(drop.totalClaimable).toString(),
+        totalRewardClaimed: BigInt(drop.totalClaimed).toString(), // since it's 1 mint per user, totalClaims == totalRewardClaimed
+        totalParticipants: drop.totalClaimable,
+        totalClaims: drop.totalClaimed,
+        contractAddress: drop.address,
+        hasUserClaimed: drop.hasUserClaimed,
+        baseURI: drop.baseURI,
+        endDate: drop.endTime
+          ? formatToDDMMYYYY(new Date(drop.endTime * 1000))
+          : undefined,
+      }));
+      console.log(poapDrops);
+      setPOAPDrops(poapDrops);
+      setDuplicatePOAPDrops(poapDrops);
+    };
+    fetchData();
+  }, [address]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -201,7 +194,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="bottom px-[1rem] bg-[#050C19] px-2 md:px-[200px] h-full">
+        <div className="bottom bg-[#050C19] px-2 md:px-[200px] h-full">
           <div className="pt-[2rem]">
             <h2>Quick Actions</h2>
             <div className="quick flex items-center gap-[1rem] justify-start md:justify-start">
@@ -269,16 +262,31 @@ const Dashboard = () => {
           </div>
 
           {isConnected &&
-            (tokendrops?.length === 0 || poapdrops?.length === 0) && (
+            selectedTabName === "Tokens" &&
+            tokenDrops?.length === 0 && (
               <motion.div
                 className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
                 initial="initial"
                 animate="final"
                 exit="exit"
-                key="empty"
+                key="empty-tokens"
                 variants={textVariant}
               >
-                <h1 className="text-center">No Drops Created🧐</h1>
+                <h1 className="text-center">No Token Drops Found 🧐</h1>
+              </motion.div>
+            )}
+          {isConnected &&
+            selectedTabName === "POAPs" &&
+            poapdrops?.length === 0 && (
+              <motion.div
+                className="h-full w-full flex justify-center items-center mt-[2rem] md:mt-[3rem] min-h-40"
+                initial="initial"
+                animate="final"
+                exit="exit"
+                key="empty-poaps"
+                variants={textVariant}
+              >
+                <h1 className="text-center">No POAP Drops Found 🧐</h1>
               </motion.div>
             )}
 
@@ -288,7 +296,7 @@ const Dashboard = () => {
                 (isLoadingOwnerTokenDrops ? (
                   <ButtonLoader />
                 ) : (
-                  (tokendrops ?? []).map((drop, index) => (
+                  (tokenDrops ?? []).map((drop, index) => (
                     <DropComp key={index} {...drop} isEditable={true} />
                   ))
                 ))}
