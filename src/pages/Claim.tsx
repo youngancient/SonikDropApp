@@ -10,7 +10,7 @@ import {
 } from "../components/icons";
 import { DropComp, POAPDropComp } from "../components/claimComponent";
 import { tabs } from "../constants/data.ts";
-import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { textVariant } from "../animations/animation";
 import { SonikNotConnected } from "../components/notConnected.tsx";
 import { ethers } from "ethers";
@@ -47,7 +47,7 @@ const ClaimPage = () => {
   );
 
   const { isConnected, address } = useAppKitAccount();
-  const { chainId } = useAppKitNetwork();
+  
   const dispatch = useAppDispatch();
 
   const [query, setQuery] = useState<string>("");
@@ -163,7 +163,7 @@ const ClaimPage = () => {
       dispatch(setDuplicatePOAPDrops(poapDrops));
     };
     fetchData();
-  }, [address,chainId]);
+  }, [address]);
 
   return (
     <div
