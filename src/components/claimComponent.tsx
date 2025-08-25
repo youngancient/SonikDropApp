@@ -329,8 +329,7 @@ export const POAPDropComp: React.FC<IDropComp> = ({
       }
       try {
         const image = await getPoapImageFromBaseURI(baseURI);
-    
-        
+
         setImageUrl(image || null);
       } catch (error) {
         console.error("Error fetching POAP image:", error);
@@ -596,6 +595,9 @@ export const ClaimModal: React.FC<IClaimModal> = ({
     });
   };
 
+  useEffect(() => {
+    console.log(userClaimDetails, tokenDetails);
+  }, []);
   const dispatch = useAppDispatch();
 
   const handleClaim = async (dropType: "token" | "poap") => {
@@ -854,6 +856,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                   </div>
                 </div>
               )}
+
               <div className="flex items-stretch justify-between gap-[1rem]">
                 <div className="flex flex-col addy">
                   <h4>{endDate ? "End Date" : "Creation Date"}</h4>
@@ -864,6 +867,34 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                     </p>
                   </div>
                 </div>
+                {isEligible &&
+                  type === "token" &&
+                  userClaimDetails &&
+                  tokenDetails && (
+                    <div className="flex flex-col addy">
+                      <h4>Your Allocation</h4>
+                      <div className="flex items-center justify-end gap-[0.25rem]">
+                        <p className="whitespace-normal">
+                          {typeof userClaimDetails === "object" &&
+                          userClaimDetails !== null &&
+                          "amount" in userClaimDetails
+                            ? ethers.formatUnits(
+                                userClaimDetails.amount,
+                                tokenDetails.decimals
+                              ) + tokenDetails.symbol
+                            : "N/A"}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                {isEligible && type === "poap" && userClaimDetails && (
+                  <div className="flex flex-col addy">
+                    <h4>Your Allocation</h4>
+                    <div className="flex items-center justify-end gap-[0.25rem]">
+                      <p className="whitespace-normal">{"1"}</p>
+                    </div>
+                  </div>
+                )}
               </div>
               {!isCreator && (
                 <div className=" addy flex items-center justify-between w-full">

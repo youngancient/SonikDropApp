@@ -47,6 +47,7 @@ const ClaimPage = () => {
   );
 
   const { isConnected, address } = useAppKitAccount();
+  
   const dispatch = useAppDispatch();
 
   const [query, setQuery] = useState<string>("");
@@ -87,7 +88,7 @@ const ClaimPage = () => {
         const filteredTokenDrops = duplicateTokenDrops.filter(
           (drop) => drop.creator.toLowerCase() === query.toLowerCase()
         );
-        setTokenDrops(filteredTokenDrops);
+        dispatch(setTokenDrops(filteredTokenDrops));
       } else if (selectedTabName === "POAPs") {
         if (!duplicatePoapdrops) {
           return;

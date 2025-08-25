@@ -16,7 +16,7 @@ export const useReadPoapFactoryFunctions = () => {
   const { address } = useAppKitAccount();
   const multicall3Contract = useMulticall3Contract();
   const errorDecoder = ErrorDecoder.create();
-
+  
   // state
   const [allPoapDropsAddresses, setAllPoapDropsAddresses] = useState<
     string[] | null
