@@ -12,7 +12,6 @@ export async function fetchUserByAddress(
     console.log(
       `drop address -> ${dropAddress} \n user address -> ${userAddress}`
     );
-    console.log(token);
     const response = await axios.get(
       `${BACKEND_URL}/users/get-user-by-address/${dropAddress.toLowerCase()}/${userAddress.toLowerCase()}`,
       {
