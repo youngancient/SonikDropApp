@@ -5,8 +5,7 @@ import {
   baseSepolia as rawBaseSepolia,
   // sonic as rawSonic,
   kairos as rawKairos,
-  sonicTestnet as rawSonicTest,
-  morphHolesky as rawMorphTest
+  sonicTestnet as rawSonicTest
 } from "@reown/appkit/networks";
 
 export const sepolia: CaipNetwork = {
@@ -29,15 +28,6 @@ export const kairos:CaipNetwork = {
   id: 1001,
   chainNamespace: "eip155",
   caipNetworkId: "eip155:1001",
-}
-
-
-
-export const morphHolesky:CaipNetwork = {
-  ...rawMorphTest,
-  id: 2810,
-  chainNamespace: "eip155",
-  caipNetworkId: "eip155:2810",
 }
 
 
@@ -102,8 +92,7 @@ const networks: [CaipNetwork, ...CaipNetwork[]] = [
   sepolia,
   baseSepolia,
   kairos,
-  sonicBlazeTestnet,
-  morphHolesky
+  sonicBlazeTestnet
 ];
 
 // 3. Create a metadata object - optional

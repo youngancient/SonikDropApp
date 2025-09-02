@@ -109,17 +109,6 @@ export const BNB: React.FC<ILink> = ({ href }) => {
   );
 };
 
-export const Morph: React.FC<ILink> = ({ href }) => {
-  return (
-    <ChainDivStyle
-      bottom={100}
-      right={150}
-      onClick={() => href && window.open(href, "_blank")}
-    >
-     <img src="/morph.webp" alt="morph" /> 
-    </ChainDivStyle>
-  );
-};
 
 export const ETH: React.FC<ILink> = ({ href }) => {
   return (
