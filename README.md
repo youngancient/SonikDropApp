@@ -1,6 +1,6 @@
 # SonikDrop
 
-<img width="1366" height="617" alt="Image" src="https://github.com/user-attachments/assets/6f318dd3-4ad0-48f2-bfaf-19813f42ff1f" />
+<img width="1364" height="613" alt="Image" src="https://github.com/user-attachments/assets/a253cd95-8be9-41bf-8f29-53b1b28e6f64" />
 
 **SonikDrop** is an open-source tool that streamlines the entire airdrop experience by letting you effortlessly create, manage, and claim token airdrops and POAPs, all in one place. This is to support and improve community reward systems making it cheaper and faster.
 
