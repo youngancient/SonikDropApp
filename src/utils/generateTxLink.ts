@@ -1,13 +1,13 @@
 import { kairos } from "@reown/appkit/networks";
 
-import { baseSepolia, sepolia, sonicBlazeTestnet, morphHolesky } from "../connection";
+import { baseSepolia, sepolia, sonicBlazeTestnet } from "../connection";
 
 export const generateTxExplorerLink = (
   chainId: string | number,
   txHash: string
 ): string => {
   let explorerUrl = "";
-  console.log("tx hash ->>>>>>", txHash);
+
   if (chainId === kairos.id) {
     explorerUrl += kairos.blockExplorers?.default.url;
   }
@@ -19,9 +19,6 @@ export const generateTxExplorerLink = (
   }
   if (chainId === baseSepolia.id) {
     explorerUrl += baseSepolia.blockExplorers?.default.url;
-  }
-  if (chainId === morphHolesky.id) {
-    explorerUrl += morphHolesky.blockExplorers?.default.url;
   }
   return `${explorerUrl}/tx/${txHash}`;
 };

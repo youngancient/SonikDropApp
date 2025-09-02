@@ -7,6 +7,5 @@ export enum ChainHrefs {
     Kaia = "https://www.kaia.io/",
     Polygon = "https://polygon.technology/",
     Sonic = "https://www.soniclabs.com/",
-    Morph = "https://www.morphl2.io/",
     Base = "https://base.org/",
   }
